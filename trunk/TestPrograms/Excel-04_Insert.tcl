@@ -18,7 +18,7 @@ for { set i 1 } { $i <= $numCols } { incr i } {
 
 # Test inserting data with the SetRowValues procedure.
 proc InsertWithSetRowValues { appId workbookId rowList testName hideApp } {
-    global numRows numWorksheets
+    global numRows numCols numWorksheets
 
     set t1 [clock clicks -milliseconds]
     if { $hideApp } {
@@ -31,6 +31,7 @@ proc InsertWithSetRowValues { appId workbookId rowList testName hideApp } {
         for { set row $startRow } { $row < [expr {$numRows+$startRow}] } { incr row } {
             ::Excel::SetRowValues $worksheetId $row $rowList $startCol
         }
+
         incr startRow 2
         incr startCol 1
     }
@@ -39,6 +40,32 @@ proc InsertWithSetRowValues { appId workbookId rowList testName hideApp } {
     }
     set t2 [clock clicks -milliseconds]
     puts "[expr $t2 - $t1] ms to set row values in $testName mode."
+}
+
+proc CheckWorksheets { workbookId } {
+    global numRows numCols numWorksheets
+
+    set startRow 1
+    set startCol 1
+    for { set ws $numWorksheets } { $ws >= 1 } { incr ws -1 } {
+        set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId $ws]
+        set wsName [::Excel::GetWorksheetName $worksheetId]
+        ::Cawt::CheckNumber $numRows [::Excel::GetNumUsedRows $worksheetId] \
+                            "Number of used rows in $wsName"
+        ::Cawt::CheckNumber $numCols [::Excel::GetNumUsedColumns $worksheetId] \
+                            "Number of used columns in $wsName"
+        ::Cawt::CheckNumber $startRow [::Excel::GetFirstUsedRow $worksheetId] \
+                            "First used row in $wsName"
+        ::Cawt::CheckNumber $startCol [::Excel::GetFirstUsedColumn $worksheetId] \
+                            "First used column in $wsName"
+        ::Cawt::CheckNumber [expr { $numRows + $startRow - 1 }] [::Excel::GetLastUsedRow $worksheetId] \
+                            "Last used row in $wsName"
+        ::Cawt::CheckNumber [expr { $numCols + $startCol - 1 }] [::Excel::GetLastUsedColumn $worksheetId] \
+                            "Last used column in $wsName"
+
+        incr startRow 2
+        incr startCol 1
+    }
 }
 
 # Test inserting data with the SetColumnValues procedure.
@@ -104,6 +131,7 @@ file delete -force $xlsFile
 
 # Perform test 1: Insert rows with Excel window visible.
 InsertWithSetRowValues $appId $workbookId $valList "RowVisible" false
+CheckWorksheets $workbookId
 
 # Perform test 2: Insert rows with Excel window hidden.
 InsertWithSetRowValues $appId $workbookId $valList "RowHidden" true

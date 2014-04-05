@@ -143,7 +143,7 @@ namespace eval ::Excel {
         # The maximum number of rows is 65.536 for Excel versions before 2007.
         # Since 2007 the maximum number of rows is 1.048.576.
         #
-        # See also: GetNumUsedRows GetNumColumns
+        # See also: GetNumUsedRows GetFirstUsedRow GetLastUsedRow GetNumColumns
 
         return [$rangeId -with { Rows } Count]
     }
@@ -153,9 +153,30 @@ namespace eval ::Excel {
         #
         # worksheetId - Identifier of the worksheet.
         #
-        # See also: GetNumRows GetNumUsedColumns
+        # See also: GetNumRows GetFirstUsedRow GetLastUsedRow GetNumUsedColumns
 
         return [$worksheetId -with { UsedRange Rows } Count]
+    }
+
+    proc GetFirstUsedRow { worksheetId } {
+        # Return the index of the first used row of a worksheet.
+        #
+        # worksheetId - Identifier of the worksheet.
+        #
+        # See also: GetNumRows GetNumUsedRows GetLastUsedRow GetNumUsedColumns
+
+        return [$worksheetId -with { UsedRange } Row]
+    }
+
+    proc GetLastUsedRow { worksheetId } {
+        # Return the index of the last used row of a worksheet.
+        #
+        # worksheetId - Identifier of the worksheet.
+        #
+        # See also: GetNumRows GetNumUsedRows GetFirstUsedRow GetNumUsedColumns
+
+        return [expr { [::Excel::GetFirstUsedRow $worksheetId] + \
+                       [::Excel::GetNumUsedRows $worksheetId] - 1 }]
     }
 
     proc GetNumColumns { rangeId } {
@@ -168,7 +189,7 @@ namespace eval ::Excel {
         # The maximum number of columns is 256 for Excel versions before 2007.
         # Since 2007 the maximum number of columns is 16.384.
         #
-        # See also: GetNumUsedColumns GetNumRows
+        # See also: GetNumUsedColumns GetFirstUsedColumn GetLastUsedColumn GetNumRows
 
         return [$rangeId -with { Columns } Count]
     }
@@ -180,9 +201,30 @@ namespace eval ::Excel {
         #
         # In some cases the number of columns returned may be 1 to high.
         #
-        # See also: GetNumColumns GetNumUsedRows
+        # See also: GetNumColumns GetFirstUsedColumn GetLastUsedColumn GetNumUsedRows
 
         return [$worksheetId -with { UsedRange Columns } Count]
+    }
+
+    proc GetFirstUsedColumn { worksheetId } {
+        # Return the index of the first used column of a worksheet.
+        #
+        # worksheetId - Identifier of the worksheet.
+        #
+        # See also: GetNumColumns GetNumUsedColumns GetLastUsedColumn GetNumUsedRows
+ 
+        return [$worksheetId -with { UsedRange } Column]
+    }
+
+    proc GetLastUsedColumn { worksheetId } {
+        # Return the index of the last used column of a worksheet.
+        #
+        # worksheetId - Identifier of the worksheet.
+        #
+        # See also: GetNumColumns GetNumUsedColumns GetFirstUsedColumn GetNumUsedRows
+
+        return [expr { [::Excel::GetFirstUsedColumn $worksheetId] + \
+                       [::Excel::GetNumUsedColumns $worksheetId] - 1 }]
     }
 
     proc SelectRangeByString { worksheetId rangeStr { visSel false } } {

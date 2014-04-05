@@ -108,8 +108,8 @@ namespace eval ::Excel {
         # WorksheetToWikitFile WorksheetToMediaWikiFile WorksheetToMatlabFile
         # WorksheetToRawImageFile WorksheetToWordTable
 
-        set numRows [::Excel::GetNumUsedRows $worksheetId]
-        set numCols [::Excel::GetNumUsedColumns $worksheetId]
+        set numRows [::Excel::GetLastUsedRow $worksheetId]
+        set numCols [::Excel::GetLastUsedColumn $worksheetId]
         set startRow 1
         if { $useHeader } {
             set headerList [::Excel::GetRowValues $worksheetId 1 1 $numCols]

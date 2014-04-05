@@ -19,10 +19,10 @@ namespace eval ::Excel {
         # If no cell matches the search criteria, an empty list is returned.
 
         if { $row2 < 0 } {
-            set row2 [::Excel::GetNumUsedRows $worksheetId]
+            set row2 [::Excel::GetLastUsedRow $worksheetId]
         }
         if { $col2 < 0 } {
-            set col2 [::Excel::GetNumUsedColumns $worksheetId]
+            set col2 [::Excel::GetLastUsedColumn $worksheetId]
         }
 
         set matrixList [::Excel::GetMatrixValues $worksheetId $row1 $col1 $row2 $col2]

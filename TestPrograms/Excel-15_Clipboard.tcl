@@ -39,8 +39,8 @@ set worksheetId1 [::Excel::AddWorksheet $workbookId "ClipboardSource"]
 
 puts "Copy worksheet to clipboard"
 ::Excel::WorksheetToClipboard $worksheetId1 1 1  \
-    [::Excel::GetNumUsedRows $worksheetId1] \
-    [::Excel::GetNumUsedColumns $worksheetId1]
+    [::Excel::GetLastUsedRow $worksheetId1] \
+    [::Excel::GetLastUsedColumn $worksheetId1]
 
 set worksheetId2 [::Excel::AddWorksheet $workbookId "ClipboardDest"]
 

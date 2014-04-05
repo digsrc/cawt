@@ -1625,36 +1625,37 @@ namespace eval ::Excel {
         ::Cawt::Destroy $cellId
     }
 
-    proc GetRowValues { worksheetId row { startCol 1 } { numVals 0 } } {
+    proc GetRowValues { worksheetId row { startCol 0 } { numVals 0 } } {
         # Return row values as a Tcl list.
         #
         # worksheetId - Identifier of the worksheet.
         # row         - Row number. Row numbering starts with 1.
         # startCol    - Column number of start. Column numbering starts with 1.
+        #               Negative or zero: Start at first available column.
         # numVals     - Negative or zero: All available row values are returned.
         #               Positive: Only numVals values of the row are returned.
         #
+        # Note, that the functionality of this procedure has changed slightly with
+        # CAWT versions greater than 1.0.5:
+        # If "startCol" is not specified, "startCol" is not set to 1, but it is set to
+        # the first available row.
+        # Possible incompatibility.
+        #
         # Return the values of the specified row or row range as a Tcl list.
         #
-        # See also: SetRowValues GetColumnValues GetCellValue ColumnCharToInt GetNumUsedColumns
+        # See also: SetRowValues GetColumnValues GetCellValue ColumnCharToInt GetFirstUsedColumn
 
+        if { $startCol <= 0 } {
+            set startCol [::Excel::GetFirstUsedColumn $worksheetId]
+        }
         if { $numVals <= 0 } {
-            set len [::Excel::GetNumUsedColumns $worksheetId]
-        } else {
-            set len $numVals
+            set numVals [expr { $startCol + [::Excel::GetLastUsedColumn $worksheetId] - 1 }]
         }
         set valList [list]
         set col $startCol
         set ind 0
-        while { $ind < $len } {
-            set val [::Excel::GetCellValue $worksheetId $row $col]
-            if { $val eq "" } {
-                set val2 [::Excel::GetCellValue $worksheetId $row [expr {$col+1}]]
-                if { $val2 eq "" } {
-                    break
-                }
-            }
-            lappend valList $val
+        while { $ind < $numVals } {
+            lappend valList [::Excel::GetCellValue $worksheetId $row $col]
             incr ind
             incr col
         }
@@ -1735,36 +1736,37 @@ namespace eval ::Excel {
         ::Cawt::Destroy $cellId
     }
 
-    proc GetColumnValues { worksheetId col { startRow 1 } { numVals 0 } } {
+    proc GetColumnValues { worksheetId col { startRow 0 } { numVals 0 } } {
         # Return column values as a Tcl list.
         #
         # worksheetId - Identifier of the worksheet.
         # col         - Column number. Column numbering starts with 1.
         # startRow    - Row number of start. Row numbering starts with 1.
+        #               Negative or zero: Start at first available row.
         # numVals     - Negative or zero: All available column values are returned.
         #               Positive: Only numVals values of the column are returned.
         #
+        # Note, that the functionality of this procedure has changed slightly with
+        # CAWT versions greater than 1.0.5:
+        # If "startRow" is not specified, "startRow" is not set to 1, but it is set to
+        # the first available row.
+        # Possible incompatibility.
+        #
         # Return the values of the specified column or column range as a Tcl list.
         #
-        # See also: SetColumnValues GetRowValues GetCellValue ColumnCharToInt GetNumUsedRows
+        # See also: SetColumnValues GetRowValues GetCellValue ColumnCharToInt GetFirstUsedRow
 
+        if { $startRow <= 0 } {
+            set startRow [::Excel::GetFirstUsedRow $worksheetId]
+        }
         if { $numVals <= 0 } {
-            set len [GetNumUsedRows $worksheetId]
-        } else {
-            set len $numVals
+            set numVals [expr { $startRow + [::Excel::GetLastUsedRow $worksheetId] - 1 }]
         }
         set valList [list]
         set row $startRow
         set ind 0
-        while { $ind < $len } {
-            set val [GetCellValue $worksheetId $row $col]
-            if { $val eq "" } {
-                set val2 [GetCellValue $worksheetId [expr {$row+1}] $col]
-                if { $val2 eq "" } {
-                    break
-                }
-            }
-            lappend valList $val
+        while { $ind < $numVals } {
+            lappend valList [GetCellValue $worksheetId $row $col]
             incr ind
             incr row
         }

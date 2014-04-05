@@ -177,8 +177,8 @@ namespace eval ::Excel {
         # WorksheetToMediaWikiFile WorksheetToWordTable WorksheetToMatlabFile
         # WorksheetToRawImageFile WorksheetToTablelist
 
-        set numRows [::Excel::GetNumUsedRows $worksheetId]
-        set numCols [::Excel::GetNumUsedColumns $worksheetId]
+        set numRows [::Excel::GetLastUsedRow $worksheetId]
+        set numCols [::Excel::GetLastUsedColumn $worksheetId]
         set startRow 1
         set catchVal [catch {open $wikiFileName w} fp]
         if { $catchVal != 0 } {

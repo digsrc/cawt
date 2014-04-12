@@ -54,16 +54,12 @@ set wsName [::Excel::GetWorksheetName $worksheetId]
 
 # Test retrieving parts of a row or column.
 set rowList [::Excel::GetRowValues $worksheetId 1 5]
-puts "HeaderRows: Values of row 1 (starting at column 5): $rowList"
-if { [llength $rowList] != 6 } {
-    puts "Error: Number of list elements not correct ([llength $rowList] vs. 6)"
-}
+puts "$wsName: Values of row 1 (starting at column 5): $rowList"
+::Cawt::CheckNumber 6 [llength $rowList] "Number of retrieved row elements in $wsName"
 
 set colList [::Excel::GetColumnValues $worksheetId 7 2]
-puts "HeaderRows: Values of column 7 (starting at row 2): $colList"
-if { [llength $colList] != 6 } {
-    puts "Error: Number of list elements not correct ([llength $colList] vs. 6)"
-}
+puts "$wsName: Values of column 7 (starting at row 2): $colList"
+::Cawt::CheckNumber 6 [llength $colList] "Number of retrieved column elements in $wsName"
 
 # Test different ways to delete a worksheet.
 set num [::Excel::GetNumWorksheets $workbookId]

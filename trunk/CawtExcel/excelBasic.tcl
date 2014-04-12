@@ -1659,7 +1659,13 @@ namespace eval ::Excel {
             incr ind
             incr col
         }
-        return $valList
+
+        # Remove empty cell values from the end of the values list.
+        incr ind -1
+        while { $ind >= 0 && [lindex $valList $ind] eq "" } {
+            incr ind -1
+        }
+        return [lrange $valList 0 $ind]
     }
 
     proc SetColumnWidth { worksheetId col { width 0 } } {
@@ -1770,7 +1776,13 @@ namespace eval ::Excel {
             incr ind
             incr row
         }
-        return $valList
+
+        # Remove empty cell values from the end of the values list.
+        incr ind -1
+        while { $ind >= 0 && [lindex $valList $ind] eq "" } {
+            incr ind -1
+        }
+        return [lrange $valList 0 $ind]
     }
 
     proc SetMatrixValues { worksheetId matrixList { startRow 1 } { startCol 1 } } {

@@ -131,32 +131,29 @@ set commentId [::Excel::SetRangeComment $rangeId "Comment text." [file join [pwd
 # Search only first 20 rows and columns for an existing string.
 set str "Hallo"
 set cell [::Excel::Search $worksheetId $str 1 1 20 20]
+::Cawt::CheckNumber 2 [llength $cell] "Search $str"
 if { [llength $cell] == 2 } {
     set rowNum [lindex $cell 0]
     set colNum [lindex $cell 1]
-    puts "Found string \"$str\" at cell [::Excel::ColumnIntToChar $colNum]$rowNum."
-} else {
-    puts "Error: Could not find string \"$str\"."
+    puts "  Found string \"$str\" at cell [::Excel::ColumnIntToChar $colNum]$rowNum."
 }
 
 # Search only first 20 rows and columns for a non-existing string.
 set str "HalliHallo"
 set cell [::Excel::Search $worksheetId $str 1 1 20 20]
+::Cawt::CheckNumber 0 [llength $cell] "Search $str"
 if { [llength $cell] == 0 } {
-    puts "Did not find string \"$str\"."
-} else {
-    puts "Error: String \"$str\" should not be available in worksheet."
+    puts "  Did not find string \"$str\". That's OK."
 }
 
 # Search whole worksheet for an existing string.
 set str "Holla"
 set cell [::Excel::Search $worksheetId $str]
+::Cawt::CheckNumber 2 [llength $cell] "Search $str"
 if { [llength $cell] == 2 } {
     set rowNum [lindex $cell 0]
     set colNum [lindex $cell 1]
-    puts "Found string \"$str\" at cell [::Excel::ColumnIntToChar $colNum]$rowNum."
-} else {
-    puts "Error: Could not find string \"$str\"."
+    puts "  Found string \"$str\" at cell [::Excel::ColumnIntToChar $colNum]$rowNum."
 }
 
 # Test different ways of setting column width.

@@ -36,10 +36,18 @@ proc RunTest { testFile } {
 
     puts "Running test $testFile ..."
     set catchVal [catch {exec -ignorestderr $::tclsh $testFile auto 2>@1 } retVal optionsDict]
-    if { $catchVal } {
-        set fullErrorInfo [dict get $optionsDict -errorinfo]
-        set msgEndIndex [string first "\n" $fullErrorInfo]
-        set msg [string range $fullErrorInfo 0 [expr {$msgEndIndex -1}]]
+    if { $catchVal || [string match "*Error:*" $retVal] } {
+        if { $catchVal } {
+            set fullErrorInfo [dict get $optionsDict -errorinfo]
+            set msgEndIndex [string first "\n" $fullErrorInfo]
+            set msg [string range $fullErrorInfo 0 [expr {$msgEndIndex -1}]]
+        } else {
+            foreach line [split $retVal "\n"] {
+                if { [string match "*Error:*" $line] } {
+                    append msg $line
+                }
+            }
+        }
         puts "Test $testFile failed: $msg"
     } else {
         if { $opts(Verbose) } {

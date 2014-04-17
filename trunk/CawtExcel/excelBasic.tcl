@@ -133,6 +133,24 @@ namespace eval ::Excel {
         return $range
     }
 
+    proc GetMaxRows { appId } {
+        # Return the maximum number of rows of an Excel table.
+        #
+        # appId - Identifier of the Excel instance.
+        #
+        # See also: GetNumRows
+
+        # appId is only needed, so we are sure, that excelVersion is initialized.
+
+        variable excelVersion
+
+        if { $excelVersion < 12.0 } {
+            return 65536
+        } else {
+            return 1048576
+        }
+    }
+
     proc GetNumRows { rangeId } {
         # Return the number of rows of a cell range.
         #
@@ -143,7 +161,7 @@ namespace eval ::Excel {
         # The maximum number of rows is 65.536 for Excel versions before 2007.
         # Since 2007 the maximum number of rows is 1.048.576.
         #
-        # See also: GetNumUsedRows GetFirstUsedRow GetLastUsedRow GetNumColumns
+        # See also: GetMaxRows GetNumUsedRows GetFirstUsedRow GetLastUsedRow GetNumColumns
 
         return [$rangeId -with { Rows } Count]
     }
@@ -179,6 +197,24 @@ namespace eval ::Excel {
                        [::Excel::GetNumUsedRows $worksheetId] - 1 }]
     }
 
+    proc GetMaxColumns { appId } {
+        # Return the maximum number of columns of an Excel table.
+        #
+        # appId - Identifier of the Excel instance.
+        #
+        # See also: GetNumColumns
+
+        # appId is only needed, so we are sure, that excelVersion is initialized.
+
+        variable excelVersion
+
+        if { $excelVersion < 12.0 } {
+            return 256
+        } else {
+            return 16384
+        }
+    }
+
     proc GetNumColumns { rangeId } {
         # Return the number of columns of a cell range.
         #
@@ -189,7 +225,7 @@ namespace eval ::Excel {
         # The maximum number of columns is 256 for Excel versions before 2007.
         # Since 2007 the maximum number of columns is 16.384.
         #
-        # See also: GetNumUsedColumns GetFirstUsedColumn GetLastUsedColumn GetNumRows
+        # See also: GetMaxColumns GetNumUsedColumns GetFirstUsedColumn GetLastUsedColumn GetNumRows
 
         return [$rangeId -with { Columns } Count]
     }
@@ -645,15 +681,15 @@ namespace eval ::Excel {
         return $version
     }
 
-    proc GetExtString { { appId "" } } {
+    proc GetExtString { appId } {
         # Return the default extension of an Excel file.
         #
         # appId - Identifier of the Excel instance.
-        #         OBSOLETE: This identifier is not needed anymore
-        #         and will be removed in next major release.
         #
         # Starting with Excel 12 (2007) this is the string ".xlsx".
         # In previous versions it was ".xls".
+
+        # appId is only needed, so we are sure, that excelVersion is initialized.
 
         variable excelVersion
 

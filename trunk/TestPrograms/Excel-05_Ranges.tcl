@@ -20,8 +20,8 @@ file delete -force $xlsFile
 set worksheetId [::Excel::AddWorksheet $workbookId "LargeColumn"]
 set maxRows [::Excel::GetNumRows $worksheetId]
 set maxCols [::Excel::GetNumColumns $worksheetId]
-puts "Maximum number of rows   : $maxRows"
-puts "Maximum number of columns: $maxCols"
+::Cawt::CheckNumber [::Excel::GetMaxRows $appId] $maxRows "Maximum number of rows"
+::Cawt::CheckNumber [::Excel::GetMaxColumns $appId] $maxCols "Maximum number of columns"
 # 256 and 65535 are the maximum number of columns and rows in Excel
 # versions up to Excel 2003.
 if { $maxCols > 256 } {

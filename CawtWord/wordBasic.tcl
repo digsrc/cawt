@@ -395,16 +395,16 @@ namespace eval ::Word {
         }
     }
 
-    proc GetExtString { { appId "" } } {
+    proc GetExtString { appId } {
         # Return the default extension of a Word file.
         #
         # appId - Identifier of the Word instance.
-        #         OBSOLETE: This identifier is not needed anymore
-        #         and will be removed in next major release.
         #
         # Starting with Word 12 (2007) this is the string ".docx".
         # In previous versions it was ".doc".
 
+        # appId is only needed, so we are sure, that wordVersion is initialized.
+ 
         variable wordVersion
 
         if { $wordVersion >= 12.0 } {
@@ -958,7 +958,7 @@ namespace eval ::Word {
     }
 
     proc GetNumRows { tableId } {
-        # Return the number of rows of a Word tablee.
+        # Return the number of rows of a Word table.
         #
         # tableId - Identifier of the Word table.
         #
@@ -968,7 +968,7 @@ namespace eval ::Word {
     }
 
     proc GetNumColumns { tableId } {
-        # Return the number of columns of a Word tablee.
+        # Return the number of columns of a Word table.
         #
         # tableId - Identifier of the Word table.
         #

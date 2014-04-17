@@ -98,7 +98,7 @@ file rename "Cawt" $distDevName
 # Remove obsolete files and directories
 cd $distDevName
 file delete -force "_FOSSIL_"
-file delete -force "Applications"
+file delete -force ".svn"
 file delete -force "ToDo.txt"
 cd "Starkit"
 foreach winPlatform { "win32" "win64" } {

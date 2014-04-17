@@ -395,10 +395,12 @@ namespace eval ::Word {
         }
     }
 
-    proc GetExtString { appId } {
+    proc GetExtString { { appId "" } } {
         # Return the default extension of a Word file.
         #
         # appId - Identifier of the Word instance.
+        #         OBSOLETE: This identifier is not needed anymore
+        #         and will be removed in next major release.
         #
         # Starting with Word 12 (2007) this is the string ".docx".
         # In previous versions it was ".doc".

@@ -44,10 +44,12 @@ namespace eval ::Ppt {
         return $version
     }
 
-    proc GetExtString { appId } {
+    proc GetExtString { { appId "" } } {
         # Return the default extension of a PowerPoint file.
         #
         # appId - Identifier of the PowerPoint instance.
+        #         OBSOLETE: This identifier is not needed anymore
+        #         and will be removed in next major release.
         #
         # Starting with PowerPoint 12 (2007) this is the string ".pptx".
         # In previous versions it was ".ppt".

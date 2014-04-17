@@ -425,51 +425,64 @@ namespace eval ::Cawt {
         }
     }
 
-    proc CheckString { expected value msg } {
+    proc CheckString { expected value msg { printCheck true } } {
         # Check, if 2 string values are identical.
         #
-        # expected - Expected string value.
-        # value    - Test string value.
-        # msg      - Message for test case.
+        # expected   - Expected string value.
+        # value      - Test string value.
+        # msg        - Message for test case.
+        # printCheck - Print message for successful test case.
         #
-        # Print message and return true, if both string values are identical.
-        # Otherwise, print message (prepended with "Error:") and return false.
+        # Return true, if both string values are identical.
+        # If "printCheck" is set to true, a line prepended with "Check:" and the
+        # message supplied in "msg" is printed to standard output.
+        # If the check fails, return false and print message prepended with "Error:".
 
         if { $expected ne $value } {
             puts "Error: $msg (Expected: \"$expected\" Have: \"$value\")"
             return false
         }
-        puts "Check: $msg (Expected: \"$expected\" Have: \"$value\")"
+        if { $printCheck } {
+            puts "Check: $msg (Expected: \"$expected\" Have: \"$value\")"
+        }
         return true
     }
 
-    proc CheckNumber { expected value msg } {
+    proc CheckNumber { expected value msg { printCheck true } } {
         # Check, if 2 numerical values are identical.
         #
-        # expected - Expected numeric value.
-        # value    - Test numeric value.
-        # msg      - Message for test case.
+        # expected   - Expected numeric value.
+        # value      - Test numeric value.
+        # msg        - Message for test case.
+        # printCheck - Print message for successful test case.
         #
-        # Print message and return true, if both numeric values are identical.
-        # Otherwise, print message (prepended with "Error:") and return false.
+        # Return true, if both numeric values are identical.
+        # If "printCheck" is set to true, a line prepended with "Check:" and the
+        # message supplied in "msg" is printed to standard output.
+        # If the check fails, return false and print message prepended with "Error:".
 
         if { $expected != $value } {
             puts "Error: $msg (Expected: $expected Have: $value)"
             return false
         }
-        puts "Check: $msg (Expected: $expected Have: $value)"
+        if { $printCheck } {
+            puts "Check: $msg (Expected: $expected Have: $value)"
+        }
         return true
     }
 
-    proc CheckList { expected value msg } {
+    proc CheckList { expected value msg { printCheck true } } {
         # Check, if 2 lists are identical.
         #
-        # expected - Expected list.
-        # value    - Test list.
-        # msg      - Message for test case.
+        # expected   - Expected list.
+        # value      - Test list.
+        # msg        - Message for test case.
+        # printCheck - Print message for successful test case.
         #
-        # Print message and return true, if both lists are identical.
-        # Otherwise, print message (prepended with "Error:") and return false.
+        # Return true, if both lists are identical.
+        # If "printCheck" is set to true, a line prepended with "Check:" and the
+        # message supplied in "msg" is printed to standard output.
+        # If the check fails, return false and print message prepended with "Error:".
 
         if { [llength $expected] != [llength $value] } {
             puts "Error: $msg (List length differ. Expected: [llength $expected] Have: [llength $value])"
@@ -483,19 +496,24 @@ namespace eval ::Cawt {
             }
             incr index
         }
-        puts "Check: $msg (List length. Expected: [llength $expected] Have: [llength $value])"
+        if { $printCheck } {
+            puts "Check: $msg (List length. Expected: [llength $expected] Have: [llength $value])"
+        }
         return true
     }
 
-    proc CheckMatrix { expected value msg } {
+    proc CheckMatrix { expected value msg { printCheck true } } {
         # Check, if 2 matrices are identical.
         #
-        # expected - Expected matrix.
-        # value    - Test matrix.
-        # msg      - Message for test case.
+        # expected   - Expected matrix.
+        # value      - Test matrix.
+        # msg        - Message for test case.
+        # printCheck - Print message for successful test case.
         #
-        # Print message and return true, if both matrices are identical.
-        # Otherwise, print message (prepended with "Error:") and return false.
+        # Return true, if both matrices are identical.
+        # If "printCheck" is set to true, a line prepended with "Check:" and the
+        # message supplied in "msg" is printed to standard output.
+        # If the check fails, return false and print message prepended with "Error:". 
 
         if { [llength $expected] != [llength $value] } {
             puts "Error: $msg (Matrix rows differ. Expected: [llength $expected] Have: [llength $value])"
@@ -513,7 +531,9 @@ namespace eval ::Cawt {
             }
             incr row
         }
-        puts "Check: $msg (Matrix rows. Expected: [llength $expected] Have: [llength $value])"
+        if { $printCheck } {
+            puts "Check: $msg (Matrix rows. Expected: [llength $expected] Have: [llength $value])"
+        }
         return true
     }
 }

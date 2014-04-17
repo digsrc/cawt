@@ -25,7 +25,6 @@ for { set s 1 } { $s <= $numSheets } { incr s } {
     set appId [::Excel::Open]
     set workbookId [::Excel::GetActiveWorkbook $appId]
     if { ! [::Cawt::IsValidId $workbookId] } {
-        puts "Creating new workbook"
         set workbookId [::Excel::AddWorkbook $appId]
     }
 
@@ -53,13 +52,14 @@ set wsName [::Excel::GetWorksheetName $worksheetId]
                        "Number of used columns in $wsName"
 
 # Test retrieving parts of a row or column.
-set rowList [::Excel::GetRowValues $worksheetId 1 5]
-puts "$wsName: Values of row 1 (starting at column 5): $rowList"
-::Cawt::CheckNumber 6 [llength $rowList] "Number of retrieved row elements in $wsName"
+set rowValuesList [::Excel::GetRowValues $worksheetId 1 5]
+::Cawt::CheckList [lrange $rowList 4 end] $rowValuesList "Values of row 1 (starting at column 5)"
+::Cawt::CheckNumber 6 [llength $rowValuesList] "Number of retrieved row elements in $wsName"
 
-set colList [::Excel::GetColumnValues $worksheetId 7 2]
-puts "$wsName: Values of column 7 (starting at row 2): $colList"
-::Cawt::CheckNumber 6 [llength $colList] "Number of retrieved column elements in $wsName"
+set colValuesList [::Excel::GetColumnValues $worksheetId 7 2]
+set colList [list E-6 E-5 E-4 E-3 E-2 E-1]
+::Cawt::CheckList $colList $colValuesList "Values of column 7 (starting at row 2)"
+::Cawt::CheckNumber 6 [llength $colValuesList] "Number of retrieved column elements in $wsName"
 
 # Test different ways to delete a worksheet.
 set num [::Excel::GetNumWorksheets $workbookId]

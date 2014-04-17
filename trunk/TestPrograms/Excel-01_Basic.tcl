@@ -75,9 +75,7 @@ puts "Testing column conversion procedures (both directions for $maxCols columns
 for { set col 1 } { $col <= $maxCols } { incr col } {
     set colStr [::Excel::ColumnIntToChar $col]
     set colNum [::Excel::ColumnCharToInt $colStr]
-    if { $col != $colNum } {
-        puts "Error converting column indices. (Column number $col)"
-    }
+    ::Cawt::CheckNumber $col $colNum "Convert column indices. Column number $col" false
 }
 
 ::Excel::Close $workbookId

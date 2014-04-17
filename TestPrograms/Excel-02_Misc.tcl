@@ -68,8 +68,8 @@ set rangeId [::Excel::SelectRangeByString $worksheetId "A8:C10" true]
 # Test setting a formula.
 set cell [::Excel::SelectCellByIndex $worksheetId 1 [expr $numCols + 2] true]
 $cell Formula "=TODAY()"
-puts "Formula:      [$cell Formula]"
-puts "FormulaLocal: [$cell FormulaLocal]"
+::Cawt::CheckString "=TODAY()" [$cell Formula] "cellId Formula"
+puts "  FormulaLocal: [$cell FormulaLocal]"
 
 # Generate a text file for testing the hyperlink capabilities.
 set fileName [file join [pwd] "testOut" "Excel-02_Misc.txt"]

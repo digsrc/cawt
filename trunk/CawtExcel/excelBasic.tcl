@@ -919,7 +919,7 @@ namespace eval ::Excel {
         set workbooks [$appId Workbooks]
         set retVal [catch {[$workbooks Item [file tail $fileName]] Activate} d]
         if { $retVal == 0 } {
-            puts "$nativeName already open"
+            # puts "$nativeName already open"
             set workbookId [$workbooks Item [file tail $fileName]]
         } else {
             # Open(Filename As String, [UpdateLinks], [ReadOnly], [Format],
@@ -1868,5 +1868,22 @@ namespace eval ::Excel {
 
         ::Cawt::Destroy $cellId
         return $matrixList
+    }
+
+    proc GetWorksheetAsMatrix { worksheetId } {
+        # Return worksheet table as a matrix.
+        #
+        # worksheetId - Identifier of the worksheet.
+        #
+        # Return the range of the worksheet with valid data as
+        # a matrix.
+        #
+        # See also: SetMatrixValues GetMatrixValues GetFirstUsedRow GetLastUsedRow
+
+        return [::Excel::GetMatrixValues $worksheetId \
+                   [::Excel::GetFirstUsedRow $worksheetId] \
+                   [::Excel::GetFirstUsedColumn $worksheetId] \
+                   [::Excel::GetLastUsedRow $worksheetId] \
+                   [::Excel::GetLastUsedColumn $worksheetId]]
     }
 }

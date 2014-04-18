@@ -36,6 +36,7 @@ set dataList {
 set worksheetId1 [::Excel::AddWorksheet $workbookId "ClipboardSource"]
 ::Excel::SetHeaderRow $worksheetId1 $headerList
 ::Excel::SetMatrixValues $worksheetId1 $dataList 2
+set matrixList1 [::Excel::GetWorksheetAsMatrix $worksheetId1]
 
 puts "Copy worksheet to clipboard"
 ::Excel::WorksheetToClipboard $worksheetId1 1 1  \
@@ -46,6 +47,9 @@ set worksheetId2 [::Excel::AddWorksheet $workbookId "ClipboardDest"]
 
 puts "Copy clipboard to worksheet with offset"
 ::Excel::ClipboardToWorksheet $worksheetId2 3 2
+set matrixList2 [::Excel::GetWorksheetAsMatrix $worksheetId2]
+
+::Cawt::CheckMatrix $matrixList1 $matrixList2 "ClipboardToWorksheet"
 
 ::Excel::SaveAs $workbookId $xlsOutFile
 

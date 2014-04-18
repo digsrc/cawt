@@ -36,12 +36,14 @@ set tableOut2 [::Word::AddTable $docId $range $numRows $numCols 1]
 puts "Filling source table with data ..."
 ::Word::SetHeaderRow $tableIn $headerList
 
+set matrixList [list]
 for { set row 1 } { $row <= $numRows } { incr row } {
     set rowList [list]
     for { set col 1 } { $col <= $numCols } { incr col } {
         lappend rowList [format "Cell_%d_%d" $row $col]
     }
     ::Word::SetRowValues $tableIn [expr {$row + $numHeaders}] $rowList
+    lappend matrixList $rowList
 }
 
 # Open new instance of Excel and add a workbook.
@@ -67,6 +69,9 @@ set t1 [clock clicks -milliseconds]
 ::Excel::WordTableToWorksheet $tableIn $worksheetId $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WordTableToWorksheet: [expr $t2 - $t1] ms (using header: $useHeader)."
+::Cawt::CheckMatrix $matrixList \
+    [::Excel::GetMatrixValues $worksheetId 2 1 [expr $numRows+1] $numCols] \
+    "GetMatrixValues"
 
 set t1 [clock clicks -milliseconds]
 ::Excel::WorksheetToWordTable $worksheetId $tableOut1 $useHeader
@@ -83,6 +88,9 @@ set t1 [clock clicks -milliseconds]
 ::Excel::WordTableToWorksheet $tableIn $worksheetId $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WordTableToWorksheet: [expr $t2 - $t1] ms (using header: $useHeader)."
+::Cawt::CheckMatrix $matrixList \
+    [::Excel::GetMatrixValues $worksheetId 1 1 $numRows $numCols] \
+    "GetMatrixValues"
 
 set t1 [clock clicks -milliseconds]
 ::Excel::WorksheetToWordTable $worksheetId $tableOut2 $useHeader

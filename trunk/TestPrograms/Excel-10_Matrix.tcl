@@ -32,17 +32,18 @@ file delete -force $matOutFile
 
 # Transfer RAW image file into a matrix and save as a Matlab file.
 set t1 [clock clicks -milliseconds]
-set matrixList [::Excel::ReadRawImageFile $rawFile]
-::Excel::WriteMatlabFile $matrixList $matOutFile
+set matrixList1 [::Excel::ReadRawImageFile $rawFile]
+::Excel::WriteMatlabFile $matrixList1 $matOutFile
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to put RAW image data into a Matlab file."
 
 # Transfer Matlab file data into a matrix and save as a RAW image file.
 set t1 [clock clicks -milliseconds]
-set matrixList [::Excel::ReadMatlabFile $matOutFile]
-::Excel::WriteRawImageFile $matrixList $rawOutFile
+set matrixList2 [::Excel::ReadMatlabFile $matOutFile]
+::Excel::WriteRawImageFile $matrixList2 $rawOutFile
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to put Matlab matrix data into a RAW image file."
+::Cawt::CheckMatrix $matrixList1 $matrixList2 "ReadMatlabFile"
 
 if { $retVal == 0 } {
     set phImg2 [image create photo -file $rawOutFile \

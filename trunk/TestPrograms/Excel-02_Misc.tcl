@@ -135,16 +135,13 @@ set cell [::Excel::Search $worksheetId $str 1 1 20 20]
 if { [llength $cell] == 2 } {
     set rowNum [lindex $cell 0]
     set colNum [lindex $cell 1]
-    puts "  Found string \"$str\" at cell [::Excel::ColumnIntToChar $colNum]$rowNum."
+    ::Cawt::CheckString "E3" "[::Excel::ColumnIntToChar $colNum]$rowNum" "Search $str"
 }
 
 # Search only first 20 rows and columns for a non-existing string.
 set str "HalliHallo"
 set cell [::Excel::Search $worksheetId $str 1 1 20 20]
 ::Cawt::CheckNumber 0 [llength $cell] "Search $str"
-if { [llength $cell] == 0 } {
-    puts "  Did not find string \"$str\". That's OK."
-}
 
 # Search whole worksheet for an existing string.
 set str "Holla"
@@ -153,7 +150,7 @@ set cell [::Excel::Search $worksheetId $str]
 if { [llength $cell] == 2 } {
     set rowNum [lindex $cell 0]
     set colNum [lindex $cell 1]
-    puts "  Found string \"$str\" at cell [::Excel::ColumnIntToChar $colNum]$rowNum."
+    ::Cawt::CheckString "E4" "[::Excel::ColumnIntToChar $colNum]$rowNum" "Search $str"
 }
 
 # Test different ways of setting column width.

@@ -160,10 +160,8 @@ namespace eval ::Excel {
         #
         # See also: MatrixToCsvString CsvRowToList
 
-        set trimString [string trim $csvString '\0']
-        # There is always a "\n" at the end of csvString. So do not use
-        # the last list element after splitting the string into a list.
-        foreach row [lrange [split $trimString "\n"] 0 end-1] {
+        set trimString [string trim $csvString '\0''\n']
+        foreach row [lrange [split $trimString "\n"] 0 end] {
             set row [string trim $row "\r"]
             lappend matrixList [::Excel::CsvRowToList $row]
         }

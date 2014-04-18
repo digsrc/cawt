@@ -38,6 +38,7 @@ set testList {
 }
 ::Excel::SetMatrixValues $worksheetId $testList
 ::Excel::SetMatrixValues $worksheetId $testList [expr [llength $testList] + 2]
+set cmpMatrix [::Excel::GetWorksheetAsMatrix $worksheetId]
 
 puts "Saving CSV file $outFileExcel with Excel"
 ::Excel::SaveAsCsv $workbookId $worksheetId $outFileExcel
@@ -48,13 +49,15 @@ puts "Saving CSV file $outFileExcel with Excel"
 ::Excel::SetCsvSeparatorChar ","
 ::Cawt::CheckString "," [::Excel::GetCsvSeparatorChar] "::Excel::GetCsvSeparatorChar"
 puts "Reading CSV file $outFileExcel"
-set csvList [::Excel::ReadCsvFile $outFileExcel]
+set csvMatrix [::Excel::ReadCsvFile $outFileExcel]
 puts "Writing CSV file $outFileCsv"
-::Excel::WriteCsvFile $csvList $outFileCsv
+::Excel::WriteCsvFile $csvMatrix $outFileCsv
+
+::Cawt::CheckMatrix $cmpMatrix $csvMatrix "Worksheet vs. ReadCsvFile"
 
 # Use the matrix generated above and write it to a new MediaWiki file.
 puts "Writing MediaWiki file $outFileMediaWiki1"
-::Excel::WriteMediaWikiFile $csvList $outFileMediaWiki1
+::Excel::WriteMediaWikiFile $csvMatrix $outFileMediaWiki1
 
 # Read the MediaWiki test file (including potential column headers)
 # and write it out again.
@@ -65,7 +68,7 @@ puts "Writing MediaWiki file $outFileMediaWiki2"
 
 # Use the matrix generated above and write it to a new Wikit file.
 puts "Writing Wikit file $outFileWikit1"
-::Excel::WriteWikitFile $csvList $outFileWikit1
+::Excel::WriteWikitFile $csvMatrix $outFileWikit1
 
 # Read the Wikit test file (including potential column headers)
 # and write it out again.
@@ -73,6 +76,8 @@ puts "Reading Wikit file $inFileWikit"
 set wikitList [::Excel::ReadWikitFile $inFileWikit]
 puts "Writing Wikit file $outFileWikit2"
 ::Excel::WriteWikitFile $wikitList $outFileWikit2
+
+::Cawt::CheckMatrix $mediaWikiList $wikitList "MediaWiki vs. Wikit"
 
 ::Cawt::Destroy
 if { [lindex $argv 0] eq "auto" } {

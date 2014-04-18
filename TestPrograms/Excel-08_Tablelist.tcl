@@ -81,6 +81,7 @@ set t1 [clock clicks -milliseconds]
 ::Excel::WorksheetToTablelist $worksheetId .frOut1.tl $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WorksheetToTablelist: [expr $t2 - $t1] ms (using header: $useHeader)."
+::Cawt::CheckMatrix $matrixList [::Excel::GetTablelistValues .frOut1.tl] "GetTablelistValues"
 update
 
 
@@ -98,6 +99,7 @@ set t1 [clock clicks -milliseconds]
 ::Excel::WorksheetToTablelist $worksheetId .frOut2.tl $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WorksheetToTablelist: [expr $t2 - $t1] ms (using header: $useHeader)."
+::Cawt::CheckMatrix $matrixList [::Excel::GetTablelistValues .frOut2.tl] "GetTablelistValues"
 update
 
 puts "Saving as Excel file: $xlsFile"

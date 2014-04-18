@@ -2,7 +2,7 @@
 # Distributed under BSD license.
 
 proc __CawtCoreSourcePkgs { dir } {
-    package provide cawtcore 1.0.3
+    package provide cawtcore 1.0.4
 
     source [file join $dir cawtBasic.tcl]
     source [file join $dir cawtImgUtil.tcl]
@@ -10,4 +10,4 @@ proc __CawtCoreSourcePkgs { dir } {
 }
 
 # All modules are exported as package cawtcore
-package ifneeded cawtcore 1.0.3 "[list __CawtCoreSourcePkgs $dir]"
+package ifneeded cawtcore 1.0.4 "[list __CawtCoreSourcePkgs $dir]"

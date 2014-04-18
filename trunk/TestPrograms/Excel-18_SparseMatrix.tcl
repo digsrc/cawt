@@ -1,4 +1,4 @@
-# Test CawtExcel procedures for inserting data as rows, columns or matrices.
+# Test CawtExcel procedures for handling sparse matrices.
 #
 # Copyright: 2007-2014 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.

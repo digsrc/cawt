@@ -73,6 +73,7 @@ foreach dir { "base64" "Img" "tablelist" "twapi"} {
     file copy [file join $cawtDir "Externals" $dir] [file join $distUserDir "Externals"]
 }
 file copy pkgIndex.tcl $distUserDir
+file copy Readme.txt   $distUserDir
 
 file copy $finalDir $distUserDir
 cd $distUserDir

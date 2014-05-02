@@ -63,6 +63,25 @@ namespace eval ::Ppt {
         }
     }
 
+    proc GetTemplateExtString { appId } {
+        # Return the default extension of a PowerPoint template file.
+        #
+        # appId - Identifier of the PowerPoint instance.
+        #
+        # Starting with PowerPoint 12 (2007) this is the string ".potx".
+        # In previous versions it was ".pot".
+
+        # appId is only needed, so we are sure, that pptVersion is initialized.
+ 
+        variable pptVersion
+
+        if { $pptVersion >= 12.0 } {
+            return ".potx"
+        } else {
+            return ".pot"
+        }
+    }
+
     proc OpenNew { { width -1 } { height -1 } } {
         # Open a new PowerPoint instance.
         #
@@ -213,16 +232,21 @@ namespace eval ::Ppt {
         ::Cawt::Destroy $appId
     }
 
-    proc AddPres { appId  } {
+    proc AddPres { appId { templateFile "" }  } {
         # Add a new empty presentation.
         #
-        # appId - Identifier of the PowerPoint instance.
+        # appId        - Identifier of the PowerPoint instance.
+        # templateFile - Name of an optional template file (as absolute path).
         #
         # Return the identifier of the new presentation.
         #
         # See also: OpenPres GetActivePres
 
         set presId [$appId -with { Presentations } Add]
+        if { $templateFile ne "" } {
+            set nativeName [file nativename $templateFile]
+            $presId ApplyTemplate $nativeName
+        }
         return $presId
     }
 
@@ -300,19 +324,40 @@ namespace eval ::Ppt {
         # Add a new slide to a presentation.
         #
         # presId     - Identifier of the presentation.
-        # type       - Value of enumeration type PpSlideLayout (see pptConst.tcl).
+        # type       - Value of enumeration type PpSlideLayout (see pptConst.tcl) or
+        #              CustomLayout object.
         # slideIndex - Insertion index of new slide. If negative, insert slide at the end.
+        #
+        # Note, that CustomLayouts are not supported with PowerPoint versions before 2007.
+        #
+        # TODO: Add to SeeAlso about CustomLayouts
         #
         # Return the identifier of the new slide.
         #
         # See also: CopySlide
 
+        variable pptVersion
+
+        set retVal [catch { expr int($type) } typeInt]
+        if { $retVal != 0 } {
+            # type seems to be a CustomLayout object.
+            if { $pptVersion < 12.0 } {
+                set appId [::Cawt::GetApplicationId $presId]
+                set versionStr [::Ppt::GetVersion $appId true]
+                error "CustomLayout not supported with PowerPoint $versionStr"
+            }
+        }
+        
         if { $slideIndex < 0 } {
             set insertIndex [expr [::Ppt::GetNumSlides $presId] +1]
         } else {
             set insertIndex $slideIndex
         }
-        set newSlide [$presId -with { Slides } Add $insertIndex [expr $type]]
+        if { $retVal != 0 } {
+            set newSlide [$presId -with { Slides } AddSlide $insertIndex $type]
+        } else {
+            set newSlide [$presId -with { Slides } Add $insertIndex [expr $typeInt]]
+        }
         set newSlideIndex [::Ppt::GetSlideIndex $newSlide]
         ::Ppt::ShowSlide $presId $newSlideIndex
         return $newSlide
@@ -597,5 +642,64 @@ namespace eval ::Ppt {
                    [::Cawt::TclInt 0] [::Cawt::TclInt 1] \
                    $left $top $width $height]
         return $imgId
+    }
+
+    proc GetNumCustomLayouts { presId } {
+        # Return the number of custom layouts of a presentation.
+        #
+        # presId - Identifier of the presentation.
+        #
+        # See also: GetNumSlides
+
+        return [$presId -with { SlideMaster CustomLayouts } Count]
+    }
+
+    proc GetCustomLayoutName { customLayoutId } {
+        # Return the name of a custom layout.
+        #
+        # customLayoutId - Identifier of the custom layout.
+        #
+        # See also: GetCustomLayoutId GetNumCustomLayouts
+
+        return [$customLayoutId Name]
+    }
+
+    proc GetCustomLayoutId { presId indexOrName } {
+        # Get a custom layout by it's index or name.
+        #
+        # presId      - Identifier of the presentation containing the custom layout.
+        # indexOrName - Index or name of the custom layout to find.
+        #
+        # Return the identifier of the found custom layout.
+        # Instead of using the numeric index the special word "end" may
+        # be used to specify the last custom layout.
+        # If the index is out of bounds or a custom layout with specified name
+        # is not found, an error is thrown.
+        #
+        # See also: GetNumCustomLayouts AddPres
+
+        set count [::Ppt::GetNumCustomLayouts $presId]
+        if { [string is integer $indexOrName] || $indexOrName eq "end" } {
+            if { $indexOrName eq "end" } {
+                set indexOrName $count
+            } else {
+                if { $indexOrName < 1 || $indexOrName > $count } {
+                    error "GetCustomLayoutId: Invalid index $indexOrName given."
+                }
+            }
+            set customLayoutId [$presId -with { SlideMaster CustomLayouts } Item [expr $indexOrName]]
+            return $customLayoutId
+        } else {
+            for { set i 1 } { $i <= $count } { incr i } {
+                set customLayouts [$presId -with { SlideMaster } CustomLayouts] 
+                set customLayoutId [$customLayouts Item [expr $i]]
+                if { $indexOrName eq [$customLayoutId Name] } {
+                    ::Cawt::Destroy $customLayouts
+                    return $customLayoutId
+                }
+                ::Cawt::Destroy $customLayoutId
+            }
+            error "GetCustomLayoutId: No custom layout with name $indexOrName"
+        }
     }
 }

@@ -603,9 +603,13 @@ namespace eval ::Excel {
         #
         # Note, that an already existing comment is overwritten.
         #
+        # A comment may be used as a mouse-over tooltip, if parameter showComments of
+        # SetCommentDisplayMode is set to false. For a selection tooltip, use SetRangeTooltip.
+        #
         # Return the comment identifier.
         #
-        # See also: SelectRangeByIndex SelectRangeByString SetCommentDisplayMode ::Cawt::GetUserName
+        # See also: SelectRangeByIndex SelectRangeByString SetCommentDisplayMode SetRangeTooltip
+        # ::Cawt::GetUserName
 
         set commentId [$rangeId Comment]
         if { ! [::Cawt::IsValidId $commentId] } {
@@ -646,6 +650,31 @@ namespace eval ::Excel {
         $commentId -with { Shape } Width  [expr double ($height)]
     }
     
+    proc SetRangeTooltip { rangeId tooltipMessage { tooltipTitle "" } } {
+        # Set a selection based tooltip for a cell range.
+        #
+        # rangeId        - Identifier of the cell range.
+        # tooltipMessage - The tooltip message string.
+        # tooltipTitle   - The optional tooltip title string.
+        #
+        # The tooltip will be shown, if the cell is selected by the user. It is implemented by using
+        # the data validation functionality of Excel.
+        # If a mouse-over tooltip is needed, use SetRangeComment.
+        #
+        # Return the validation identifier.
+        #
+        # See also: SelectRangeByIndex SelectRangeByString SetRangeComment
+
+        set validationId [$rangeId Validation]
+        $validationId Add $::Excel::xlValidateInputOnly
+        $validationId InputMessage $tooltipMessage
+        if { $tooltipTitle ne "" } {
+            $validationId InputTitle $tooltipTitle
+        }
+        $validationId ShowInput [::Cawt::TclBool true]
+        return $validationId
+    }
+
     proc GetVersion { appId { useString false } } {
         # Return the version of an Excel application.
         #

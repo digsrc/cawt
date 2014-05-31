@@ -127,6 +127,11 @@ set commentId [::Excel::SetRangeComment $rangeId "Comment text." [file join [pwd
 
 ::Excel::SetCommentDisplayMode $appId true true
 
+# Test adding tooltips.
+::Excel::SetCellValue $worksheetId 12 7 "Cell with tooltip"
+set rangeId [::Excel::SelectCellByIndex $worksheetId 12 7 true]
+::Excel::SetRangeTooltip $rangeId "Tooltip message" "Tooltip title"
+
 # Test the search capabilities.
 # Search only first 20 rows and columns for an existing string.
 set str "Hallo"

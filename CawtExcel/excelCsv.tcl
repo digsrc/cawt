@@ -190,6 +190,7 @@ namespace eval ::Excel {
         if { $catchVal != 0 } {
             error "Could not open file \"$csvFileName\" for reading."
         }
+        fconfigure $fp -translation crlf
 
         while { [gets $fp row] >= 0 } {
             if { $rowCount <= $numHeaderRows && ! $useHeader } {
@@ -222,9 +223,11 @@ namespace eval ::Excel {
         if { $catchVal != 0 } {
             error "Could not open file \"$csvFileName\" for writing."
         }
+        fconfigure $fp -translation binary
 
         foreach row $matrixList {
-            puts $fp [::Excel::ListToCsvRow $row]
+            puts -nonewline $fp [::Excel::ListToCsvRow $row]
+            puts -nonewline $fp "\r\n"
         }
         close $fp
     }

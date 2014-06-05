@@ -9,6 +9,9 @@ package require cawt
 set inPath  [file join [pwd] "testIn"]
 set outPath [file join [pwd] "testOut"]
 
+# Test file with multiline cells.
+set xlsMultiFile [file join $inPath "MultiLine.xls"]
+
 # Names of CSV files being generated.
 set outFileExcel [file join $outPath Excel-07_Csv_Excel.csv]
 set outFileCsv   [file join $outPath Excel-07_Csv_Csv.csv]
@@ -20,6 +23,9 @@ set outFileMediaWiki2 [file join $outPath Excel-07_Csv_MediaWiki2.txt]
 set inFileWikit   [file join $inPath  WikitTable.txt]
 set outFileWikit1 [file join $outPath Excel-07_Csv_Wikit1.txt]
 set outFileWikit2 [file join $outPath Excel-07_Csv_Wikit2.txt]
+
+set outFileMultiExcel [file join $outPath Excel-07_Csv_MultiExcel.csv]
+set outFileMultiCsv   [file join $outPath Excel-07_Csv_MultiCsv.csv]
 
 file mkdir testOut
 
@@ -78,6 +84,25 @@ puts "Writing Wikit file $outFileWikit2"
 ::Excel::WriteWikitFile $wikitList $outFileWikit2
 
 ::Cawt::CheckMatrix $mediaWikiList $wikitList "MediaWiki vs. Wikit"
+
+set appId [::Excel::OpenNew]
+set workbookId [::Excel::OpenWorkbook $appId $xlsMultiFile]
+set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId 1]
+
+puts "Saving CSV file $outFileMultiExcel with Excel"
+::Excel::SaveAsCsv $workbookId $worksheetId $outFileMultiExcel
+
+set excelMatrix [::Excel::GetMatrixValues $worksheetId 1 1 2 3]
+::Cawt::CheckNumber 2 [llength $excelMatrix] "Number of rows of matrix"
+::Cawt::CheckNumber 3 [llength [lindex $excelMatrix 0]] "Number of columns of matrix"
+::Excel::Close $workbookId
+::Excel::Quit $appId false
+
+puts "Writing CSV file $outFileMultiCsv"
+::Excel::WriteCsvFile $excelMatrix $outFileMultiCsv
+puts "Reading CSV file $outFileMultiCsv"
+set csvMatrix [::Excel::ReadCsvFile $outFileMultiCsv]
+::Cawt::CheckMatrix $excelMatrix $csvMatrix "ExcelMatrixMulti vs. CsvMatrixMulti"
 
 ::Cawt::Destroy
 if { [lindex $argv 0] eq "auto" } {

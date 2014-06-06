@@ -1516,20 +1516,21 @@ namespace eval ::Excel {
     }
 
     proc SetHyperlink { worksheetId row col link { textDisplay "" } } {
-        # Insert a hyperlink into a worksheet.
+        # Insert a hyperlink into a cell.
         #
-        # worksheetId - Identifier of the worksheet where the hyperlink is inserted.
+        # worksheetId - Identifier of the worksheet the hyperlink is inserted to.
         # row         - Row number. Row numbering starts with 1.
         # col         - Column number. Column numbering starts with 1.
         # link        - URL of the hyperlink.
         # textDisplay - Text to be displayed instead of the URL.
         #
-        # URL's are specified as strings. "file://myLinkedFile" specifies a link
-        # to a local file.
+        # URL's are specified as strings:
+        # "file://myLinkedFile" specifies a link to a local file.
+        # "http://myLinkedWebpage" specifies a link to a web address.
         #
         # No return value.
         #
-        # See also: AddWorksheet
+        # See also: AddWorksheet SetHyperlinkToFile SetHyperlinkToCell SetLinkToCell
 
         variable excelVersion
 
@@ -1537,7 +1538,7 @@ namespace eval ::Excel {
             set textDisplay $link
         }
 
-        set rangeId [SelectRangeByIndex $worksheetId $row $col $row $col]
+        set rangeId [SelectCellByIndex $worksheetId $row $col]
         set hyperId [$worksheetId Hyperlinks]
 
         # Add(Anchor As Object, Address As String, [SubAddress],
@@ -1554,6 +1555,100 @@ namespace eval ::Excel {
         }
         ::Cawt::Destroy $hyperId
         ::Cawt::Destroy $rangeId
+    }
+
+    proc SetHyperlinkToFile { worksheetId row col fileName { textDisplay "" } } {
+        # Insert a hyperlink to a file into a cell.
+        #
+        # worksheetId - Identifier of the worksheet the hyperlink is inserted to.
+        # row         - Row number. Row numbering starts with 1.
+        # col         - Column number. Column numbering starts with 1.
+        # fileName    - Absolute path name of the linked file.
+        # textDisplay - Text to be displayed instead of the file name.
+        #
+        # No return value.
+        #
+        # See also: AddWorksheet SetHyperlinkToCell SetHyperlink SetLinkToCell
+
+        if { $textDisplay eq "" } {
+            set textDisplay $fileName
+        }
+
+        set rangeId [SelectCellByIndex $worksheetId $row $col]
+        set hyperId [$worksheetId Hyperlinks]
+
+        set address [format "file://%s" [file nativename $fileName]]
+
+        # Add(Anchor As Object, Address As String, [SubAddress],
+        # [ScreenTip], [TextToDisplay]) As Object
+        $hyperId -callnamedargs Add \
+                 Anchor $rangeId \
+                 Address $address \
+                 TextToDisplay $textDisplay
+        ::Cawt::Destroy $hyperId
+        ::Cawt::Destroy $rangeId
+    }
+
+    proc SetHyperlinkToCell { srcWorksheetId srcRow srcCol destWorksheetId destRow destCol { textDisplay "" } } {
+        # Insert a hyperlink to a cell into another cell.
+        #
+        # srcWorksheetId  - Identifier of the worksheet the link points to.
+        # srcRow          - Source row number. Row numbering starts with 1.
+        # srcCol          - Source column number. Column numbering starts with 1.
+        # destWorksheetId - Identifier of the worksheet the link is inserted into.
+        # destRow         - Destination row number. Row numbering starts with 1.
+        # destCol         - Destination column number. Column numbering starts with 1.
+        # textDisplay     - Text to be displayed instead of the hyperlink.
+        #
+        # No return value.
+        #
+        # See also: AddWorksheet SetHyperlinkToFile SetHyperlink SetLinkToCell
+
+        set rangeId [SelectCellByIndex $destWorksheetId $destRow $destCol]
+        set hyperId [$destWorksheetId Hyperlinks]
+
+        set subAddress [format "%s!%s%d" \
+                           [Excel::GetWorksheetName $srcWorksheetId] \
+                           [ColumnIntToChar $srcCol] $srcRow]
+
+        if { $textDisplay eq "" } {
+            set textDisplay $subAddress
+        }
+
+        # Add(Anchor As Object, Address As String, [SubAddress],
+        # [ScreenTip], [TextToDisplay]) As Object
+        $hyperId -callnamedargs Add \
+                 Anchor $rangeId \
+                 Address "" \
+                 SubAddress $subAddress \
+                 TextToDisplay $textDisplay
+        ::Cawt::Destroy $hyperId
+        ::Cawt::Destroy $rangeId
+    }
+
+    proc SetLinkToCell { srcWorksheetId srcRow srcCol destWorksheetId destRow destCol } {
+        # Insert an internal link to a cell into another cell.
+        #
+        # srcWorksheetId  - Identifier of the worksheet the link points to.
+        # srcRow          - Source row number. Row numbering starts with 1.
+        # srcCol          - Source column number. Column numbering starts with 1.
+        # destWorksheetId - Identifier of the worksheet the link is inserted to.
+        # destRow         - Destination row number. Row numbering starts with 1.
+        # destCol         - Destination column number. Column numbering starts with 1.
+        #
+        # No return value.
+        #
+        # See also: SetHyperlinkToCell SetHyperlinkToFile SetHyperlink
+
+        set srcRangeId  [SelectCellByIndex $srcWorksheetId $srcRow $srcCol]
+        set destRangeId [SelectCellByIndex $destWorksheetId $destRow $destCol]
+
+        $srcRangeId Copy
+        $destRangeId Select
+        $destWorksheetId -callnamedargs Paste Link [::Cawt::TclBool true]
+
+        ::Cawt::Destroy $srcRangeId
+        ::Cawt::Destroy $destRangeId
     }
 
     proc InsertImage { worksheetId imgFileName { row 1 } { col 1 } } {
@@ -1748,7 +1843,7 @@ namespace eval ::Excel {
         #
         # See also: SetColumnsWidth ColumnCharToInt
 
-        set cell [SelectRangeByIndex $worksheetId 1 $col 1 $col]
+        set cell [SelectCellByIndex $worksheetId 1 $col]
         set curCol [$cell EntireColumn]
         if { $width == 0 } {
             [$curCol Columns] AutoFit

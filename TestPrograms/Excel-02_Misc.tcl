@@ -1,5 +1,5 @@
 # Test miscellaneous CawtExcel procedures like setting colors, fonts and column width,
-# inserting formulas, hyperlinks and images, searching and page setup.
+# inserting formulas and images, searching and page setup.
 #
 # Copyright: 2007-2014 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
@@ -71,15 +71,6 @@ $cell Formula "=TODAY()"
 ::Cawt::CheckString "=TODAY()" [$cell Formula] "cellId Formula"
 puts "  FormulaLocal: [$cell FormulaLocal]"
 
-# Generate a text file for testing the hyperlink capabilities.
-set fileName [file join [pwd] "testOut" "Excel-02_Misc.txt"]
-set fp [open $fileName "w"]
-puts $fp "This is the linked text file."
-close $fp
-
-::Excel::SetHyperlink $worksheetId 2 [expr $numCols + 2] \
-                      [format "file://%s" $fileName] "Hyperlink"
-
 # Test the font capabilities.
 ::Excel::SetCellValue $worksheetId 3 [expr $numCols + 2] "Hallo"
 ::Excel::SetCellValue $worksheetId 4 [expr $numCols + 2] "Holla"
@@ -113,24 +104,6 @@ set rangeId [::Excel::SelectCellByIndex $worksheetId 8 [expr $numCols + 2] true]
 set rangeId [::Excel::SelectRangeByIndex $worksheetId 1 6 2 8 true]
 ::Excel::SetRangeMergeCells $rangeId true
 ::Excel::SetRangeBorders $rangeId $::Excel::xlThick
-
-# Test adding comments.
-::Excel::SetCellValue $worksheetId 4 7 "Cell with comment text"
-set rangeId [::Excel::SelectCellByIndex $worksheetId 4 7 true]
-::Excel::SetRangeComment $rangeId "This cell has a comment"
-::Excel::SetRangeComment $rangeId "Overwritten comment text."
-
-::Excel::SetCellValue $worksheetId 6 7 "Cell with comment image"
-set rangeId [::Excel::SelectCellByIndex $worksheetId 6 7 true]
-set commentId [::Excel::SetRangeComment $rangeId "Comment text." [file join [pwd] "testIn/wish.gif"]]
-::Excel::SetCommentSize $commentId [::Cawt::CentiMetersToPoints 3] [::Cawt::CentiMetersToPoints 5]
-
-::Excel::SetCommentDisplayMode $appId true true
-
-# Test adding tooltips.
-::Excel::SetCellValue $worksheetId 12 7 "Cell with tooltip"
-set rangeId [::Excel::SelectCellByIndex $worksheetId 12 7 true]
-::Excel::SetRangeTooltip $rangeId "Tooltip message" "Tooltip title"
 
 # Test the search capabilities.
 # Search only first 20 rows and columns for an existing string.

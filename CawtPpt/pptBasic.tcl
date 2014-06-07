@@ -326,7 +326,8 @@ namespace eval ::Ppt {
         # presId     - Identifier of the presentation.
         # type       - Value of enumeration type PpSlideLayout (see pptConst.tcl) or
         #              CustomLayout object.
-        # slideIndex - Insertion index of new slide. If negative, insert slide at the end.
+        # slideIndex - Insertion index of new slide. Slide indices start at 1.
+        #              If negative or "end", add slide at the end.
         #
         # Note, that CustomLayouts are not supported with PowerPoint versions before 2007.
         #
@@ -348,27 +349,29 @@ namespace eval ::Ppt {
             }
         }
         
-        if { $slideIndex < 0 } {
-            set insertIndex [expr [::Ppt::GetNumSlides $presId] +1]
-        } else {
-            set insertIndex $slideIndex
+        if { $slideIndex eq "" || $slideIndex < 0 } {
+            set slideIndex [expr [::Ppt::GetNumSlides $presId] +1]
         }
         if { $retVal != 0 } {
-            set newSlide [$presId -with { Slides } AddSlide $insertIndex $type]
+            set newSlide [$presId -with { Slides } AddSlide $slideIndex $type]
         } else {
-            set newSlide [$presId -with { Slides } Add $insertIndex [expr $typeInt]]
+            set newSlide [$presId -with { Slides } Add $slideIndex [expr $typeInt]]
         }
         set newSlideIndex [::Ppt::GetSlideIndex $newSlide]
         ::Ppt::ShowSlide $presId $newSlideIndex
         return $newSlide
     }
 
-    proc CopySlide { presId fromSlideIndex { toSlideIndex -1 } } {
+    proc CopySlide { presId fromSlideIndex { toSlideIndex -1 } { toPresId "" } } {
         # Copy the contents of a slide into another slide.
         #
         # presId         - Identifier of the presentation.
-        # fromSlideIndex - Index of source slide.
-        # toSlideIndex   - Insertion index of copied slide. If negative, insert slide at the end.
+        # fromSlideIndex - Index of source slide. Slide indices start at 1.
+        #                  If negative or "end", use last slide as source.
+        # toSlideIndex   - Insertion index of copied slide. Slide indices start at 1.
+        #                  If negative or "end", insert slide at the end.
+        # toPresId       - Identifier of the presentation the slide is copied to. If not specified
+        #                  or the empty string, the slide is copied into presentation presId.
         #
         # A new empty slide is created at the insertion index and the contents of the source
         # slide are copied into the new slide.
@@ -377,40 +380,28 @@ namespace eval ::Ppt {
         #
         # See also: AddSlide
 
-        if { $toSlideIndex < 0 } {
-            set insertIndex [expr [::Ppt::GetNumSlides $presId] +1]
-        } else {
-            set insertIndex $toSlideIndex
+        if { $toPresId eq "" } {
+            set toPresId $presId
         }
-        set newSlide [::Ppt::AddSlide $presId $::Ppt::ppLayoutBlank $insertIndex]
-        set newSlideIndex [::Ppt::GetSlideIndex $newSlide]
+        if { $toSlideIndex eq "end" || $toSlideIndex < 0 } {
+            set toSlideIndex [expr [::Ppt::GetNumSlides $toPresId] +1]
+        }
+        if { $fromSlideIndex eq "end" || $fromSlideIndex < 0 } {
+            set fromSlideIndex [expr [::Ppt::GetNumSlides $presId] +1]
+        }
 
-        set appId [::Cawt::GetApplicationId $presId]
-        [$presId -with { Windows } Item 1] Activate
-        set actWin [$appId ActiveWindow]
+        set fromSlideId [::Ppt::GetSlideId $presId $fromSlideIndex]
+        $fromSlideId Copy
 
-        # Save current view type.
-        set saveViewType [::Ppt::GetViewType $presId]
+        $toPresId -with { Slides } Paste
+        set toSlideId [GetSlideId $toPresId end]
+        ::Ppt::MoveSlide $toSlideId $toSlideIndex
 
-        # Select slide to be copied.
-        $actWin ViewType $::Ppt::ppViewSlide
-        ::Ppt::ShowSlide $presId $fromSlideIndex
+        ::Ppt::ShowSlide $toPresId $toSlideIndex
 
-        set actSel [$actWin Selection]
-        $actSel -with { SlideRange Shapes } SelectAll
-        $actWin -with { Selection } Copy
+        ::Cawt::Destroy $fromSlideId
 
-        ::Ppt::ShowSlide $presId $newSlideIndex
-        $appId -with { ActiveWindow View } Paste
-
-        # Restore original view type.
-        ::Ppt::SetViewType $presId $saveViewType
-
-        ::Cawt::Destroy $actSel
-        ::Cawt::Destroy $actWin
-        ::Cawt::Destroy $appId
-
-        return $newSlide
+        return $toSlideId
     }
 
     proc ExportSlide { slideId outputFile { imgType "GIF" } { width -1 } { height -1 } } {
@@ -492,9 +483,13 @@ namespace eval ::Ppt {
         #
         # presId     - Identifier of the presentation.
         # slideIndex - Index of slide. Slide indices start at 1.
+        #              If negative or "end", show last slide.
         #
         # No return value.
 
+        if { $slideIndex eq "end" || $slideIndex < 0 } {
+            set slideIndex [GetNumSlides $presId]
+        }
         set slideId [$presId -with { Slides } Item $slideIndex]
         $slideId Select
         ::Cawt::Destroy $slideId
@@ -521,13 +516,17 @@ namespace eval ::Ppt {
     }
 
     proc GetSlideId { presId slideIndex } {
-        # Get slide identifier form slide index.
+        # Get slide identifier from slide index.
         #
         # presId     - Identifier of the presentation.
         # slideIndex - Index of slide. Slide indices start at 1.
+        #              If negative or "end", use last slide.
         #
         # Return the identifier of the slide.
 
+        if { $slideIndex eq "end" || $slideIndex < 0 } {
+            set slideIndex [GetNumSlides $presId]
+        }
         set slideId [$presId -with { Slides } Item $slideIndex]
         return $slideId
     }
@@ -617,6 +616,16 @@ namespace eval ::Ppt {
         # See also: UseSlideShow SlideShowNext SlideShowPrev SlideShowFirst
 
         $slideShowId -with { View } Last
+    }
+
+    proc MoveSlide { slideId slideIndex } {
+        # Move a slide to another position.
+        #
+        # slideId    - Identifier of the slide to be moved.
+        # slideIndex - Index of new slide position. Slide indices start at 1.
+        #              If negative or "end", move slide to the end of the presentation.
+
+        $slideId MoveTo $slideIndex
     }
 
     proc InsertImage { slideId imgFileName left top { width -1 } { height -1 } } {

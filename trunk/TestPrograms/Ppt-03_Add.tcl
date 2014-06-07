@@ -35,8 +35,14 @@ set imgId1 [::Ppt::InsertImage $slideId1 $imgName \
 set imgId2 [::Ppt::InsertImage $slideId2 $imgName \
            [::Cawt::CentiMetersToPoints 1] [::Cawt::CentiMetersToPoints 2]]
 
-# Copy slide 1 to the end of the presentation.
-set copiedSlide [::Ppt::CopySlide $presId1 1]
+# Copy slide 1 of presId1 to the end of the presentation.
+set copiedSlide1 [::Ppt::CopySlide $presId1 1]
+
+# Copy slide 1 of presId1 to the end of presentation presId2.
+set copiedSlide2 [::Ppt::CopySlide $presId1 1 end $presId2]
+
+# Copy slide 1 of presId1 to the beginning of presentation presId2.
+set copiedSlide2 [::Ppt::CopySlide $presId1 1 1 $presId2]
 
 # Save both presentations.
 puts "Saving as PowerPoint file: $pptFile1"
@@ -47,8 +53,8 @@ puts "Saving as PowerPoint file: $pptFile2"
 # Close all open presentations.
 ::Ppt::CloseAll $appId
 
-# Reopen presentation 1.
-::Ppt::OpenPres $appId $pptFile1
+# Reopen presentation 2.
+::Ppt::OpenPres $appId $pptFile2
 
 if { [lindex $argv 0] eq "auto" } {
     ::Ppt::Quit $appId

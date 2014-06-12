@@ -155,8 +155,28 @@ namespace eval ::Cawt {
         # range 0 .. 255.
         #
         # Return the color number as an integer.
+        #
+        # See also: ColorToRgb
 
         return [expr {int ($b) << 16 | int ($g) << 8 | int($r)}]
+    }
+
+    proc ColorToRgb { color } {
+        # Return an Office color number as a RGB color list.
+        #
+        # color - The Office color number
+        #
+        # The r, g and b values are returned as integers in the
+        # range 0 .. 255.
+        #
+        # Return the color number as a list of r, b and b values.
+        #
+        # See also: RgbToColor
+
+        set r [expr { (int ($color))       & 0xFF }]
+        set g [expr { (int ($color) >>  8) & 0xFF }]
+        set b [expr { (int ($color) >> 16) & 0xFF }]
+        return [list $r $g $b]
     }
 
     proc TclInt { val } {

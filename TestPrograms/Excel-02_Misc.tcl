@@ -41,15 +41,18 @@ set rangeId [::Excel::SelectCellByIndex $worksheetId 2 1 true]
 ::Excel::SetRangeFillColor $rangeId 255 0 0
 ::Excel::SetRangeTextColor $rangeId 0 255 0
 ::Excel::SetRangeBorders $rangeId
+::Cawt::CheckList [list 255 0 0] [::Excel::GetRangeFillColor $rangeId] "Fill color of cell 2,1"
 
 set rangeId [::Excel::SelectCellByIndex $worksheetId 3 1 true]
 ::Excel::SetRangeFillColor $rangeId 0 255 0
 ::Excel::SetRangeTextColor $rangeId 0 0 255
+::Cawt::CheckList [list 0 255 0] [::Excel::GetRangeFillColor $rangeId] "Fill color of cell 3,1"
 
 set rangeId [::Excel::SelectCellByIndex $worksheetId 4 1 true]
 ::Excel::SetRangeFillColor $rangeId 0 0 255
 ::Excel::SetRangeTextColor $rangeId 255 0 0
 ::Excel::SetRangeBorders $rangeId $::Excel::xlThick
+::Cawt::CheckList [list 0 0 255] [::Excel::GetRangeFillColor $rangeId] "Fill color of cell 4,1"
 
 set rangeId [::Excel::SelectRangeByIndex $worksheetId 5 1 5 1 true]
 ::Excel::SetRangeFillColor $rangeId 255 0 0
@@ -136,10 +139,6 @@ if { [llength $cell] == 2 } {
 ::Excel::SetColumnsWidth $worksheetId 1 [expr $numCols + 6] 0
 ::Excel::SetColumnWidth $worksheetId 1 20
 ::Excel::SetColumnWidth $worksheetId 2 10
-
-# Test inserting and scaling an image into a worksheet.
-set picId [::Excel::InsertImage $worksheetId [file join [pwd] "testIn/wish.gif"] 5 9]
-::Excel::ScaleImage $picId 2 2.5
 
 # Test copying a whole worksheet.
 set copyWorksheetId [::Excel::AddWorksheet $workbookId "Copy"]

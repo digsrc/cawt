@@ -289,4 +289,38 @@ namespace eval ::Excel {
         set matrixList [::Excel::GetMatrixValues $worksheetId $row1 $col1 $row2 $col2]
         ::Excel::MatrixToClipboard $matrixList $sepChar
     }
+
+    proc ImgToWorksheet { phImg worksheetId { row 1 } { col 1 } { rowHeight 9 } { colWidth 1 } } {
+        # Put a photo image into a worksheet.
+        #
+        # phImg       - The photo image identifier.
+        # worksheetId - Idontifier of the worksheet.
+        # row         - Row number of the top-left corner of the image. Row numbering starts with 1.
+        # col         - Column number of the top-left corner of the image. Column numbering starts with 1.
+        # rowHeight   - Row height in points.
+        # colWidth    - Column width in average-size characters of the widget's font.
+        #
+        # No return value.
+        #
+        # See also: WorksheetToImg ImgToClipboard RawImageFileToWorksheet SetRowHeight SetColumnWidth
+
+        set w [image width $phImg]
+        set h [image height $phImg]
+
+        ::Excel::SetRowsHeight   $worksheetId $row [expr {$row + $h}] $rowHeight
+        ::Excel::SetColumnsWidth $worksheetId $col [expr {$col + $w}] $colWidth
+
+        set curRow $row
+        for { set y 0 } { $y < $h } { incr y } {
+            set curCol $col
+            for { set x 0 } { $x < $w } { incr x } {
+                set rgb [$phImg get $x $y]
+                lassign $rgb r g b
+                set rangeId [::Excel::SelectCellByIndex $worksheetId $curRow $curCol]
+                ::Excel::SetRangeFillColor $rangeId $r $g $b
+                incr curCol
+            }
+            incr curRow
+        }
+    }
 }

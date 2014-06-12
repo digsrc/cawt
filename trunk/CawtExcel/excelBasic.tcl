@@ -443,13 +443,29 @@ namespace eval ::Excel {
         $rangeId AutoFilter
     }
 
+    proc GetRangeFillColor { rangeId } {
+        # Get the fill color of a cell range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # The r, g and b values are returned as integers in the
+        # range [0, 255].
+        #
+        # Return the fill color as a list of r, b and b values.
+        #
+        # See also: SetRangeFillColor ::Cawt::ColorToRgb SelectRangeByIndex SelectRangeByString
+
+        set colorNum [$rangeId -with { Interior } Color]
+        return [::Cawt::ColorToRgb $colorNum]
+    }
+
     proc SetRangeFillColor { rangeId r g b } {
         # Set the fill color of a cell range.
         #
         # rangeId - Identifier of the cell range.
-        # r       - Red component of the text color.
-        # g       - Green component of the text color.
-        # b       - Blue component of the text color.
+        # r       - Red component of the background fill color.
+        # g       - Green component of the background fill color.
+        # b       - Blue component of the background fill color.
         #
         # The r, g and b values are specified as integers in the
         # range [0, 255].
@@ -1830,6 +1846,49 @@ namespace eval ::Excel {
         return [lrange $valList 0 $ind]
     }
 
+    proc SetRowHeight { worksheetId row { height 0 } } {
+        # Set the height of a row.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # row         - Row number. Row numbering starts with 1.
+        # height      - A positive value specifies the row's height in points.
+        #               A value of zero specifies that the rows's height
+        #               fits automatically the height of all elements in the row.
+        #
+        # No return value.
+        #
+        # See also: SetRowsHeight SetColumnWidth ColumnCharToInt
+
+        set cell [SelectCellByIndex $worksheetId $row 1]
+        set curRow [$cell EntireRow]
+        if { $height == 0 } {
+            [$curRow Rows] AutoFit
+        } else {
+            $curRow RowHeight $height
+        }
+        ::Cawt::Destroy $curRow
+        ::Cawt::Destroy $cell
+    }
+
+    proc SetRowsHeight { worksheetId startRow endRow { height 0 } } {
+        # Set the height of a range of rows.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # startRow    - Range start row number. Row numbering starts with 1.
+        # endRow      - Range end row number. Row numbering starts with 1.
+        # height      - A positive value specifies the row's height in points.
+        #               A value of zero specifies that the rows's height
+        #               fits automatically the height of all elements in the row.
+        #
+        # No return value.
+        #
+        # See also: SetRowHeight SetColumnsWidth ColumnCharToInt
+
+        for { set r $startRow } { $r <= $endRow } { incr r } {
+            ::Excel::SetRowHeight $worksheetId $r $height
+        }
+    }
+
     proc SetColumnWidth { worksheetId col { width 0 } } {
         # Set the width of a column.
         #
@@ -1869,7 +1928,7 @@ namespace eval ::Excel {
         # See also: SetColumnWidth ColumnCharToInt
 
         for { set c $startCol } { $c <= $endCol } { incr c } {
-            SetColumnWidth $worksheetId $c $width
+            ::Excel::SetColumnWidth $worksheetId $c $width
         }
     }
 

@@ -294,11 +294,13 @@ namespace eval ::Excel {
         # Put a photo image into a worksheet.
         #
         # phImg       - The photo image identifier.
-        # worksheetId - Idontifier of the worksheet.
+        # worksheetId - Identifier of the worksheet.
         # row         - Row number of the top-left corner of the image. Row numbering starts with 1.
         # col         - Column number of the top-left corner of the image. Column numbering starts with 1.
         # rowHeight   - Row height in points.
         # colWidth    - Column width in average-size characters of the widget's font.
+        #
+        # Note: Use only with small images.
         #
         # No return value.
         #
@@ -322,5 +324,50 @@ namespace eval ::Excel {
             }
             incr curRow
         }
+    }
+
+    proc WorksheetToImg { worksheetId { startRow 1 } { startCol 1 } { endRow "end" } { endCol "end" } } {
+        # Put worksheet background colors into a photo image.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # startRow    - Row number of the top-left corner of the image.
+        # startCol    - Column number of the top-left corner of the image.
+        # endRow      - Row number of the bottom-right corner of the image.
+        # endCol      - Column number of the bottom-right corner of the image.
+        #
+        # Note: Row and column numbering starts with 1.
+        #       Instead of using the number for endRow or endCol, it is possible to use
+        #       the special word "end" to use the last used row or column.
+        #
+        # Return the photo image identifier.
+        #
+        # See also: ImgToWorksheet ImgToClipboard RawImageFileToWorksheet
+        #           GetLastUsedRow GetLastUsedColumn
+
+        if { $endRow eq "end" } {
+            set endRow [::Excel::GetLastUsedRow $worksheetId]
+        }
+        if { $endCol eq "end" } {
+            set endCol [::Excel::GetLastUsedColumn $worksheetId]
+        }
+
+        set w [expr { $endCol - $startCol + 1 }]
+        set h [expr { $endRow - $startRow + 1 }]
+
+        set phImg [image create photo -width $w -height $h]
+
+        set curRow $startRow
+        for { set y 0 } { $y < $h } { incr y } {
+            set curCol $startCol
+            for { set x 0 } { $x < $w } { incr x } {
+                set rangeId [::Excel::SelectCellByIndex $worksheetId $curRow $curCol]
+                set rgb [::Excel::GetRangeFillColor $rangeId]
+                set colorVal [format "#%02X%02X%02X" [lindex $rgb 0] [lindex $rgb 1] [lindex $rgb 2]]
+                $phImg put $colorVal -to $x $y
+                incr curCol
+            }
+            incr curRow
+        }
+        return $phImg
     }
 }

@@ -13,7 +13,7 @@ proc __cawtSourcePkgs { dir } {
         set retVal [catch {package require $pkg} ::__cawtPkgInfo($pkg,version)]
         set ::__cawtPkgInfo($pkg,avail) [expr !$retVal]
     }
-    package provide cawt 1.0.6
+    package provide cawt 1.0.7
 }
 
-package ifneeded cawt 1.0.6 "[list __cawtSourcePkgs $dir]"
+package ifneeded cawt 1.0.7 "[list __cawtSourcePkgs $dir]"

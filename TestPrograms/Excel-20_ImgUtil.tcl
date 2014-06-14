@@ -36,6 +36,7 @@ set picId [::Excel::InsertImage $worksheetId1 $testImg 1 1]
 set phImg [image create photo -file $testImg]
 set w [image width $phImg]
 set h [image height $phImg]
+set numPix [expr { $w * $h }]
 
 .f1.l configure -image $phImg
 .f1.t configure -text  "Original image (Size: $w x $h)"
@@ -43,20 +44,35 @@ update
 
 puts "Add an image as cell background colors (at specific position) ..."
 set worksheetId2 [::Excel::AddWorksheet $workbookId "ImageParam"]
+::Excel::UseImgTransparency false
+
+set t1 [clock clicks -milliseconds]
 ::Excel::ImgToWorksheet $phImg $worksheetId2 10 3  5 1
+set t2 [clock clicks -milliseconds]
+puts "[expr $t2 - $t1] ms to put $numPix pixels (ignoring transparency) into worksheet."
 
 puts "Add an image as cell background colors (Default params) ..."
 set worksheetId3 [::Excel::AddWorksheet $workbookId "ImageDef"]
+::Excel::UseImgTransparency true
+
+set t1 [clock clicks -milliseconds]
 ::Excel::ImgToWorksheet $phImg $worksheetId3
+set t2 [clock clicks -milliseconds]
+puts "[expr $t2 - $t1] ms to put $numPix pixels (using transparency) into worksheet."
 
 puts "Paint a cross ..."
 set rangeId [::Excel::SelectRangeByIndex $worksheetId3 [expr $h/2] 1 [expr $h/2 +1] $w]
 ::Excel::SetRangeFillColor $rangeId 255 0 255
+
 set rangeId [::Excel::SelectRangeByIndex $worksheetId3 1 [expr $w/2] $h [expr $w/2 +1]]
+
 ::Excel::SetRangeFillColor $rangeId 255 0 255
 
 puts "Export changed image into a Tk photo ..."
+set t1 [clock clicks -milliseconds]
 set phImgPainted [::Excel::WorksheetToImg $worksheetId3 1 1 $h $w]
+set t2 [clock clicks -milliseconds]
+puts "[expr $t2 - $t1] ms to get $numPix pixels from worksheet."
 
 set wp [image width $phImgPainted]
 set hp [image height $phImgPainted]
@@ -67,6 +83,10 @@ update
 
 ::Cawt::CheckNumber $w $wp "Width of images"
 ::Cawt::CheckNumber $h $hp "Height of images"
+
+set imgFile [file join [pwd] "testOut" "Excel-20_ImgUtil.gif"]
+puts "Saving painted images: $imgFile"
+$phImgPainted write $imgFile -format "GIF"
 
 puts "Saving as Excel file: $xlsFile"
 ::Excel::SaveAs $workbookId $xlsFile "" false

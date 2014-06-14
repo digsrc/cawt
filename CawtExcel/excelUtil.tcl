@@ -3,6 +3,8 @@
 
 namespace eval ::Excel {
 
+    variable sUseTransparency true
+
     proc Search { worksheetId str { row1 1 } { col1 1 } { row2 -1 } { col2 -1 } } {
         # Find a string in a worksheet cell range.
         #
@@ -306,20 +308,32 @@ namespace eval ::Excel {
         #
         # See also: WorksheetToImg ImgToClipboard RawImageFileToWorksheet SetRowHeight SetColumnWidth
 
+        variable sUseTransparency
+
         set w [image width $phImg]
         set h [image height $phImg]
 
-        ::Excel::SetRowsHeight   $worksheetId $row [expr {$row + $h}] $rowHeight
-        ::Excel::SetColumnsWidth $worksheetId $col [expr {$col + $w}] $colWidth
+        ::Excel::SetRowsHeight   $worksheetId $row [expr {$row + $h -1}] $rowHeight
+        ::Excel::SetColumnsWidth $worksheetId $col [expr {$col + $w -1}] $colWidth
 
         set curRow $row
         for { set y 0 } { $y < $h } { incr y } {
             set curCol $col
             for { set x 0 } { $x < $w } { incr x } {
-                set rgb [$phImg get $x $y]
-                lassign $rgb r g b
                 set rangeId [::Excel::SelectCellByIndex $worksheetId $curRow $curCol]
-                ::Excel::SetRangeFillColor $rangeId $r $g $b
+                if { $sUseTransparency } {
+                    if { [$phImg transparency get $x $y] } {
+                        $rangeId -with { Interior } Pattern $::Excel::xlNone
+                    } else {
+                        set rgb [$phImg get $x $y]
+                        lassign $rgb r g b
+                        ::Excel::SetRangeFillColor $rangeId $r $g $b
+                    }
+                } else {
+                    set rgb [$phImg get $x $y]
+                    lassign $rgb r g b
+                    ::Excel::SetRangeFillColor $rangeId $r $g $b
+                }
                 incr curCol
             }
             incr curRow
@@ -344,6 +358,8 @@ namespace eval ::Excel {
         # See also: ImgToWorksheet ImgToClipboard RawImageFileToWorksheet
         #           GetLastUsedRow GetLastUsedColumn
 
+        variable sUseTransparency
+
         if { $endRow eq "end" } {
             set endRow [::Excel::GetLastUsedRow $worksheetId]
         }
@@ -361,13 +377,29 @@ namespace eval ::Excel {
             set curCol $startCol
             for { set x 0 } { $x < $w } { incr x } {
                 set rangeId [::Excel::SelectCellByIndex $worksheetId $curRow $curCol]
-                set rgb [::Excel::GetRangeFillColor $rangeId]
-                set colorVal [format "#%02X%02X%02X" [lindex $rgb 0] [lindex $rgb 1] [lindex $rgb 2]]
-                $phImg put $colorVal -to $x $y
+                if { $sUseTransparency } {
+                    if { [$rangeId -with { Interior } Pattern] == $::Excel::xlNone } {
+                        $phImg transparency set $x $y true
+                    } else {
+                        set rgb [::Excel::GetRangeFillColor $rangeId]
+                        set colorVal [format "#%02X%02X%02X" [lindex $rgb 0] [lindex $rgb 1] [lindex $rgb 2]]
+                        $phImg put $colorVal -to $x $y
+                    }
+                } else {
+                    set rgb [::Excel::GetRangeFillColor $rangeId]
+                    set colorVal [format "#%02X%02X%02X" [lindex $rgb 0] [lindex $rgb 1] [lindex $rgb 2]]
+                    $phImg put $colorVal -to $x $y
+                }
                 incr curCol
             }
             incr curRow
         }
         return $phImg
+    }
+    
+    proc UseImgTransparency { onOff } {
+        variable sUseTransparency
+
+        set sUseTransparency $onOff
     }
 }

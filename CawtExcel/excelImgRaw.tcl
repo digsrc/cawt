@@ -219,6 +219,7 @@ namespace eval ::Excel {
         if { $useHeader } {
             set headerList [::Excel::ReadRawImageHeader $rawFileName]
             ::Excel::SetHeaderRow $worksheetId $headerList
+            ::Excel::FreezePanes $worksheetId 1 0 true
             incr startRow
         }
         set matrixList [::Excel::ReadRawImageFile $rawFileName]

@@ -56,7 +56,6 @@ set t1 [clock clicks -milliseconds]
 set t2 [clock clicks -milliseconds]
 puts "WorksheetToRawImageFile: [expr $t2 - $t1] ms (using header: $useHeader)."
 
-
 # Transfer image data without header information into Excel and vice versa.
 set useHeader false
 

@@ -832,6 +832,20 @@ namespace eval ::Excel {
         $appId Visible [::Cawt::TclInt $visible]
     }
 
+    proc ScreenUpdate { appId onOff } {
+        # Toggle the screen updating of an Excel application window.
+        #
+        # appId - Identifier of the Excel instance.
+        # onOff - true: Update the application window.
+        #         false: Do not update the application window.
+        #
+        # No return value.
+        #
+        # See also: Visible SetWindowState ArrangeWindows
+
+        $appId ScreenUpdating [::Cawt::TclBool $onOff]
+    }
+
     proc SetWindowState { appId { windowState $::Excel::xlNormal } } {
         # Set the window state of an Excel application.
         #
@@ -1529,6 +1543,36 @@ namespace eval ::Excel {
         set actWin [[::Cawt::GetApplicationId $worksheetId] ActiveWindow]
         $actWin ScrollColumn $col
         $actWin ScrollRow $row
+        ::Cawt::Destroy $actWin
+    }
+
+    proc FreezePanes { worksheetId row col { onOff true } } {
+        # Freeze a range in a worksheet identified by it's row/column index.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # row         - Row number. Row numbering starts with 1.
+        # col         - Column number. Column numbering starts with 1.
+        # onOff       - true: Freeze the range.
+        #               false: Unfreeze the range.
+        #
+        # The rows and columns with indices lower than the specified values are freezed for scrolling.
+        # If a row or a column should not be freezed, a value of zero for the corresponding parameter
+        # should be given.
+        #
+        # See also: SelectCellByIndex
+
+        $worksheetId Activate
+        set actWin [[::Cawt::GetApplicationId $worksheetId] ActiveWindow]
+        if { $onOff } {
+            if { $col > 0 } {
+                $actWin SplitColumn $col
+            }
+            if { $row > 0 } {
+                $actWin SplitRow $row
+            }
+        }
+        $actWin FreezePanes [::Cawt::TclBool $onOff]
+        ::Cawt::Destroy $actWin
     }
 
     proc SetHyperlink { worksheetId row col link { textDisplay "" } } {

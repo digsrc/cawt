@@ -143,6 +143,7 @@ namespace eval ::Excel {
         if { $useHeader } {
             set headerList [::Excel::ReadMatlabHeader $matFileName]
             ::Excel::SetHeaderRow $worksheetId $headerList
+            ::Excel::FreezePanes $worksheetId 1 0 true
             incr startRow
         }
         set matrixList [::Excel::ReadMatlabFile $matFileName]

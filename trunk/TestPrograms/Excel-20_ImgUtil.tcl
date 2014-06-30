@@ -51,26 +51,37 @@ set t1 [clock clicks -milliseconds]
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to put $numPix pixels (ignoring transparency) into worksheet."
 
+puts "Add an image as cell background colors (without screen update) ..."
+set worksheetId3 [::Excel::AddWorksheet $workbookId "ImageNoUpdate"]
+::Excel::UseImgTransparency false
+
+::Excel::ScreenUpdate $appId false
+set t1 [clock clicks -milliseconds]
+::Excel::ImgToWorksheet $phImg $worksheetId3 10 3  5 1
+set t2 [clock clicks -milliseconds]
+puts "[expr $t2 - $t1] ms to put $numPix pixels (ignoring transparency) into worksheet."
+::Excel::ScreenUpdate $appId true
+
 puts "Add an image as cell background colors (Default params) ..."
-set worksheetId3 [::Excel::AddWorksheet $workbookId "ImageDef"]
+set worksheetId4 [::Excel::AddWorksheet $workbookId "ImageDefault"]
 ::Excel::UseImgTransparency true
 
 set t1 [clock clicks -milliseconds]
-::Excel::ImgToWorksheet $phImg $worksheetId3
+::Excel::ImgToWorksheet $phImg $worksheetId4
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to put $numPix pixels (using transparency) into worksheet."
 
 puts "Paint a cross ..."
-set rangeId [::Excel::SelectRangeByIndex $worksheetId3 [expr $h/2] 1 [expr $h/2 +1] $w]
+set rangeId [::Excel::SelectRangeByIndex $worksheetId4 [expr $h/2] 1 [expr $h/2 +1] $w]
 ::Excel::SetRangeFillColor $rangeId 255 0 255
 
-set rangeId [::Excel::SelectRangeByIndex $worksheetId3 1 [expr $w/2] $h [expr $w/2 +1]]
+set rangeId [::Excel::SelectRangeByIndex $worksheetId4 1 [expr $w/2] $h [expr $w/2 +1]]
 
 ::Excel::SetRangeFillColor $rangeId 255 0 255
 
 puts "Export changed image into a Tk photo ..."
 set t1 [clock clicks -milliseconds]
-set phImgPainted [::Excel::WorksheetToImg $worksheetId3 1 1 $h $w]
+set phImgPainted [::Excel::WorksheetToImg $worksheetId4 1 1 $h $w]
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to get $numPix pixels from worksheet."
 

@@ -128,12 +128,24 @@ namespace eval ::Word {
         ::Cawt::Destroy $myFind
     }
 
+    proc SelectRange { rangeId } {
+        # Select a text range.
+        #
+        # rangeId - Identifier of the text range.
+        #
+        # No return value.
+        #
+        # See also: GetSelectionRange
+
+        $rangeId Select
+    }
+
     proc GetSelectionRange { docId } {
         # Return the text range representing the current selection.
         #
         # docId - Identifier of the document.
         #
-        # See also: GetStartRange GetEndRange
+        # See also: GetStartRange GetEndRange SelectRange
 
         return [$docId -with { ActiveWindow } Selection]
     }
@@ -166,6 +178,19 @@ namespace eval ::Word {
         ::Cawt::Destroy $endOfDoc
         ::Cawt::Destroy $bookMarks
         return $endRange
+    }
+
+    proc GetRangeInformation { rangeId type } {
+        # Get information about a text range.
+        #
+        # rangeId - Identifier of the text range.
+        # type    - Value of enumeration type WdInformation (see wordConst.tcl).
+        #
+        # Return the range information associated with the supplied type.
+        #
+        # See also: GetStartRange GetEndRange PrintRange
+
+        return [$rangeId Information $type]
     }
 
     proc PrintRange { rangeId { msg "Range: " } } {
@@ -360,6 +385,20 @@ namespace eval ::Word {
 
         $rangeId -with { Cells Shading } BackgroundPatternColor \
                                    [::Cawt::RgbToColor $r $g $b]
+    }
+
+    proc AddPageBreak { rangeId } {
+        # Add a page break to a text range.
+        #
+        # rangeId - Identifier of the text range.
+        #
+        # No return value.
+        #
+        # See also: AddParagraph
+
+        $rangeId Collapse $::Word::wdCollapseEnd
+        $rangeId InsertBreak [expr { int ($::Word::wdPageBreak) }]
+        $rangeId Collapse $::Word::wdCollapseEnd
     }
 
     proc GetVersion { appId { useString false } } {

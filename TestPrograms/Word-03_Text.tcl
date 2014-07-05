@@ -54,13 +54,12 @@ while { true } {
     ::Word::AppendText $docId "More lines of text."
     ::Word::AppendParagraph $docId
     set endRange [::Word::GetEndRange $docId]
-    if { $pos < [$endRange Information $::Word::wdVerticalPositionRelativeToPage] } {
+    if { $pos < [::Word::GetRangeInformation $endRange $::Word::wdVerticalPositionRelativeToPage] } {
         break
     }
 }
-$endRange Collapse $::Word::wdCollapseEnd
-$endRange InsertBreak [expr int($::Word::wdPageBreak)]
-$endRange Collapse $::Word::wdCollapseEnd
+
+::Word::AddPageBreak $endRange
 set rangeId [::Word::AppendText $docId "This is page 2."]
 ::Word::AddParagraph $rangeId "after"
 set rangeId [::Word::AppendText $docId "There must be two paragraphs before this line."]
@@ -68,7 +67,7 @@ set rangeId [::Word::AppendText $docId "There must be two paragraphs before this
 
 ::Word::SetRangeStartIndex $docId $rangeId "begin"
 ::Word::SetRangeEndIndex   $docId $rangeId 5
-$rangeId Select
+::Word::SelectRange $rangeId
 ::Word::PrintRange $rangeId "SetRange and selection: "
 
 # Save document as Word file.

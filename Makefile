@@ -9,6 +9,10 @@ DSEP  = \\
 MYDIR=$(subst /,\\,$(CURDIR))
 DISTDIR=$(MYDIR)$(DSEP)..$(DSEP)CawtDistribution
 
+# Installation directory usable for CAWT developers.
+# Adapt to your local needs.
+INSTDIR=C:\opt\poSoft\lib\Cawt
+
 dist: kit doc distcawt
 
 clean:
@@ -32,3 +36,15 @@ doc:
 
 distcawt:
 	$(TCLSH) makeDist.tcl $(DISTDIR)
+
+install:
+	$(MKDIR) $(INSTDIR)
+	$(CPDIR) CawtCore     $(INSTDIR)$(DSEP)CawtCore
+	$(CPDIR) CawtEarth    $(INSTDIR)$(DSEP)CawtEarth
+	$(CPDIR) CawtExcel    $(INSTDIR)$(DSEP)CawtExcel
+	$(CPDIR) CawtExplorer $(INSTDIR)$(DSEP)CawtExplorer
+	$(CPDIR) CawtMatlab   $(INSTDIR)$(DSEP)CawtMatlab
+	$(CPDIR) CawtOcr      $(INSTDIR)$(DSEP)CawtOcr
+	$(CPDIR) CawtPpt      $(INSTDIR)$(DSEP)CawtPpt
+	$(CPDIR) CawtWord     $(INSTDIR)$(DSEP)CawtWord
+	$(CP)    pkgIndex.tcl $(INSTDIR)$(DSEP)pkgIndex.tcl

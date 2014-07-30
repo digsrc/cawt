@@ -128,6 +128,20 @@ namespace eval ::Word {
         ::Cawt::Destroy $myFind
     }
 
+    proc CreateRange { docId startIndex endIndex } {
+        # Create a new text range.
+        #
+        # docId      - Identifier of the document.
+        # startIndex - The start index of the range in characters.
+        # endIndex   - The end index of the range in characters.
+        #
+        # Return the identifier of the new text range.
+        #
+        # See also: SelectRange GetSelectionRange
+
+        return [$docId Range $startIndex $endIndex]
+    }
+
     proc SelectRange { rangeId } {
         # Select a text range.
         #
@@ -151,16 +165,13 @@ namespace eval ::Word {
     }
 
     proc GetStartRange { docId } {
-        # Return the text range representing the start of the document.
+        # Return a text range representing the start of the document.
         #
         # docId - Identifier of the document.
         #
-        # See also: GetSelectionRange GetEndRange
+        # See also: CreateRange GetSelectionRange GetEndRange
 
-        set rangeId [::Word::GetSelectionRange $docId]
-        $rangeId Start 0
-        $rangeId End 0
-        return $rangeId
+        return [::Word::CreateRange $docId 0 0]
     }
 
     proc GetEndRange { docId } {
@@ -301,6 +312,32 @@ namespace eval ::Word {
         return $rangeId
     }
 
+    proc SetRangeFontName { rangeId fontName } {
+        # Set the font name of a text range.
+        #
+        # rangeId  - Identifier of the text range.
+        # fontName - Font name.
+        #
+        # No return value.
+        #
+        # See also: SetRangeFontSize SetRangeFontBold SetRangeFontItalic
+
+        $rangeId -with { Font } Name $fontName
+    }
+
+    proc SetRangeFontSize { rangeId fontSize } {
+        # Set the font size of a text range.
+        #
+        # rangeId  - Identifier of the text range.
+        # fontSize - Font size in points.
+        #
+        # No return value.
+        #
+        # See also: SetRangeFontName SetRangeFontBold SetRangeFontItalic
+
+        $rangeId -with { Font } Size [expr int($fontSize)]
+    }
+
     proc SetRangeFontBold { rangeId { onOff true } } {
         # Toggle the bold font style of a text range.
         #
@@ -310,7 +347,7 @@ namespace eval ::Word {
         #
         # No return value.
         #
-        # See also: SetRangeFontItalic
+        # See also: SetRangeFontName SetRangeFontSize SetRangeFontItalic
 
         $rangeId -with { Font } Bold [::Cawt::TclInt $onOff]
     }
@@ -324,7 +361,7 @@ namespace eval ::Word {
         #
         # No return value.
         #
-        # See also: SetRangeFontBold
+        # See also: SetRangeFontName SetRangeFontSize SetRangeFontBold
 
         $rangeId -with { Font } Italic [::Cawt::TclInt $onOff]
     }
@@ -333,13 +370,24 @@ namespace eval ::Word {
         # Set the horizontal alignment of a text range.
         #
         # rangeId - Identifier of the text range.
-        # align   - Value of enumeration type WdParagraphAlignment (see wordConst.tcl).
+        # align   - Value of enumeration type WdParagraphAlignment (see wordConst.tcl)
+        #           or any of the following strings: left, right, center.
         #
         # No return value.
         #
         # See also: SetRangeHighlightColorByEnum
 
-        $rangeId -with { ParagraphFormat } Alignment $align
+        if { $align eq "center" } {
+            set alignEnum $::Word::wdAlignParagraphCenter
+        } elseif { $align eq "left" } {
+            set alignEnum $::Word::wdAlignParagraphLeft
+        } elseif { $align eq "right" } {
+            set alignEnum $::Word::wdAlignParagraphRight
+        } else {
+            set alignEnum $align
+        }
+
+        $rangeId -with { ParagraphFormat } Alignment $alignEnum
     }
 
     proc SetRangeHighlightColorByEnum { rangeId colorEnum } {
@@ -451,6 +499,19 @@ namespace eval ::Word {
         } else {
             return ".doc"
         }
+    }
+
+    proc ToggleSpellCheck { appId onOff } {
+        # Toggle checking of grammatical and spelling errors.
+        #
+        # appId - Identifier of the Word instance.
+        #
+        # No return value.
+        #
+        # See also: 
+
+        $appId -with { ActiveDocument } ShowGrammaticalErrors [::Cawt::TclBool $onOff]
+        $appId -with { ActiveDocument } ShowSpellingErrors    [::Cawt::TclBool $onOff]
     }
 
     proc OpenNew { { visible true } { width -1 } { height -1 } } {
@@ -799,15 +860,30 @@ namespace eval ::Word {
         }
     }
 
+    proc InsertText { docId text } {
+        # Insert text to a Word document.
+        #
+        # docId - Identifier of the document.
+        # text  - Text string to be inserted.
+        #
+        # The text string is inserted at the start of the document.
+        #
+        # See also: AddText AppendText AddParagraph
+
+        set newRange [::Word::CreateRange $docId 0 0]
+        $newRange InsertAfter $text
+        return $newRange
+    }
+
     proc AppendText { docId text } {
         # Append text to a Word document.
         #
         # docId - Identifier of the document.
-        # text  - Appended text string.
+        # text  - Text string to be appended.
         #
         # The text string is appended at the current end range of the document.
         #
-        # See also:
+        # See also: AddText InsertText AppendParagraph
 
         set endRange [::Word::GetEndRange $docId]
         set para [$docId -with { Content Paragraphs } Add $endRange]
@@ -816,6 +892,28 @@ namespace eval ::Word {
         ::Cawt::Destroy $para
         ::Cawt::Destroy $endRange
         return $range
+    }
+
+    proc AddText { docId rangeId text { where "after" } } {
+        # Add text to a Word document.
+        #
+        # docId   - Identifier of the document.
+        # rangeId - Identifier of the text range.
+        # text    - Text string to be added.
+        # where   - Insertion point of the new paragraph.
+        #
+        # The text string is appended to the supplied text range.
+        #
+        # See also: AddText InsertText AppendParagraph
+
+        set newStartIndex [expr [$rangeId End] + 1]
+        set newRange [::Word::CreateRange $docId $newStartIndex $newStartIndex]
+        if { $where eq "after" } {
+            $newRange InsertAfter $text
+        } else {
+            $newRange InsertBefore $text
+        }
+        return $newRange
     }
 
     proc SetHyperlink { docId rangeId link { textDisplay "" } } {

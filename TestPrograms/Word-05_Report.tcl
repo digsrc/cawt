@@ -41,7 +41,7 @@ for { set t 1 } { $t <= $numTestCases } { incr t } {
     ::Word::SetRangeFontSize $titleRange 16
     ::Word::SetRangeFontBold $titleRange true
     ::Word::SetRangeFontName $titleRange "Arial"
-    set tilleRange [::Word::AppendParagraph $docId]
+    set titleRange [::Word::AppendParagraph $docId]
 
     # Add test result.
     if { [expr $t % 3] != 0 } {

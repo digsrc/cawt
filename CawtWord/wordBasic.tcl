@@ -128,6 +128,16 @@ namespace eval ::Word {
         ::Cawt::Destroy $myFind
     }
 
+    proc GetNumCharacters { docId } {
+        # Return the number of characters in a Word document.
+        #
+        # docId - Identifier of the document.
+        #
+        # See also: GetNumDocuments GetNumTables GetNumCharacters
+
+        return [$docId -with { Characters } Count]
+    }
+
     proc CreateRange { docId startIndex endIndex } {
         # Create a new text range.
         #
@@ -180,15 +190,18 @@ namespace eval ::Word {
         # docId - Identifier of the document.
         #
         # Note: This corresponds to the built-in bookmark \endofdoc.
+        #       The end range of an empty document is (0, 0), although
+        #       GetNumCharacters returns 1.
         #
-        # See also: GetSelectionRange GetStartRange
+        # See also: GetSelectionRange GetStartRange GetNumCharacters
 
         set bookMarks [$docId Bookmarks]
         set endOfDoc  [$bookMarks Item "\\endofdoc"]
         set endRange  [$endOfDoc Range]
         ::Cawt::Destroy $endOfDoc
         ::Cawt::Destroy $bookMarks
-        return $endRange
+        set endIndex [::Word::GetRangeEndIndex $endRange]
+        return [::Word::CreateRange $docId $endIndex $endIndex]
     }
 
     proc GetRangeInformation { rangeId type } {
@@ -875,23 +888,26 @@ namespace eval ::Word {
         return $newRange
     }
 
-    proc AppendText { docId text } {
+    proc AppendText { docId text { addParagraph true } } {
         # Append text to a Word document.
         #
-        # docId - Identifier of the document.
-        # text  - Text string to be appended.
+        # docId        - Identifier of the document.
+        # text         - Text string to be appended.
+        # addParagraph - true: Add a paragraph character after the text.
+        #                false: Just add the plain text.
         #
         # The text string is appended at the current end range of the document.
         #
         # See also: AddText InsertText AppendParagraph
 
         set endRange [::Word::GetEndRange $docId]
-        set para [$docId -with { Content Paragraphs } Add $endRange]
-        set range [$para Range]
-        $range InsertAfter $text
-        ::Cawt::Destroy $para
-        ::Cawt::Destroy $endRange
-        return $range
+        if { $addParagraph } {
+            set para [$docId -with { Content Paragraphs } Add $endRange]
+            set endRange [$para Range]
+            ::Cawt::Destroy $para
+        }
+        $endRange InsertAfter $text
+        return $endRange
     }
 
     proc AddText { docId rangeId text { where "after" } } {
@@ -1099,7 +1115,7 @@ namespace eval ::Word {
         #
         # tableId - Identifier of the Word table.
         #
-        # See also: GetNumColumns
+        # See also: GetNumColumns GetNumTables
 
         return [$tableId -with { Rows } Count]
     }
@@ -1109,7 +1125,7 @@ namespace eval ::Word {
         #
         # tableId - Identifier of the Word table.
         #
-        # See also: GetNumRows
+        # See also: GetNumRows GetNumTables
 
         return [$tableId -with { Columns } Count]
     }

@@ -25,14 +25,20 @@ for { set i 0 } { $i < 20 } { incr i } {
 # Create a new document.
 set docId [::Word::AddDocument $appId]
 
+# Emtpy document has 1 paragraph character.
+::Cawt::CheckNumber 1 [::Word::GetNumCharacters $docId] "Number of characters in empty document"
+
 # Insert a short piece of text as one paragraph.
-set range1 [::Word::AppendText $docId $msg1]
+set range1 [::Word::AppendText $docId $msg1 true]
 ::Word::SetRangeFontItalic $range1 true
 ::Word::SetRangeHighlightColorByEnum $range1 $::Word::wdYellow
-::Word::AppendParagraph $docId
+
+# 1 paragraph character + string + 1 paragraph character
+set expectedChars [expr 1 + [string length $msg1] + 1]
+::Cawt::CheckNumber $expectedChars [::Word::GetNumCharacters $docId] "Number of characters after adding text"
 
 # Insert a longer piece of text as one paragraph.
-set range2 [::Word::AppendText $docId $msg2]
+set range2 [::Word::AppendText $docId $msg2 true]
 ::Word::SetRangeFontBold $range2 true
 ::Word::AppendParagraph $docId
 
@@ -52,7 +58,6 @@ set rangeLink [::Word::AppendText $docId "Dummy"]
 set pos [::Cawt::InchesToPoints 7]
 while { true } {
     ::Word::AppendText $docId "More lines of text."
-    ::Word::AppendParagraph $docId
     set endRange [::Word::GetEndRange $docId]
     if { $pos < [::Word::GetRangeInformation $endRange $::Word::wdVerticalPositionRelativeToPage] } {
         break
@@ -68,7 +73,7 @@ set rangeId [::Word::AppendText $docId "There must be two paragraphs before this
 ::Word::SetRangeStartIndex $docId $rangeId "begin"
 ::Word::SetRangeEndIndex   $docId $rangeId 5
 ::Word::SelectRange $rangeId
-::Word::PrintRange $rangeId "SetRange and selection: "
+::Word::PrintRange $rangeId "Selected first 5 characters: "
 
 # Save document as Word file.
 puts "Saving as Word file: $wordFile"

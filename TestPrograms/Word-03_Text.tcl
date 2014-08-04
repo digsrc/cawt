@@ -17,7 +17,7 @@ set wordFile [format "%s%s" $rootName [::Word::GetExtString $appId]]
 file delete -force $pdfFile
 file delete -force $wordFile
 
-set msg1 "This is a italic line of text in italic."
+set msg1 "This is a italic line of text in italic.\n"
 for { set i 0 } { $i < 20 } { incr i } {
     append msg2 "This is a large oops paragraph in bold. "
 }
@@ -29,16 +29,18 @@ set docId [::Word::AddDocument $appId]
 ::Cawt::CheckNumber 1 [::Word::GetNumCharacters $docId] "Number of characters in empty document"
 
 # Insert a short piece of text as one paragraph.
-set range1 [::Word::AppendText $docId $msg1 true]
+set range1 [::Word::AppendText $docId $msg1]
 ::Word::SetRangeFontItalic $range1 true
+::Word::SetRangeFontSize $range1 12
+::Word::SetRangeFontName $range1 "Courier"
 ::Word::SetRangeHighlightColorByEnum $range1 $::Word::wdYellow
 
-# 1 paragraph character + string + 1 paragraph character
-set expectedChars [expr 1 + [string length $msg1] + 1]
+# 1 paragraph character + string
+set expectedChars [expr 1 + [string length $msg1]]
 ::Cawt::CheckNumber $expectedChars [::Word::GetNumCharacters $docId] "Number of characters after adding text"
 
 # Insert a longer piece of text as one paragraph.
-set range2 [::Word::AppendText $docId $msg2 true]
+set range2 [::Word::AppendText $docId $msg2]
 ::Word::SetRangeFontBold $range2 true
 ::Word::AppendParagraph $docId
 
@@ -57,7 +59,7 @@ set rangeLink [::Word::AppendText $docId "Dummy"]
 # document, insert a hard page break.
 set pos [::Cawt::InchesToPoints 7]
 while { true } {
-    ::Word::AppendText $docId "More lines of text."
+    ::Word::AppendText $docId "More lines of text.\n"
     set endRange [::Word::GetEndRange $docId]
     if { $pos < [::Word::GetRangeInformation $endRange $::Word::wdVerticalPositionRelativeToPage] } {
         break

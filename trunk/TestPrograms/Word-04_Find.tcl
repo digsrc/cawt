@@ -32,11 +32,12 @@ if { ! [::Word::FindString $range "italic"] } {
     puts "Error: Word \"italic\" not listed in Word-Document"
 }
 
+set endIndex [::Word::GetRangeEndIndex $range]
 set range [::Word::ExtendRange $inDocId $range 0 500]
+::Cawt::CheckNumber [expr $endIndex + 500] [::Word::GetRangeEndIndex $range] "End index of extended range"
 ::Word::PrintRange $range "Extended range:"
 ::Word::ReplaceString $range "italic" "yellow" "one"
 
-# Test replacing with an empty string. This did not work with TcomOffice and Tcom.
 set range [::Word::ExtendRange $inDocId $range 0 end]
 ::Word::PrintRange $range "Extended range:"
 ::Word::ReplaceString $range "oops " "" "all"
@@ -57,11 +58,11 @@ puts "Saving as Word file: $wordFile"
 
 # Get number of open documents.
 set numDocs [::Word::GetNumDocuments $appId]
-puts "Number of open documents: $numDocs"
+::Cawt::CheckNumber 1 $numDocs "Number of open documents"
 
 set newDocId [::Word::OpenDocument $appId $inFile]
 set numDocs [::Word::GetNumDocuments $appId]
-puts "Number of open documents: $numDocs"
+::Cawt::CheckNumber 2 $numDocs "Number of open documents"
 for { set i 1 } { $i <= $numDocs } { incr i } {
     set docId [::Word::GetDocumentIdByIndex $appId $i]
     puts "File-$i: [::Word::GetDocumentName $docId]"

@@ -25,7 +25,7 @@ set docId [::Word::AddDocument $appId]
 # Switch off spell and grammatic checking.
 ::Word::ToggleSpellCheck $appId false
 
-set numTestCases   10
+set numTestCases   3
 set testCaseTmpl   "Test case %d"
 set testResultTmpl "Test case result: %s"
 set testImg        [file join [pwd] "testIn/wish.gif"]
@@ -38,9 +38,7 @@ for { set t 1 } { $t <= $numTestCases } { incr t } {
     # Add chapter title.
     set title [format $testCaseTmpl $t]
     set titleRange [::Word::AppendText $docId $title]
-    ::Word::SetRangeFontSize $titleRange 16
-    ::Word::SetRangeFontBold $titleRange true
-    ::Word::SetRangeFontName $titleRange "Arial"
+    ::Word::SetRangeStyle $titleRange $::Word::wdStyleHeading1
     set titleRange [::Word::AppendParagraph $docId]
 
     # Add test result.
@@ -53,8 +51,7 @@ for { set t 1 } { $t <= $numTestCases } { incr t } {
     }
     set result [format $testResultTmpl $success]
     set resultRange [::Word::AppendText $docId $result]
-    ::Word::SetRangeFontSize $resultRange 12
-    ::Word::SetRangeFontName $resultRange "Courier"
+    ::Word::SetRangeStyle $titleRange $::Word::wdStyleBodyText
     set resultRange [::Word::AppendParagraph $docId]
 
     # Add the image related to current test case via the clipboard.
@@ -71,18 +68,12 @@ for { set t 1 } { $t <= $numTestCases } { incr t } {
 }
 
 # Print summary of test suite at the beginning of the document.
-set startRange [::Word::InsertText $docId "Summary of performed tests"]
-::Word::SetRangeFontSize $startRange 20
-::Word::SetRangeFontName $startRange "Arial"
-::Word::SetRangeHorizontalAlignment $startRange "center"
-::Word::AddParagraph $startRange
+set startRange [::Word::InsertText $docId "Summary of performed tests\n" $::Word::wdStyleTitle]
 
 append summary "Number of test cases      : $numTests\n"
 append summary "Number of successful tests: $numTestsOk\n"
 append summary "Number of failed tests    : $numTestsFail\n"
-set sumRange [::Word::AddText $docId $startRange $summary]
-::Word::SetRangeFontSize $sumRange 12
-::Word::SetRangeFontName $sumRange "Courier"
+set sumRange [::Word::AddText $docId $startRange $summary $::Word::wdStylePlainText]
 
 ::Word::SelectRange $sumRange
 set checkRange [::Word::GetSelectionRange $docId]

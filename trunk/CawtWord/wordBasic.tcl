@@ -325,6 +325,22 @@ namespace eval ::Word {
         return $rangeId
     }
 
+    proc SetRangeStyle { rangeId style } {
+        # Set the style of a text range.
+        #
+        # rangeId - Identifier of the text range.
+        # style   - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
+        #           Often used values: Word::wdStyleHeading1, Word::wdStyleNormal
+        #
+        # No return value.
+        #
+        # See also: SetRangeFontSize SetRangeFontName
+
+        set docId [$rangeId Document]
+        $rangeId Style [$docId -with { Styles } Item [expr $style]]
+        ::Cawt::Destroy $docId
+    }
+
     proc SetRangeFontName { rangeId fontName } {
         # Set the font name of a text range.
         #
@@ -873,62 +889,59 @@ namespace eval ::Word {
         }
     }
 
-    proc InsertText { docId text } {
+    proc InsertText { docId text { style $::Word::wdStyleNormal } } {
         # Insert text to a Word document.
         #
         # docId - Identifier of the document.
         # text  - Text string to be inserted.
+        # style - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
         #
-        # The text string is inserted at the start of the document.
+        # The text string is inserted at the start of the document with given style.
+        # Return the new text range.
         #
-        # See also: AddText AppendText AddParagraph
+        # See also: AddText AppendText AddParagraph SetRangeStyle
 
         set newRange [::Word::CreateRange $docId 0 0]
         $newRange InsertAfter $text
+        ::Word::SetRangeStyle $newRange [expr $style]
         return $newRange
     }
 
-    proc AppendText { docId text { addParagraph true } } {
+    proc AppendText { docId text { style $::Word::wdStyleNormal } } {
         # Append text to a Word document.
         #
-        # docId        - Identifier of the document.
-        # text         - Text string to be appended.
-        # addParagraph - true: Add a paragraph character after the text.
-        #                false: Just add the plain text.
+        # docId - Identifier of the document.
+        # text  - Text string to be appended.
+        # style - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
         #
-        # The text string is appended at the current end range of the document.
+        # The text string is appended at the end of the document with given style.
+        # Return the new text range.
         #
-        # See also: AddText InsertText AppendParagraph
+        # See also: AddText InsertText AppendParagraph SetRangeStyle
 
         set endRange [::Word::GetEndRange $docId]
-        if { $addParagraph } {
-            set para [$docId -with { Content Paragraphs } Add $endRange]
-            set endRange [$para Range]
-            ::Cawt::Destroy $para
-        }
         $endRange InsertAfter $text
+        ::Word::SetRangeStyle $endRange [expr $style]
         return $endRange
     }
 
-    proc AddText { docId rangeId text { where "after" } } {
+    proc AddText { docId rangeId text { style $::Word::wdStyleNormal } } {
         # Add text to a Word document.
         #
         # docId   - Identifier of the document.
         # rangeId - Identifier of the text range.
         # text    - Text string to be added.
-        # where   - Insertion point of the new paragraph.
+        # style   - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
         #
-        # The text string is appended to the supplied text range.
+        # The text string is appended to the supplied text range with given style.
+        # Return the new text range.
         #
-        # See also: AddText InsertText AppendParagraph
+        # See also: AddText InsertText AppendParagraph SetRangeStyle
 
-        set newStartIndex [expr [$rangeId End] + 1]
+        set newStartIndex [$rangeId End]
         set newRange [::Word::CreateRange $docId $newStartIndex $newStartIndex]
-        if { $where eq "after" } {
-            $newRange InsertAfter $text
-        } else {
-            $newRange InsertBefore $text
-        }
+        $newRange InsertAfter $text
+        ::Word::SetRangeStyle $newRange [expr $style]
         return $newRange
     }
 

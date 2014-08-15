@@ -488,6 +488,8 @@ namespace eval ::Word {
         # Both version name and version number are returned as strings.
         # Version number is in a format, so that it can be evaluated as a
         # floating point number.
+        #
+        # See also: GetCompatibilityMode GetExtString
 
         array set map {
             "7.0"  "Word 95"
@@ -504,10 +506,42 @@ namespace eval ::Word {
             if { [info exists map($version)] } {
                 return $map($version)
             } else {
-                return "Unknown Word version"
+                return "Unknown Word version $version"
             }
         } else {
             return $version
+        }
+    }
+
+    proc GetCompatibilityMode { appId { version "" } } {
+        # Return the compatibility version of a Word application.
+        #
+        # appId   - Identifier of the Word instance.
+        # version - Word version number.
+        #
+        # Return the compatibility mode of the current Word application, if 
+        # version is not specified or the empty string.
+        # If version is a valid Word version as returned by GetVersion, the
+        # corresponding compatibility mode is returned.
+        #
+        # Note: The compatibility mode is a value of enumeration WdCompatibilityMode.
+        #
+        # See also: GetVersion GetExtString
+
+        if { $version eq "" } {
+            return $::Word::wdCurrent
+        } else {
+            array set map {
+                "11.0" $::Word::wdWord2003
+                "12.0" $::Word::wdWord2007
+                "14.0" $::Word::wdWord2010
+                "15.0" $::Word::wdWord2013
+            }
+            if { [info exists map($version)] } {
+                return $map($version)
+            } else {
+                error "Unknown Word version $version"
+            }
         }
     }
 
@@ -518,6 +552,8 @@ namespace eval ::Word {
         #
         # Starting with Word 12 (2007) this is the string ".docx".
         # In previous versions it was ".doc".
+        #
+        # See also: GetCompatibilityMode GetVersion
 
         # appId is only needed, so we are sure, that wordVersion is initialized.
  
@@ -673,17 +709,17 @@ namespace eval ::Word {
 
         set fileName [file nativename $fileName]
         set appId [::Cawt::GetApplicationId $docId]
+        ::Cawt::ShowAlerts $appId false
         if { $fmt eq "" } {
-            if { $wordVersion eq "14.0" } {
+            if { $wordVersion >= 14.0 } {
                 $docId SaveAs $fileName [expr $::Word::wdFormatDocumentDefault]
             } else {
                 $docId SaveAs $fileName
             }
         } else {
-            ::Cawt::ShowAlerts $appId false
             $docId SaveAs $fileName $fmt
-            ::Cawt::ShowAlerts $appId true
         }
+        ::Cawt::ShowAlerts $appId true
     }
 
     proc SaveAsPdf { docId fileName } {
@@ -741,10 +777,12 @@ namespace eval ::Word {
         # Available only for Word 2010 and up.
         #
         # No return value.
+        #
+        # See also: GetCompatibilityMode
 
         variable wordVersion
 
-        if { $wordVersion eq "14.0" } {
+        if { $wordVersion >= 14.0 } {
             $docId SetCompatibilityMode [expr $mode]
         }
     }
@@ -847,85 +885,90 @@ namespace eval ::Word {
         return [$docId FullName]
     }
 
-    proc AppendParagraph { docId { text "" } { spaceAfter -1 } } {
+    proc AppendParagraph { docId { spaceAfter -1 } } {
         # Append a paragraph at the end of the document.
         #
-        # docId - Identifier of the document.
-        # text  - Appended text string.
+        # docId      - Identifier of the document.
+        # spaceAfter - Spacing in points after the range.
         #
-        # Append a new paragraph to the end of the document and (optionally)
-        # insert a text string in the new paragraph.
-        #
-        # Return the new end range.
-        #
-        # See also: AddParagraph
-
-        set endRange [GetEndRange $docId]
-        $endRange InsertParagraphAfter
-        if { $text ne "" } {
-            $endRange InsertAfter $text
-        }
-        if { $spaceAfter >= 0 } {
-            $endRange -with { ParagraphFormat } SpaceAfter $spaceAfter
-        }
-        ::Cawt::Destroy $endRange
-        return [GetEndRange $docId]
-    }
-
-    proc AddParagraph { rangeId { where "after" } } {
-        # Add a new paragraph to a document.
-        #
-        # rangeId - Identifier of the text range.
-        # where   - Insertion point of the new paragraph.
+        # Append a new paragraph to the end of the document.
         #
         # No return value.
         #
-        # See also: AppendParagraph
+        # See also: GetEndRange AddParagraph
 
-        if { $where eq "after" } {
-            $rangeId InsertParagraphAfter
-        } else {
-            $rangeId InsertParagraphBefore
+        set endRange [::Word::GetEndRange $docId]
+        $endRange InsertParagraphAfter
+        if { $spaceAfter >= 0 } {
+            $endRange -with { ParagraphFormat } SpaceAfter $spaceAfter
         }
+        return $endRange
     }
 
-    proc InsertText { docId text { style $::Word::wdStyleNormal } } {
+    proc AddParagraph { rangeId { spaceAfter -1 } } {
+        # Add a new paragraph to a document.
+        #
+        # rangeId    - Identifier of the text range.
+        # spaceAfter - Spacing in points after the range.
+        #
+        # Return the new extended range.
+        #
+        # See also: AppendParagraph
+
+        $rangeId InsertParagraphAfter
+        if { $spaceAfter >= 0 } {
+            $rangeId -with { ParagraphFormat } SpaceAfter $spaceAfter
+        }
+        return $rangeId
+    }
+
+    proc InsertText { docId text { addParagraph false } { style $::Word::wdStyleNormal } } {
         # Insert text to a Word document.
         #
-        # docId - Identifier of the document.
-        # text  - Text string to be inserted.
-        # style - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
+        # docId        - Identifier of the document.
+        # text         - Text string to be inserted.
+        # addParagraph - Add a paragraph after the text.
+        # style        - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
         #
         # The text string is inserted at the start of the document with given style.
+        #
         # Return the new text range.
         #
         # See also: AddText AppendText AddParagraph SetRangeStyle
 
         set newRange [::Word::CreateRange $docId 0 0]
         $newRange InsertAfter $text
+        if { $addParagraph } {
+            $newRange InsertParagraphAfter
+        }
         ::Word::SetRangeStyle $newRange [expr $style]
         return $newRange
     }
 
-    proc AppendText { docId text { style $::Word::wdStyleNormal } } {
+    proc AppendText { docId text { addParagraph false } { style $::Word::wdStyleNormal } } {
         # Append text to a Word document.
         #
-        # docId - Identifier of the document.
-        # text  - Text string to be appended.
-        # style - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
+        # docId        - Identifier of the document.
+        # text         - Text string to be appended.
+        # addParagraph - Add a paragraph after the text.
+        # style        - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
         #
         # The text string is appended at the end of the document with given style.
+        #
         # Return the new text range.
         #
-        # See also: AddText InsertText AppendParagraph SetRangeStyle
+        # See also: GetEndRange AddText InsertText AppendParagraph SetRangeStyle
 
-        set endRange [::Word::GetEndRange $docId]
-        $endRange InsertAfter $text
-        ::Word::SetRangeStyle $endRange [expr $style]
-        return $endRange
+        set newRange [::Word::GetEndRange $docId]
+        $newRange InsertAfter $text
+        if { $addParagraph } {
+            $newRange InsertParagraphAfter
+        }
+        ::Word::SetRangeStyle $newRange [expr $style]
+        return $newRange
     }
 
-    proc AddText { docId rangeId text { style $::Word::wdStyleNormal } } {
+    proc AddText { docId rangeId text { addParagraph false } { style $::Word::wdStyleNormal } } {
         # Add text to a Word document.
         #
         # docId   - Identifier of the document.
@@ -941,6 +984,9 @@ namespace eval ::Word {
         set newStartIndex [$rangeId End]
         set newRange [::Word::CreateRange $docId $newStartIndex $newStartIndex]
         $newRange InsertAfter $text
+        if { $addParagraph } {
+            $newRange InsertParagraphAfter
+        }
         ::Word::SetRangeStyle $newRange [expr $style]
         return $newRange
     }
@@ -992,7 +1038,7 @@ namespace eval ::Word {
         if { 0 } {
             # TODO
             set imgId [$rangeId -with { InlineShapes } AddPicture $fileName \
-                       [::Cawt::TclInt $linkToFile] [::Cawt::TclInt $saveWithDocument]]
+                       [::Cawt::TclBool $linkToFile] [::Cawt::TclBool $saveWithDocument]]
         } else {
             set imgId [$rangeId -with { InlineShapes } AddPicture $fileName]
         }

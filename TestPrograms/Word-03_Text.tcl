@@ -40,9 +40,8 @@ set expectedChars [expr 1 + [string length $msg1]]
 ::Cawt::CheckNumber $expectedChars [::Word::GetNumCharacters $docId] "Number of characters after adding text"
 
 # Insert a longer piece of text as one paragraph.
-set range2 [::Word::AppendText $docId $msg2]
+set range2 [::Word::AppendText $docId $msg2 true]
 ::Word::SetRangeFontBold $range2 true
-::Word::AppendParagraph $docId
 
 # Generate a text file for testing the hyperlink capabilities.
 set fileName [file join [pwd] "testOut" "Word-03_Text.txt"]
@@ -59,7 +58,7 @@ set rangeLink [::Word::AppendText $docId "Dummy"]
 # document, insert a hard page break.
 set pos [::Cawt::InchesToPoints 7]
 while { true } {
-    ::Word::AppendText $docId "More lines of text.\n"
+    ::Word::AppendText $docId "More lines of text." true
     set endRange [::Word::GetEndRange $docId]
     if { $pos < [::Word::GetRangeInformation $endRange $::Word::wdVerticalPositionRelativeToPage] } {
         break
@@ -67,10 +66,11 @@ while { true } {
 }
 
 ::Word::AddPageBreak $endRange
-set rangeId [::Word::AppendText $docId "This is page 2."]
-::Word::AddParagraph $rangeId "after"
+
+set rangeId [::Word::AppendText $docId "This is page 2." true]
+::Word::AddParagraph $rangeId 10
+::Word::AppendParagraph $docId 30
 set rangeId [::Word::AppendText $docId "There must be two paragraphs before this line."]
-::Word::AddParagraph $rangeId "before"
 
 ::Word::SetRangeStartIndex $docId $rangeId "begin"
 ::Word::SetRangeEndIndex   $docId $rangeId 5

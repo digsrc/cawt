@@ -22,8 +22,8 @@ set docId [::Word::AddDocument $appId]
 set numRows 3
 set numCols 5
 
-set endRange [::Word::AppendParagraph $docId "A standard table with a header line:"]
-set table(1,Id) [::Word::AddTable $docId $endRange [expr $numRows+1] $numCols 1]
+::Word::AppendText $docId "A standard table with a header line:"
+set table(1,Id) [::Word::AddTable $docId [::Word::GetEndRange $docId] [expr $numRows+1] $numCols]
 set table(1,Rows) [expr $numRows+1]
 
 for { set c 1 } { $c <= $numCols } { incr c } {
@@ -40,8 +40,9 @@ for { set r 1 } { $r <= $numRows } { incr r } {
 # Create a table and change some properties.
 set numRows 5
 set numCols 2
-set endRange [::Word::AppendParagraph $docId "Another table with changed properties:"]
-set table(2,Id) [::Word::AddTable $docId $endRange $numRows $numCols 6]
+::Word::AppendParagraph $docId
+::Word::AppendText $docId "Another table with changed properties:"
+set table(2,Id) [::Word::AddTable $docId [::Word::GetEndRange $docId] $numRows $numCols 6]
 
 for { set r 1 } { $r <= $numRows } { incr r } {
     for { set c 1 } { $c <= $numCols } { incr c } {
@@ -75,8 +76,9 @@ set numColsRead [::Word::GetNumColumns $table(2,Id)]
 # Read back the contents of the table and insert them into a newly created table
 # (which is 2 rows and 1 column larger than the original).
 # Set all columns to an equal width and change the border style.
-set endRange [::Word::AppendParagraph $docId "Copy of table with changed borders:"]
-set table(3,Id) [::Word::AddTable $docId $endRange \
+::Word::AppendParagraph $docId
+::Word::AppendText $docId "Copy of table with changed borders:"
+set table(3,Id) [::Word::AddTable $docId [::Word::GetEndRange $docId] \
                 [expr $numRows+2] [expr $numCols+1] 6]
 set table(3,Rows) [expr $numRows+2]
 
@@ -104,9 +106,8 @@ for { set n 1 } { $n <= $numTables } {incr n } {
 }
 
 # Test inserting an image.
-set endRange [::Word::AppendParagraph $docId \
-             "The wish lamp cropped at the right side:"]
-set imgId [::Word::InsertImage $endRange [file join [pwd] "testIn/wish.gif"]]
+::Word::AppendText $docId "The wish lamp cropped at the right side:"
+set imgId [::Word::InsertImage [::Word::GetEndRange $docId] [file join [pwd] "testIn/wish.gif"]]
 
 # CropImage imgId cropBottom cropTop cropLeft cropRight
 ::Word::CropImage $imgId 0 0 0 [::Cawt::CentiMetersToPoints 0.3]

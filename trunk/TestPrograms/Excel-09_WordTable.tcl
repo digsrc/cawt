@@ -24,14 +24,17 @@ for { set c 1 } { $c <= $numCols } { incr c } {
 set wordAppId [::Word::OpenNew true]
 set docId [::Word::AddDocument $wordAppId]
 
-set range [::Word::AppendParagraph $docId "Source table:" 10]
-set tableIn [::Word::AddTable $docId $range $totalRows $numCols 1]
+::Word::AppendText $docId "Source table:" true
+set tableIn [::Word::AddTable $docId [::Word::GetEndRange $docId] $totalRows $numCols 1]
+::Word::AppendParagraph $docId
 
-set range [::Word::AppendParagraph $docId "Table with header:" 10]
-set tableOut1 [::Word::AddTable $docId $range $totalRows $numCols 1]
+::Word::AppendText $docId "Table with header:" true
+set tableOut1 [::Word::AddTable $docId [::Word::GetEndRange $docId] $totalRows $numCols 1]
+::Word::AppendParagraph $docId
 
-set range [::Word::AppendParagraph $docId "Table without header:" 10]
-set tableOut2 [::Word::AddTable $docId $range $numRows $numCols 1]
+::Word::AppendText $docId "Table without header:" true
+set tableOut2 [::Word::AddTable $docId [::Word::GetEndRange $docId] $numRows $numCols 1]
+::Word::AppendParagraph $docId
 
 puts "Filling source table with data ..."
 ::Word::SetHeaderRow $tableIn $headerList

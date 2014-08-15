@@ -52,6 +52,8 @@ set range [::Word::ExtendRange $inDocId $range 0 end]
 #::Word::ReplaceByProc [::Word::GetStartRange $inDocId] "paragraph" \
 #                        ::Word::SetRangeHighlightColorByEnum $::Word::wdYellow
 
+::Word::InsertText $inDocId "Inserted text at beginning of document\n"
+
 # Save document as Word file.
 puts "Saving as Word file: $wordFile"
 ::Word::SaveAs $inDocId $wordFile

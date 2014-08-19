@@ -549,6 +549,7 @@ namespace eval ::Word {
     variable wdAutospaceLikeWW7 38
     variable wdCachedColBalance 65
     variable wdConvMailMergeEsc 6
+    variable wdDelayableFloatingTable 70
     variable wdDisableOTKerning 66
     variable wdDontAdjustLineHeightInTable 36
     variable wdDontAutofitConstrainedTables 56

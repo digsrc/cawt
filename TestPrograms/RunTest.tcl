@@ -6,7 +6,7 @@ set opts(RunTests)    true
 set opts(RunCoverage) true
 
 set nsUseList   [list]
-set nsAvailList [list Excel Ppt Word Ocr Earth Matlab Explorer]
+set nsAvailList [list Excel Ppt Word Outlook Ocr Earth Matlab Explorer]
 set useAllNamespaces false
 
 proc PrintUsage { progName { msg "" } } {

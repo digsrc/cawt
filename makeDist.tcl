@@ -62,7 +62,7 @@ file mkdir $distUserDir
 
 cd $cawtDir
 foreach dir { "CawtCore" "CawtEarth" "CawtExcel" "CawtExplorer" "CawtMatlab" \
-              "CawtOcr" "CawtPpt" "CawtWord" "TestPrograms" } {
+              "CawtOcr" "CawtPpt" "CawtOutlook" "CawtWord" "TestPrograms" } {
     puts "    Copying CAWT package $dir ..."
     file copy [file join $cawtDir $dir] $distUserDir
 }

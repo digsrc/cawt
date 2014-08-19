@@ -46,5 +46,6 @@ install:
 	$(CPDIR) CawtMatlab   $(INSTDIR)$(DSEP)CawtMatlab
 	$(CPDIR) CawtOcr      $(INSTDIR)$(DSEP)CawtOcr
 	$(CPDIR) CawtPpt      $(INSTDIR)$(DSEP)CawtPpt
+	$(CPDIR) CawtOutlook  $(INSTDIR)$(DSEP)CawtOutlook
 	$(CPDIR) CawtWord     $(INSTDIR)$(DSEP)CawtWord
 	$(CP)    pkgIndex.tcl $(INSTDIR)$(DSEP)pkgIndex.tcl

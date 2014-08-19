@@ -44,6 +44,10 @@ namespace eval ::Cawt {
         set pkgInfo(cawtocr,avail)   [expr !$retVal]
         set pkgInfo(cawtocr,version) $version
 
+        set retVal [catch {package require cawtoutlook} version]
+        set pkgInfo(cawtoutlook,avail)   [expr !$retVal]
+        set pkgInfo(cawtoutlook,version) $version
+
         set retVal [catch {package require cawtppt} version]
         set pkgInfo(cawtppt,avail)   [expr !$retVal]
         set pkgInfo(cawtppt,version) $version

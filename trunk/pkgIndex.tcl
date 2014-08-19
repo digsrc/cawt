@@ -7,7 +7,7 @@ if {[lsearch -exact $::auto_path $dir] == -1} {
 }
 
 proc __cawtSourcePkgs { dir } {
-    set subPkgs [list cawtcore cawtexcel cawtword cawtppt cawtocr cawtexplorer \
+    set subPkgs [list cawtcore cawtexcel cawtword cawtppt cawtoutlook cawtocr cawtexplorer \
                       cawtearth cawtmatlab]
     foreach pkg $subPkgs {
         set retVal [catch {package require $pkg} ::__cawtPkgInfo($pkg,version)]

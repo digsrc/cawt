@@ -1,6 +1,6 @@
 CAWT is a high-level Tcl interface for scripting Microsoft Windows® applications
 having a COM interface. It uses Twapi for automation via the COM interface.
-Currently packages for Microsoft Excel, Word, PowerPoint and Internet Explorer,
+Currently packages for Microsoft Excel, Word, PowerPoint, Outlook and Internet Explorer,
 MathWorks Matlab and Google Earth are available.
 
 CAWT sources are available at https://sourceforge.net/projects/cawt/

@@ -35,7 +35,7 @@ if { $option eq "ref" || $option eq "all" } {
 
     puts "Generating reference documentation from source code ..."
     ::ruff::document_namespaces html \
-        [list ::Cawt ::Word ::Excel ::Explorer ::Ppt ::Ocr ::Matlab ::Earth] \
+        [list ::Cawt ::Word ::Excel ::Explorer ::Outlook ::Ppt ::Ocr ::Matlab ::Earth] \
         -title "CAWT Reference" \
         -output [file join $finalDir "CawtReference-$pkgVersion.html"]
     cd $docDir
@@ -76,7 +76,7 @@ if { $option eq "user" || $option eq "all" } {
         set cellCont [::Word::GetCellValue $tableId 2 1]
         if { $cellCont eq $placeHolder } {
             puts "    Replacing placeholder \"$placeHolder\" with list of test programs."
-            set testFileList [lsort [glob -directory $testDir Earth* Excel* Explorer* Matlab* Ocr* Ppt* Word*]]
+            set testFileList [lsort [glob -directory $testDir Earth* Excel* Explorer* Matlab* Outlook* Ocr* Ppt* Word*]]
             set numRows [::Word::GetNumRows $tableId]
             set missingRows [expr [llength $testFileList] - $numRows +1]
             for { set r 1 } { $r <= $missingRows } {incr r } {
@@ -126,8 +126,8 @@ if { $option eq "user" || $option eq "all" } {
         } else {
             puts "    Replacing keyword $placeHolder with figure $figImg"
         }
-        set rangeId [::Word::GetSelectionRange $docId]
-        set imgId [::Word::InsertImage $rangeId $fig]
+        set imgId [::Word::InsertImage $myRange $fig]
+        ::Word::ReplaceString $myRange $placeHolder ""
         if { [info exists cropValues($figName)] } {
             set crop [::Cawt::CentiMetersToPoints $cropValues($figName)]
         } else {

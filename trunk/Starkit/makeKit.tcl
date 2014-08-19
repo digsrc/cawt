@@ -63,7 +63,7 @@ file mkdir $starkitVfsLibDir
 
 cd $cawtDir
 foreach dir { "CawtCore" "CawtEarth" "CawtExcel" "CawtExplorer" "CawtMatlab" \
-              "CawtOcr" "CawtPpt" "CawtWord" } {
+              "CawtOcr" "CawtOutlook" "CawtPpt" "CawtWord" } {
     puts "    Copying CAWT package $dir ..."
     file copy [file join $cawtDir $dir] [file join $starkitVfsLibDir $dir]
 }

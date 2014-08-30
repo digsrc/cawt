@@ -2,7 +2,7 @@
 # Distributed under BSD license.
 
 proc __CawtWordSourcePkgs { dir } {
-    package provide cawtword 1.0.4
+    package provide cawtword 1.1.0
 
     source [file join $dir wordConst.tcl]
     source [file join $dir wordBasic.tcl]
@@ -11,4 +11,4 @@ proc __CawtWordSourcePkgs { dir } {
 }
 
 # All modules are exported as package cawtword
-package ifneeded cawtword 1.0.4 "[list __CawtWordSourcePkgs $dir]"
+package ifneeded cawtword 1.1.0 "[list __CawtWordSourcePkgs $dir]"

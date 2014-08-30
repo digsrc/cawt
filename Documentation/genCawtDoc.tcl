@@ -106,7 +106,7 @@ if { $option eq "user" || $option eq "all" } {
         puts "    Warning: Placeholder \"$placeHolder\" not referenced in Word-Document"
     }
 
-    set cropValues(Figure-01)  5.0    ; # Overview CAWT
+    set cropValues(Figure-01)  1.5    ; # Overview CAWT
     set cropValues(Figure-02)  9.0    ; # Module excelCsv
     set cropValues(Figure-03) 11.0    ; # Module excelTablelist
     set cropValues(Figure-04)  9.0    ; # Module excelMatlabFile

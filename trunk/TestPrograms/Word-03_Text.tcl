@@ -19,7 +19,7 @@ file delete -force $wordFile
 
 set msg1 "This is a italic line of text in italic.\n"
 for { set i 0 } { $i < 20 } { incr i } {
-    append msg2 "This is a large oops paragraph in bold. "
+    append msg3 "This is a large oops paragraph in bold. "
 }
 
 # Create a new document.
@@ -39,9 +39,16 @@ set range1 [::Word::AppendText $docId $msg1]
 set expectedChars [expr 1 + [string length $msg1]]
 ::Cawt::CheckNumber $expectedChars [::Word::GetNumCharacters $docId] "Number of characters after adding text"
 
+# Insert other short pieces of text with different underlinings.
+set range2 [::Word::AppendText $docId "This is text with default underlining color.\n"]
+::Word::SetRangeFontUnderline $range2
+
+set range3 [::Word::AppendText $docId "This is text with orange underlining color.\n"]
+::Word::SetRangeFontUnderline $range3 true $::Word::wdColorLightOrange
+
 # Insert a longer piece of text as one paragraph.
-set range2 [::Word::AppendText $docId $msg2 true]
-::Word::SetRangeFontBold $range2 true
+set range4 [::Word::AppendText $docId $msg3 true]
+::Word::SetRangeFontBold $range4 true
 
 # Generate a text file for testing the hyperlink capabilities.
 set fileName [file join [pwd] "testOut" "Word-03_Text.txt"]

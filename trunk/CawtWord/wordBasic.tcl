@@ -349,7 +349,7 @@ namespace eval ::Word {
         #
         # No return value.
         #
-        # See also: SetRangeFontSize SetRangeFontBold SetRangeFontItalic
+        # See also: SetRangeFontSize SetRangeFontBold SetRangeFontItalic SetRangeFontUnderline
 
         $rangeId -with { Font } Name $fontName
     }
@@ -362,7 +362,7 @@ namespace eval ::Word {
         #
         # No return value.
         #
-        # See also: SetRangeFontName SetRangeFontBold SetRangeFontItalic
+        # See also: SetRangeFontName SetRangeFontBold SetRangeFontItalic SetRangeFontUnderline
 
         $rangeId -with { Font } Size [expr int($fontSize)]
     }
@@ -376,7 +376,7 @@ namespace eval ::Word {
         #
         # No return value.
         #
-        # See also: SetRangeFontName SetRangeFontSize SetRangeFontItalic
+        # See also: SetRangeFontName SetRangeFontSize SetRangeFontItalic SetRangeFontUnderline
 
         $rangeId -with { Font } Bold [::Cawt::TclInt $onOff]
     }
@@ -390,9 +390,27 @@ namespace eval ::Word {
         #
         # No return value.
         #
-        # See also: SetRangeFontName SetRangeFontSize SetRangeFontBold
+        # See also: SetRangeFontName SetRangeFontSize SetRangeFontBold SetRangeFontUnderline
 
         $rangeId -with { Font } Italic [::Cawt::TclInt $onOff]
+    }
+
+    proc SetRangeFontUnderline { rangeId { onOff true } { color $::Word::wdColorAutomatic } } {
+        # Toggle the underline font style of a text range.
+        #
+        # rangeId - Identifier of the text range.
+        # onOff   - true: Set underline style on.
+        #           false: Set underline style off.
+        # color   - Value of enumeration type WdColor (see wordConst.tcl)
+        #
+        # No return value.
+        #
+        # See also: SetRangeFontName SetRangeFontSize SetRangeFontBold SetRangeFontItalic
+
+        $rangeId -with { Font } Underline [::Cawt::TclInt $onOff]
+        if { $onOff } {
+            $rangeId -with { Font } UnderlineColor [expr $color]
+        }
     }
 
     proc SetRangeHorizontalAlignment { rangeId align } {

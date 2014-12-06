@@ -31,6 +31,9 @@ if { 1 } {
 # Switch off spell and grammatic checking.
 ::Word::ToggleSpellCheck $appId false
 
+# Configure the Figure captions inserted later.
+::Word::ConfigureCaption $appId $Word::wdCaptionFigure 1 true
+
 set numTestSuites  3
 set numTestCases   2
 set testSuiteTmpl  "Test suite %d"
@@ -74,6 +77,10 @@ for { set s 1 } { $s <= $numTestSuites } { incr s } {
         after 200
         [::Word::GetEndRange $docId] Paste
         image delete $phImg
+        set resultRange [::Word::AppendParagraph $docId]
+
+        # Add a caption under the image.
+        ::Word::InsertCaption $resultRange $Word::wdCaptionFigure ": Test image $s.$t"
         set resultRange [::Word::AppendParagraph $docId]
 
         incr numTests

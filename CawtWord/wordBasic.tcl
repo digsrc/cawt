@@ -147,9 +147,25 @@ namespace eval ::Word {
         #
         # Return the identifier of the new text range.
         #
-        # See also: SelectRange GetSelectionRange
+        # See also: CreateRangeAfter SelectRange GetSelectionRange
 
         return [$docId Range $startIndex $endIndex]
+    }
+
+    proc CreateRangeAfter { rangeId } {
+        # Create a new text range after specified range.
+        #
+        # rangeId - Identifier of the text range.
+        #
+        # Return the identifier of the new text range.
+        #
+        # See also: CreateRange SelectRange GetSelectionRange
+
+        set docId [::Word::GetDocumentId $rangeId]
+        set index [::Word::GetRangeEndIndex $rangeId]
+        set rangeId [::Word::CreateRange $docId $index $index]
+        ::Cawt::Destroy $docId
+        return $rangeId
     }
 
     proc SelectRange { rangeId } {
@@ -495,6 +511,40 @@ namespace eval ::Word {
         $rangeId Collapse $::Word::wdCollapseEnd
         $rangeId InsertBreak [expr { int ($::Word::wdPageBreak) }]
         $rangeId Collapse $::Word::wdCollapseEnd
+    }
+
+    proc AddBookmark { rangeId name } {
+        # Add a bookmark to a text range.
+        #
+        # rangeId - Identifier of the text range.
+        # name    - Name of the bookmark. 
+        #
+        # Return the bookmark identifier.
+        #
+        # See also: SetLinkToBookmark GetBookmarkName
+
+        set docId [::Word::GetDocumentId $rangeId]
+        set bookmarks [$docId Bookmarks]
+        # Create valid bookmark names.
+        set validName [regsub -all { } $name {_}]
+        set validName [regsub -all -- {-} $validName {_}]
+        set bookmarkId [$bookmarks Add $validName $rangeId]
+
+        ::Cawt::Destroy $bookmarks
+        ::Cawt::Destroy $docId
+        return $bookmarkId
+    }
+
+    proc GetBookmarkName { bookmarkId } {
+        # Get the name of a bookmark.
+        #
+        # bookmarkId - Identifier of the boormark.
+        #
+        # Return the name of the bookmark.
+        #
+        # See also: AddBookmark SetLinkToBookmark
+
+        return [$bookmarkId Name]
     }
 
     proc GetVersion { appId { useString false } } {
@@ -952,7 +1002,7 @@ namespace eval ::Word {
     }
 
     proc InsertText { docId text { addParagraph false } { style $::Word::wdStyleNormal } } {
-        # Insert text to a Word document.
+        # Insert text in a Word document.
         #
         # docId        - Identifier of the document.
         # text         - Text string to be inserted.
@@ -1039,18 +1089,47 @@ namespace eval ::Word {
         }
 
         set docId [::Word::GetDocumentId $rangeId]
-        set hyperId [$docId Hyperlinks]
+        set hyperlinks [$docId Hyperlinks]
         # Add(Anchor As Object, [Address], [SubAddress], [ScreenTip],
         # [TextToDisplay], [Target]) As Hyperlink
-        $hyperId -callnamedargs Add \
+        $hyperlinks -callnamedargs Add \
                  Anchor  $rangeId \
                  Address $link \
                  TextToDisplay $textDisplay
-        ::Cawt::Destroy $hyperId
+        ::Cawt::Destroy $hyperlinks
         ::Cawt::Destroy $docId
     }
 
-   proc InsertImage { rangeId imgFileName { linkToFile false } { saveWithDocument false } } {
+    proc SetLinkToBookmark { rangeId bookmarkId { textDisplay "" } } {
+        # Insert a hyperlink into a Word document.
+        #
+        # rangeId     - Identifier of the text range.
+        # bookmarkId  - Identifier of the bookmark to link to.
+        # textDisplay - Text to be displayed instead of the bookmark name.
+        #
+        # No return value.
+        #
+        # See also: AddBookmark
+
+        set bookmarkName [::Word::GetBookmarkName $bookmarkId]
+        if { $textDisplay eq "" } {
+            set textDisplay $bookmarkName
+        }
+
+        set docId [::Word::GetDocumentId $rangeId]
+        set hyperlinks [$docId Hyperlinks]
+        # Add(Anchor As Object, [Address], [SubAddress], [ScreenTip],
+        # [TextToDisplay], [Target]) As Hyperlink
+        $hyperlinks -callnamedargs Add \
+                 Anchor        $rangeId \
+                 Address       "" \
+                 SubAddress    $bookmarkName \
+                 TextToDisplay $textDisplay
+        ::Cawt::Destroy $hyperlinks
+        ::Cawt::Destroy $docId
+    }
+
+    proc InsertImage { rangeId imgFileName { linkToFile false } { saveWithDocument false } } {
         # Insert an image into a range of a document.
         #
         # rangeId          - Identifier of the text range.

@@ -1086,6 +1086,47 @@ namespace eval ::Word {
         $imgId -with { PictureFormat } CropRight  $cropRight
     }
 
+    proc InsertCaption { rangeId labelId text { pos $::Word::wdCaptionPositionBelow } } {
+        # Insert a caption into a range of a document.
+        #
+        # rangeId - Identifier of the text range.
+        # labelId - Value of enumeration type WdCaptionLabelID. 
+        #           Possible values: wdCaptionEquation, wdCaptionFigure, wdCaptionTable
+        # text    - Text of the caption.
+        # pos     - Value of enumeration type WdCaptionPosition (see wordConst.tcl).
+        #
+        # Return the new extended range.
+        #
+        # See also: ConfigureCaption
+ 
+        $rangeId InsertCaption $labelId $text "" [expr $pos] 0
+        return $rangeId
+    }
+
+    proc ConfigureCaption { appId labelId chapterStyleLevel { includeChapterNumber true } \
+                            { numberStyle $::Word::wdCaptionNumberStyleArabic } \
+                            { separator $::Word::wdSeparatorHyphen } } {
+        # Configure style of a caption type identified by it's label identifier.
+        #
+        # appId                - Identifier of the Word instance.
+        # labelId              - Value of enumeration type WdCaptionLabelID. 
+        #                        Possible values: wdCaptionEquation, wdCaptionFigure, wdCaptionTable
+        # chapterStyleLevel    - 1 corresponds to Heading1, 2 corresponds to Heading2, ...
+        # includeChapterNumber - Flag indicating whether to include the chapter number.
+        # numberStyle          - Value of enumeration type WdCaptionNumberStyle (see wordConst.tcl).
+        # separator            - Value of enumeration type WdSeparatorType (see wordConst.tcl).
+        #
+        # No return value.
+        #
+        # See also: InsertCaption
+
+        set captionItem [[$appId CaptionLabels] Item $labelId]
+        $captionItem ChapterStyleLevel    [expr $chapterStyleLevel]
+        $captionItem IncludeChapterNumber [::Cawt::TclBool $includeChapterNumber]
+        $captionItem NumberStyle          [expr $numberStyle]
+        $captionItem Separator            [expr $separator]
+    }
+
     proc AddTable { docId rangeId numRows numCols { spaceAfter -1 } } {
         # Add a new table in a text range.
         #

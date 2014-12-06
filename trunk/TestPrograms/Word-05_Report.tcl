@@ -70,6 +70,7 @@ for { set s 1 } { $s <= $numTestSuites } { incr s } {
         }
         set result [format $testResultTmpl $success]
         set resultRange [::Word::AppendText $docId $result true $::Word::wdStyleBodyText]
+        set bookmarkIds($s.$t) [::Word::AddBookmark $resultRange "Bookmark-$s-$t"]
 
         # Add the image related to current test case via the clipboard.
         set phImg [image create photo -file $testImg]
@@ -102,11 +103,27 @@ append summary "Number of test cases      : $numTests\n"
 append summary "Number of successful tests: $numTestsOk\n"
 append summary "Number of failed tests    : $numTestsFail\n"
 set sumRange [::Word::AddText $summaryRange $summary false $::Word::wdStylePlainText]
+set sumRange [::Word::AddParagraph $sumRange]
 
 ::Word::SelectRange $sumRange
 set checkRange [::Word::GetSelectionRange $docId]
 ::Cawt::CheckNumber [::Word::GetRangeStartIndex $sumRange] [::Word::GetRangeStartIndex $checkRange] "Start index of selected range"
 ::Cawt::CheckNumber [::Word::GetRangeEndIndex $sumRange] [::Word::GetRangeEndIndex $checkRange] "End index of selected range"
+
+set tableRange [::Word::CreateRangeAfter $sumRange]
+set tableId [::Word::AddTable $tableRange [expr [array size bookmarkIds] + 1] 2]
+::Word::SetTableBorderLineStyle $tableId
+::Word::SetHeaderRow $tableId [list "Requirement" "Test Case"]
+set req 1
+set row 2
+foreach key [lsort [array names bookmarkIds]] {
+    ::Word::SetCellValue $tableId $row 1 "Requirement $req"
+    ::Word::SetCellValue $tableId $row 2 [::Word::GetBookmarkName $bookmarkIds($key)]
+    set cellRange [::Word::GetCellRange $tableId $row 2]
+    ::Word::SetLinkToBookmark $cellRange $bookmarkIds($key) "Link to test case $key"
+    incr row
+    incr req
+}
 
 ::Word::UpdateFields $docId
 

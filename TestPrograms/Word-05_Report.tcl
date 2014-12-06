@@ -101,7 +101,7 @@ append summary "Number of test suites     : $numTestSuites\n"
 append summary "Number of test cases      : $numTests\n"
 append summary "Number of successful tests: $numTestsOk\n"
 append summary "Number of failed tests    : $numTestsFail\n"
-set sumRange [::Word::AddText $docId $summaryRange $summary false $::Word::wdStylePlainText]
+set sumRange [::Word::AddText $summaryRange $summary false $::Word::wdStylePlainText]
 
 ::Word::SelectRange $sumRange
 set checkRange [::Word::GetSelectionRange $docId]

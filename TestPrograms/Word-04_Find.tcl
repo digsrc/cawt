@@ -33,16 +33,16 @@ if { ! [::Word::FindString $range "italic"] } {
 }
 
 set endIndex [::Word::GetRangeEndIndex $range]
-set range [::Word::ExtendRange $inDocId $range 0 500]
+set range [::Word::ExtendRange $range 0 500]
 ::Cawt::CheckNumber [expr $endIndex + 500] [::Word::GetRangeEndIndex $range] "End index of extended range"
 ::Word::PrintRange $range "Extended range:"
 ::Word::ReplaceString $range "italic" "yellow" "one"
 
-set range [::Word::ExtendRange $inDocId $range 0 end]
+set range [::Word::ExtendRange $range 0 end]
 ::Word::PrintRange $range "Extended range:"
 ::Word::ReplaceString $range "oops " "" "all"
 
-set range [::Word::ExtendRange $inDocId $range 0 end]
+set range [::Word::ExtendRange $range 0 end]
 ::Word::PrintRange $range "Extended range:"
 ::Word::ReplaceString $range "lines" "rows" "all"
 

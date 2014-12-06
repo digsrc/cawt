@@ -253,10 +253,9 @@ namespace eval ::Word {
         return [$rangeId End]
     }
 
-    proc SetRangeStartIndex { docId rangeId index } {
+    proc SetRangeStartIndex { rangeId index } {
         # Set the start index of a text range.
         #
-        # docId   - Identifier of the document.
         # rangeId - Identifier of the text range.
         # index   - Index for the range start.
         #
@@ -273,10 +272,9 @@ namespace eval ::Word {
         $rangeId Start $index
     }
 
-    proc SetRangeEndIndex { docId rangeId index } {
+    proc SetRangeEndIndex { rangeId index } {
         # Set the end index of a text range.
         #
-        # docId   - Identifier of the document.
         # rangeId - Identifier of the text range.
         # index   - Index for the range end.
         #
@@ -288,15 +286,16 @@ namespace eval ::Word {
         # See also: SetRangeBeginIndex GetRangeEndIndex
 
         if { $index eq "end" } {
-            set index [[GetEndRange $docId] End]
+            set docId [::Word::GetDocumentId $rangeId]
+            set index [$docId End]
+            ::Cawt::Destroy $docId
         }
         $rangeId End $index
     }
 
-    proc ExtendRange { docId rangeId { startIncr 0 } { endIncr 0 } } {
+    proc ExtendRange { rangeId { startIncr 0 } { endIncr 0 } } {
         # Extend the range indices of a text range.
         #
-        # docId     - Identifier of the document.
         # rangeId   - Identifier of the text range.
         # startIncr - Increment of the range start index.
         # endIncr   - Increment of the range end index.
@@ -318,7 +317,9 @@ namespace eval ::Word {
         if { [string is integer $endIncr] } {
             set endIndex [expr $endIndex + $endIncr]
         } elseif { $endIncr eq "end" } {
+            set docId [::Word::GetDocumentId $rangeId]
             set endIndex [[GetEndRange $docId] End]
+            ::Cawt::Destroy $docId
         }
         $rangeId Start $startIndex
         $rangeId End $endIndex
@@ -336,7 +337,7 @@ namespace eval ::Word {
         #
         # See also: SetRangeFontSize SetRangeFontName
 
-        set docId [$rangeId Document]
+        set docId [::Word::GetDocumentId $rangeId]
         $rangeId Style [$docId -with { Styles } Item [expr $style]]
         ::Cawt::Destroy $docId
     }
@@ -892,6 +893,16 @@ namespace eval ::Word {
         return [$appId -with { Documents } Item $index]
     }
 
+    proc GetDocumentId { componentId } {
+        # Get the document identifier of a Word component.
+        #
+        # componentId - The identifier of a Word component.
+        #
+        # Word components having the Document property are ex. ranges, panes.
+
+        return [$componentId Document]
+    }
+
     proc GetDocumentName { docId } {
         # Get the name of a document.
         #
@@ -986,10 +997,9 @@ namespace eval ::Word {
         return $newRange
     }
 
-    proc AddText { docId rangeId text { addParagraph false } { style $::Word::wdStyleNormal } } {
+    proc AddText { rangeId text { addParagraph false } { style $::Word::wdStyleNormal } } {
         # Add text to a Word document.
         #
-        # docId   - Identifier of the document.
         # rangeId - Identifier of the text range.
         # text    - Text string to be added.
         # style   - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
@@ -1000,25 +1010,27 @@ namespace eval ::Word {
         # See also: AddText InsertText AppendParagraph SetRangeStyle
 
         set newStartIndex [$rangeId End]
+        set docId [::Word::GetDocumentId $rangeId]
         set newRange [::Word::CreateRange $docId $newStartIndex $newStartIndex]
         $newRange InsertAfter $text
         if { $addParagraph } {
             $newRange InsertParagraphAfter
         }
         ::Word::SetRangeStyle $newRange [expr $style]
+        ::Cawt::Destroy $docId
         return $newRange
     }
 
-    proc SetHyperlink { docId rangeId link { textDisplay "" } } {
+    proc SetHyperlink { rangeId link { textDisplay "" } } {
         # Insert a hyperlink into a Word document.
         #
-        # docId       - Identifier of the document.
         # rangeId     - Identifier of the text range.
         # link        - URL of the hyperlink.
         # textDisplay - Text to be displayed instead of the URL.
         #
-        # URL's are specified as strings. "file://myLinkedFile" specifies a link
-        # to a local file.
+        # # URL's are specified as strings:
+        # "file://myLinkedFile" specifies a link to a local file.
+        # "http://myLinkedWebpage" specifies a link to a web address.
         #
         # No return value.
 
@@ -1026,6 +1038,7 @@ namespace eval ::Word {
             set textDisplay $link
         }
 
+        set docId [::Word::GetDocumentId $rangeId]
         set hyperId [$docId Hyperlinks]
         # Add(Anchor As Object, [Address], [SubAddress], [ScreenTip],
         # [TextToDisplay], [Target]) As Hyperlink
@@ -1034,6 +1047,7 @@ namespace eval ::Word {
                  Address $link \
                  TextToDisplay $textDisplay
         ::Cawt::Destroy $hyperId
+        ::Cawt::Destroy $docId
     }
 
    proc InsertImage { rangeId imgFileName { linkToFile false } { saveWithDocument false } } {
@@ -1127,10 +1141,9 @@ namespace eval ::Word {
         $captionItem Separator            [expr $separator]
     }
 
-    proc AddTable { docId rangeId numRows numCols { spaceAfter -1 } } {
+    proc AddTable { rangeId numRows numCols { spaceAfter -1 } } {
         # Add a new table in a text range.
         #
-        # docId      - Identifier of the document.
         # rangeId    - Identifier of the text range.
         # numRows    - Number of rows of the new table.
         # numCols    - Number of columns of the new table.
@@ -1140,10 +1153,12 @@ namespace eval ::Word {
         #
         # See also: GetNumRows GetNumColumns
 
+        set docId [::Word::GetDocumentId $rangeId]
         set tableId [$docId -with { Tables } Add $rangeId $numRows $numCols]
         if { $spaceAfter >= 0 } {
             $tableId -with { Range ParagraphFormat } SpaceAfter $spaceAfter
         }
+        ::Cawt::Destroy $docId
         return $tableId
     }
 

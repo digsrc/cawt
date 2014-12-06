@@ -58,7 +58,7 @@ close $fp
 
 ::Word::AppendParagraph $docId
 set rangeLink [::Word::AppendText $docId "Dummy"]
-::Word::SetHyperlink $docId $rangeLink [format "file://%s" $fileName] "File Link"
+::Word::SetHyperlink $rangeLink [format "file://%s" $fileName] "File Link"
 ::Word::AppendParagraph $docId
 
 # Insert lines of text. When we get to 7 inches from top of the
@@ -79,8 +79,8 @@ set rangeId [::Word::AppendText $docId "This is page 2." true]
 ::Word::AppendParagraph $docId 30
 set rangeId [::Word::AppendText $docId "There must be two paragraphs before this line."]
 
-::Word::SetRangeStartIndex $docId $rangeId "begin"
-::Word::SetRangeEndIndex   $docId $rangeId 5
+::Word::SetRangeStartIndex $rangeId "begin"
+::Word::SetRangeEndIndex   $rangeId 5
 ::Word::SelectRange $rangeId
 ::Word::PrintRange $rangeId "Selected first 5 characters: "
 

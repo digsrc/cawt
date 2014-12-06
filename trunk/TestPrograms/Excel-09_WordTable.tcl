@@ -25,15 +25,15 @@ set wordAppId [::Word::OpenNew true]
 set docId [::Word::AddDocument $wordAppId]
 
 ::Word::AppendText $docId "Source table:" true
-set tableIn [::Word::AddTable $docId [::Word::GetEndRange $docId] $totalRows $numCols 1]
+set tableIn [::Word::AddTable [::Word::GetEndRange $docId] $totalRows $numCols 1]
 ::Word::AppendParagraph $docId
 
 ::Word::AppendText $docId "Table with header:" true
-set tableOut1 [::Word::AddTable $docId [::Word::GetEndRange $docId] $totalRows $numCols 1]
+set tableOut1 [::Word::AddTable [::Word::GetEndRange $docId] $totalRows $numCols 1]
 ::Word::AppendParagraph $docId
 
 ::Word::AppendText $docId "Table without header:" true
-set tableOut2 [::Word::AddTable $docId [::Word::GetEndRange $docId] $numRows $numCols 1]
+set tableOut2 [::Word::AddTable [::Word::GetEndRange $docId] $numRows $numCols 1]
 ::Word::AppendParagraph $docId
 
 puts "Filling source table with data ..."

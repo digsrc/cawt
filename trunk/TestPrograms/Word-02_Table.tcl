@@ -23,7 +23,7 @@ set numRows 3
 set numCols 5
 
 ::Word::AppendText $docId "A standard table with a header line:"
-set table(1,Id) [::Word::AddTable $docId [::Word::GetEndRange $docId] [expr $numRows+1] $numCols]
+set table(1,Id) [::Word::AddTable [::Word::GetEndRange $docId] [expr $numRows+1] $numCols]
 set table(1,Rows) [expr $numRows+1]
 
 for { set c 1 } { $c <= $numCols } { incr c } {
@@ -42,7 +42,7 @@ set numRows 5
 set numCols 2
 ::Word::AppendParagraph $docId
 ::Word::AppendText $docId "Another table with changed properties:"
-set table(2,Id) [::Word::AddTable $docId [::Word::GetEndRange $docId] $numRows $numCols 6]
+set table(2,Id) [::Word::AddTable [::Word::GetEndRange $docId] $numRows $numCols 6]
 
 for { set r 1 } { $r <= $numRows } { incr r } {
     for { set c 1 } { $c <= $numCols } { incr c } {
@@ -78,7 +78,7 @@ set numColsRead [::Word::GetNumColumns $table(2,Id)]
 # Set all columns to an equal width and change the border style.
 ::Word::AppendParagraph $docId
 ::Word::AppendText $docId "Copy of table with changed borders:"
-set table(3,Id) [::Word::AddTable $docId [::Word::GetEndRange $docId] \
+set table(3,Id) [::Word::AddTable [::Word::GetEndRange $docId] \
                 [expr $numRows+2] [expr $numCols+1] 6]
 set table(3,Rows) [expr $numRows+2]
 

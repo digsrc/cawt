@@ -547,6 +547,60 @@ namespace eval ::Word {
         return [$bookmarkId Name]
     }
 
+    proc GetListGalleryId { appId galleryType } {
+        # Get one of the 3 predefined list galleries.
+        #
+        # appId       - Identifier of the Word instance.
+        # galleryType - Value of enumeration type WdListGalleryType (see wordConst.tcl).
+        #
+        # Return the identifier of the specified list gallery.
+        #
+        # See also: GetListTemplateId InsertList
+
+        return [$appId -with { ListGalleries } Item [expr $galleryType]]
+    }
+
+    proc GetListTemplateId { galleryId listType } {
+        # Get one of the 7 predefined list templates.
+        #
+        # appId    - Identifier of the Word instance.
+        # listType - Value of enumeration type WdListType (see wordConst.tcl)
+        #
+        # Return the identifier of the specified list template.
+        #
+        # See also: GetListGalleryId InsertList
+
+        return [$galleryId -with { ListTemplates } Item [expr $listType]]
+    }
+
+    proc InsertList { rangeId stringList \
+                      { galleryType $::Word::wdBulletGallery } \
+                      { listType $::Word::wdListListNumOnly } } {
+        # Insert a Word list.
+        #
+        # rangeId     - Identifier of the text range.
+        # stringList  - List of text strings building up the Word list. 
+        # galleryType - Value of enumeration type WdListGalleryType (see wordConst.tcl).
+        # listType    - Value of enumeration type WdListType (see wordConst.tcl)
+        #
+        # Return the range of the Word list.
+        #
+        # See also: GetListGalleryId GetListTemplateId
+
+        foreach line $stringList {
+            append listStr "$line\n"
+        }
+        set appId [::Cawt::GetApplicationId $rangeId]
+        set listRangeId [::Word::AddText $rangeId $listStr]
+        set listGalleryId  [::Word::GetListGalleryId $appId $galleryType]
+        set listTemplateId [::Word::GetListTemplateId $listGalleryId $listType]
+        $listRangeId -with { ListFormat } ApplyListTemplate $listTemplateId
+        ::Cawt::Destroy $listTemplateId
+        ::Cawt::Destroy $listGalleryId
+        ::Cawt::Destroy $appId
+        return $listRangeId
+    }
+
     proc GetVersion { appId { useString false } } {
         # Return the version of a Word application.
         #

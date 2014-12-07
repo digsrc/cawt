@@ -77,7 +77,17 @@ while { true } {
 set rangeId [::Word::AppendText $docId "This is page 2." true]
 ::Word::AddParagraph $rangeId 10
 ::Word::AppendParagraph $docId 30
-set rangeId [::Word::AppendText $docId "There must be two paragraphs before this line."]
+set rangeId [::Word::AppendText $docId "There must be two paragraphs before this line." true]
+
+set rangeId [::Word::AppendText $docId "Different types of lists" true]
+
+set listRange [::Word::CreateRangeAfter $rangeId]
+set listRange [::Word::InsertList $listRange [list "Unordered list entry 1" "Unordered list entry 2" "Unordered list entry 3"]]
+
+set listRange [::Word::CreateRangeAfter $listRange]
+set listRange [::Word::InsertList $listRange \
+                   [list "Ordered list entry 1" "Ordered list entry 2" "Ordered list entry 3"] \
+                   $::Word::wdNumberGallery $::Word::wdListListNumOnly]
 
 ::Word::SetRangeStartIndex $rangeId "begin"
 ::Word::SetRangeEndIndex   $rangeId 5

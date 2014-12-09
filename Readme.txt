@@ -18,6 +18,18 @@ for programmers who want to extend the CAWT package.
 Release history:
 ================
 
+1.2.0   2014-12-14
+        Compatibility issue: Incompatible changes in module CawtWord.
+            Removed parameter docId from all procedures, which had both docId and rangeId parameters:
+            SetRangeStartIndex, SetRangeEndIndex, ExtendRange, AddText, SetHyperlink, AddTable.
+        CawtExcel: Added optional startRow parameter to TablelistToWorksheet.
+        Extended test suite for changed and new procedures.
+        New procedures in CawtWord:
+            GetDocumentId, SetRangeFontUnderline, CreateRangeAfter,
+            InsertCaption, ConfigureCaption,
+            AddBookmark, GetBookmarkName, SetLinkToBookmark,
+            GetListGalleryId, GetListTemplateId, InsertList
+
 1.1.0   2014-08-30
         Compatibility issue: Incompatible changes in module CawtWord.
             Unified signatures of AddText, AppendText and AddParagraph, AppendParagraph.

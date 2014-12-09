@@ -1104,9 +1104,10 @@ namespace eval ::Word {
     proc AddText { rangeId text { addParagraph false } { style $::Word::wdStyleNormal } } {
         # Add text to a Word document.
         #
-        # rangeId - Identifier of the text range.
-        # text    - Text string to be added.
-        # style   - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
+        # rangeId      - Identifier of the text range.
+        # text         - Text string to be added.
+        # addParagraph - Add a paragraph after the text.
+        # style        - Value of enumeration type WdBuiltinStyle (see wordConst.tcl).
         #
         # The text string is appended to the supplied text range with given style.
         # Return the new text range.

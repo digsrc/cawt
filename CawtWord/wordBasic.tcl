@@ -563,8 +563,8 @@ namespace eval ::Word {
     proc GetListTemplateId { galleryId listType } {
         # Get one of the 7 predefined list templates.
         #
-        # appId    - Identifier of the Word instance.
-        # listType - Value of enumeration type WdListType (see wordConst.tcl)
+        # galleryId - Identifier of the Word gallery.
+        # listType  - Value of enumeration type WdListType (see wordConst.tcl)
         #
         # Return the identifier of the specified list template.
         #

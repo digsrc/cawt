@@ -61,13 +61,14 @@ namespace eval ::Excel {
         }
     }
 
-    proc TablelistToWorksheet { tableId worksheetId { useHeader true } } {
+    proc TablelistToWorksheet { tableId worksheetId { useHeader true } { startRow 1 } } {
         # Insert the values of a tablelist into a worksheet.
         #
         # tableId     - Identifier of the tablelist.
         # worksheetId - Identifier of the worksheet.
         # useHeader   - true: Insert the header of the tablelist as first row.
         #               false: Only transfer the tablelist data.
+        # startRow    - Row number of insertion start. Row numbering starts with 1.
         #
         # No return value.
         #
@@ -75,21 +76,17 @@ namespace eval ::Excel {
         # WikitFileToWorksheet MediaWikiFileToWorksheet MatlabFileToWorksheet
         # RawImageFileToWorksheet WordTableToWorksheet
 
-        set startRow 1
+        set curRow $startRow
         if { $useHeader } {
-            # TODO Possible improvements:
-            # -align -labelalign
-            # -width -1 pixel 0 dynamic
-            # -title
             set numCols [$tableId columncount]
             for { set col 0 } { $col < $numCols } { incr col } {
                 lappend headerList [$tableId columncget $col -title]
             }
-            ::Excel::SetHeaderRow $worksheetId $headerList
-            incr startRow
+            ::Excel::SetHeaderRow $worksheetId $headerList $curRow
+            incr curRow
         }
         set matrixList [$tableId get 0 end]
-        ::Excel::SetMatrixValues $worksheetId $matrixList $startRow 1
+        ::Excel::SetMatrixValues $worksheetId $matrixList $curRow 1
     }
 
     proc WorksheetToTablelist { worksheetId tableId { useHeader true } } {

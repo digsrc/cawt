@@ -3,6 +3,9 @@ having a COM interface. It uses Twapi for automation via the COM interface.
 Currently packages for Microsoft Excel, Word, PowerPoint, Outlook and Internet Explorer,
 MathWorks Matlab and Google Earth are available.
 
+Note, that only Microsoft Office packages Excel, Word and PowerPoint are in active developement.
+The other packages are proof-of-concept examples only.
+
 CAWT sources are available at https://sourceforge.net/projects/cawt/
 The CAWT homepage is at http://www.poSoft.de/html/extCawt.html
 

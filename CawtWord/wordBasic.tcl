@@ -1134,10 +1134,12 @@ namespace eval ::Word {
         # textDisplay - Text to be displayed instead of the URL.
         #
         # # URL's are specified as strings:
-        # "file://myLinkedFile" specifies a link to a local file.
-        # "http://myLinkedWebpage" specifies a link to a web address.
+        # file://myLinkedFile specifies a link to a local file.
+        # http://myLinkedWebpage specifies a link to a web address.
         #
         # No return value.
+        #
+        # See also: SetLinkToBookmark
 
         if { $textDisplay eq "" } {
             set textDisplay $link
@@ -1156,7 +1158,7 @@ namespace eval ::Word {
     }
 
     proc SetLinkToBookmark { rangeId bookmarkId { textDisplay "" } } {
-        # Insert a hyperlink into a Word document.
+        # Insert an internal link to a bookmark into a Word document.
         #
         # rangeId     - Identifier of the text range.
         # bookmarkId  - Identifier of the bookmark to link to.
@@ -1164,7 +1166,7 @@ namespace eval ::Word {
         #
         # No return value.
         #
-        # See also: AddBookmark
+        # See also: AddBookmark GetBookmarkName SetHyperlink
 
         set bookmarkName [::Word::GetBookmarkName $bookmarkId]
         if { $textDisplay eq "" } {

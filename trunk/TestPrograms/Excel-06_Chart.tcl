@@ -1,6 +1,6 @@
 # Test CawtExcel procedures for creating charts and exporting charts as Tk photo images.
 #
-# Copyright: 2007-2014 Paul Obermeier (obermeier@poSoft.de)
+# Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
 source "SetTestPathes.tcl"

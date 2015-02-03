@@ -1,4 +1,4 @@
-# Copyright: 2007-2014 Paul Obermeier (obermeier@poSoft.de)
+# Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
 # Call with all as parameter to build the CAWT StarKit for native OS.

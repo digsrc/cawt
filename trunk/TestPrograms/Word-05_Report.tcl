@@ -3,7 +3,7 @@
 # there are images to be inserted that are in a format Word does not know about,
 # and a summary should be printed at the first page.
 #
-# Copyright: 2007-2014 Paul Obermeier (obermeier@poSoft.de)
+# Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
 source "SetTestPathes.tcl"

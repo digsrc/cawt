@@ -1,6 +1,6 @@
 # Test basic functionality of the CawtOutlook package.
 #
-# Copyright: 2007-2014 Paul Obermeier (obermeier@poSoft.de)
+# Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
 source "SetTestPathes.tcl"

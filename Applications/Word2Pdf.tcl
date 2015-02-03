@@ -1,6 +1,6 @@
 # Utility script to convert a Word document to a PDF file.
 #
-# Copyright: 2013-2014 Paul Obermeier (obermeier@poSoft.de)
+# Copyright: 2013-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
 set cawtDir [pwd]

@@ -1,7 +1,7 @@
 # Test miscellaneous CawtExcel procedures like setting colors, fonts and column width,
 # inserting formulas and images, searching and page setup.
 #
-# Copyright: 2007-2014 Paul Obermeier (obermeier@poSoft.de)
+# Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
 source "SetTestPathes.tcl"

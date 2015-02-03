@@ -1,7 +1,7 @@
 # Test miscellaneous CawtPpt procedures like adding slides, inserting images and saving slides
 # as image files.
 #
-# Copyright: 2007-2014 Paul Obermeier (obermeier@poSoft.de)
+# Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
 source "SetTestPathes.tcl"

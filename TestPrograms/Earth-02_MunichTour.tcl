@@ -2,7 +2,7 @@
 # a Tk GUI with buttons corresponding to these positions.
 # Clicking onto one of these buttons triggers Google Earth to fly to that position.
 #
-# Copyright: 2007-2014 Paul Obermeier (obermeier@poSoft.de)
+# Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
 source "SetTestPathes.tcl"

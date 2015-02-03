@@ -11,7 +11,7 @@ package ifneeded jpegtcl 8.4 \
 #
 # $Id: pkgIndex.tcl.in 209 2009-03-03 17:19:05Z nijtmans $
 
-package ifneeded img::base 1.4.2 [list load [file join $dir tkimg142.dll]]
+package ifneeded img::base 1.4.3 [list load [file join $dir tkimg143.dll]]
 
 # Compatibility hack. When asking for the old name of the package
 # then load all format handlers and base libraries provided by tkImg.
@@ -24,7 +24,7 @@ package ifneeded img::base 1.4.2 [list load [file join $dir tkimg142.dll]]
 # Therefore file formats with some "magic" identifier, which can be
 # recognized safely, should be added at the end of this list.
 
-package ifneeded Img 1.4.2 {
+package ifneeded Img 1.4.3 {
     package require img::window
     package require img::tga
     package require img::ico
@@ -41,42 +41,42 @@ package ifneeded Img 1.4.2 {
     package require img::ppm
     package require img::gif
     package require img::pixmap
-    package provide Img 1.4.2
+    package provide Img 1.4.3
 }
 
-package ifneeded img::bmp 1.4.2 \
-    [list load [file join $dir tkimgbmp142.dll]]
-package ifneeded img::gif 1.4.2 \
-    [list load [file join $dir tkimggif142.dll]]
-package ifneeded img::ico 1.4.2 \
-    [list load [file join $dir tkimgico142.dll]]
-package ifneeded img::jpeg 1.4.2 \
-    [list load [file join $dir tkimgjpeg142.dll]]
-package ifneeded img::pcx 1.4.2 \
-    [list load [file join $dir tkimgpcx142.dll]]
-package ifneeded img::pixmap 1.4.2 \
-    [list load [file join $dir tkimgpixmap142.dll]]
-package ifneeded img::png 1.4.2 \
-    [list load [file join $dir tkimgpng142.dll]]
-package ifneeded img::ppm 1.4.2 \
-    [list load [file join $dir tkimgppm142.dll]]
-package ifneeded img::ps 1.4.2 \
-    [list load [file join $dir tkimgps142.dll]]
-package ifneeded img::sgi 1.4.2 \
-    [list load [file join $dir tkimgsgi142.dll]]
-package ifneeded img::sun 1.4.2 \
-    [list load [file join $dir tkimgsun142.dll]]
-package ifneeded img::tga 1.4.2 \
-    [list load [file join $dir tkimgtga142.dll]]
-package ifneeded img::tiff 1.4.2 \
-    [list load [file join $dir tkimgtiff142.dll]]
-package ifneeded img::window 1.4.2 \
-    [list load [file join $dir tkimgwindow142.dll]]
-package ifneeded img::xbm 1.4.2 \
-    [list load [file join $dir tkimgxbm142.dll]]
-package ifneeded img::xpm 1.4.2 \
-    [list load [file join $dir tkimgxpm142.dll]]
-package ifneeded img::dted 1.4.2 \
-    [list load [file join $dir tkimgdted142.dll]]
-package ifneeded img::raw 1.4.2 \
-    [list load [file join $dir tkimgraw142.dll]]
+package ifneeded img::bmp 1.4.3 \
+    [list load [file join $dir tkimgbmp143.dll]]
+package ifneeded img::gif 1.4.3 \
+    [list load [file join $dir tkimggif143.dll]]
+package ifneeded img::ico 1.4.3 \
+    [list load [file join $dir tkimgico143.dll]]
+package ifneeded img::jpeg 1.4.3 \
+    [list load [file join $dir tkimgjpeg143.dll]]
+package ifneeded img::pcx 1.4.3 \
+    [list load [file join $dir tkimgpcx143.dll]]
+package ifneeded img::pixmap 1.4.3 \
+    [list load [file join $dir tkimgpixmap143.dll]]
+package ifneeded img::png 1.4.3 \
+    [list load [file join $dir tkimgpng143.dll]]
+package ifneeded img::ppm 1.4.3 \
+    [list load [file join $dir tkimgppm143.dll]]
+package ifneeded img::ps 1.4.3 \
+    [list load [file join $dir tkimgps143.dll]]
+package ifneeded img::sgi 1.4.3 \
+    [list load [file join $dir tkimgsgi143.dll]]
+package ifneeded img::sun 1.4.3 \
+    [list load [file join $dir tkimgsun143.dll]]
+package ifneeded img::tga 1.4.3 \
+    [list load [file join $dir tkimgtga143.dll]]
+package ifneeded img::tiff 1.4.3 \
+    [list load [file join $dir tkimgtiff143.dll]]
+package ifneeded img::window 1.4.3 \
+    [list load [file join $dir tkimgwindow143.dll]]
+package ifneeded img::xbm 1.4.3 \
+    [list load [file join $dir tkimgxbm143.dll]]
+package ifneeded img::xpm 1.4.3 \
+    [list load [file join $dir tkimgxpm143.dll]]
+package ifneeded img::dted 1.4.3 \
+    [list load [file join $dir tkimgdted143.dll]]
+package ifneeded img::raw 1.4.3 \
+    [list load [file join $dir tkimgraw143.dll]]

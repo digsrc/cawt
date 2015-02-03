@@ -83,4 +83,48 @@ namespace eval ::Word {
         }
         return $matrixList
     }
+
+    proc DiffWordFiles { wordBaseFile wordNewFile } {
+        # Compare 2 Word files visually.
+        #
+        # wordBaseFile - Name of the base Word file.
+        # wordNewFile  - Name of the new Word file.
+        #
+        # The two files are opened in Word's compare mode.
+        #
+        # Return the identifier of the new Word application instance.
+        #
+        # See also: OpenNew
+
+        variable wordVersion
+
+        if { ! [file exists $wordBaseFile] } {
+            error "Diff: Base file $wordBaseFile does not exists"
+        }
+        if { ! [file exists $wordNewFile] } {
+            error "Diff: New file $wordNewFile does not exists"
+        }
+        if { [file normalize $wordBaseFile] eq [file normalize $wordNewFile] } {
+            error "Diff: Base and new file are equal. Cannot compare."
+        }
+
+        set appId [::Word::OpenNew true]
+
+        if { $wordVersion >= 12.0 } {
+            # From Word 2007 and up, change order of files.
+            set tmpFile $wordBaseFile
+            set wordBaseFile $wordNewFile
+            set wordNewFile $tmpFile
+        }
+
+        set newDocId [::Word::OpenDocument $appId [file nativename $wordNewFile] true]
+        $newDocId -with { ActiveWindow View } Type $::Word::wdNormalView
+
+        $newDocId Compare [file nativename $wordBaseFile] "CawtDiff" $::Word::wdCompareTargetNew true true
+
+        $appId -with { ActiveDocument } Saved [::Cawt::TclBool true]
+        ::Word::Close $newDocId
+
+        return $appId
+    }
 }

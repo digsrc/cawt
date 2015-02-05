@@ -802,7 +802,7 @@ namespace eval ::Word {
     }
 
     proc UpdateFields { docId } {
-        # Update all fields of a document.
+        # Update all fields as well as tables of content and figures of a document.
         #
         # docId - Identifier of the document.
         #
@@ -810,9 +810,30 @@ namespace eval ::Word {
         #
         # See also: SaveAs
 
-        set rangeId [::Word::GetStartRange $docId]
-        $rangeId WholeStory
-        $rangeId -with { Fields } Update
+        set stories [$docId StoryRanges]
+        $stories -iterate story {
+            $story -with { Fields } Update
+            while { [::Cawt::IsValidId [$story NextStoryRange]] } {
+                set story [$story NextStoryRange]
+                $story -with { Fields } Update
+            }
+            ::Cawt::Destroy $story
+        }
+        ::Cawt::Destroy $stories
+
+        set tocs [$docId TablesOfContents]
+        $tocs -iterate toc {
+            $toc Update
+            ::Cawt::Destroy $toc
+        }
+        ::Cawt::Destroy $tocs
+
+        set tofs [$docId TablesOfFigures]
+        $tofs -iterate tof {
+            $tof Update
+            ::Cawt::Destroy $tof
+        }
+        ::Cawt::Destroy $tofs
     }
 
     proc SaveAs { docId fileName { fmt "" } } {

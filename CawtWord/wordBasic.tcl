@@ -585,7 +585,7 @@ namespace eval ::Word {
         #
         # Return the range of the Word list.
         #
-        # See also: GetListGalleryId GetListTemplateId
+        # See also: GetListGalleryId GetListTemplateId InsertCaption InsertFile InsertImage InsertText
 
         foreach line $stringList {
             append listStr "$line\n"
@@ -993,6 +993,7 @@ namespace eval ::Word {
             # As Document
             set docId [$docs -callnamedargs Open \
                              FileName $nativeName \
+                             ConfirmConversions [::Cawt::TclBool false] \
                              ReadOnly [::Cawt::TclInt $readOnly]]
         }
         ::Cawt::Destroy $docs
@@ -1088,7 +1089,8 @@ namespace eval ::Word {
         #
         # Return the new text range.
         #
-        # See also: AddText AppendText AddParagraph SetRangeStyle
+        # See also: AddText AppendText AddParagraph SetRangeStyle 
+        #           InsertCaption InsertFile InsertImage InsertList
 
         set newRange [::Word::CreateRange $docId 0 0]
         $newRange InsertAfter $text
@@ -1148,7 +1150,7 @@ namespace eval ::Word {
     }
 
     proc SetHyperlink { rangeId link { textDisplay "" } } {
-        # Insert a hyperlink into a Word document.
+        # Insert an external hyperlink into a Word document.
         #
         # rangeId     - Identifier of the text range.
         # link        - URL of the hyperlink.
@@ -1160,7 +1162,7 @@ namespace eval ::Word {
         #
         # No return value.
         #
-        # See also: SetLinkToBookmark
+        # See also: SetLinkToBookmark SetInternalHyperlink
 
         if { $textDisplay eq "" } {
             set textDisplay $link
@@ -1178,6 +1180,33 @@ namespace eval ::Word {
         ::Cawt::Destroy $docId
     }
 
+    proc SetInternalHyperlink { rangeId subAddress { textDisplay "" } } {
+        # Insert an internal hyperlink into a Word document.
+        #
+        # rangeId     - Identifier of the text range.
+        # subAddress  - Internal reference.
+        # textDisplay - Text to be displayed instead of the URL.
+        #
+        # No return value.
+        #
+        # See also: SetLinkToBookmark SetHyperlink
+
+        if { $textDisplay eq "" } {
+            set textDisplay $subAddress
+        }
+
+        set docId [::Word::GetDocumentId $rangeId]
+        set hyperlinks [$docId Hyperlinks]
+        # Add(Anchor As Object, [Address], [SubAddress], [ScreenTip],
+        # [TextToDisplay], [Target]) As Hyperlink
+        $hyperlinks -callnamedargs Add \
+                 Anchor  $rangeId \
+                 SubAddress $subAddress \
+                 TextToDisplay $textDisplay
+        ::Cawt::Destroy $hyperlinks
+        ::Cawt::Destroy $docId
+    }
+
     proc SetLinkToBookmark { rangeId bookmarkId { textDisplay "" } } {
         # Insert an internal link to a bookmark into a Word document.
         #
@@ -1187,7 +1216,7 @@ namespace eval ::Word {
         #
         # No return value.
         #
-        # See also: AddBookmark GetBookmarkName SetHyperlink
+        # See also: AddBookmark GetBookmarkName SetHyperlink SetInternalHyperlink
 
         set bookmarkName [::Word::GetBookmarkName $bookmarkId]
         if { $textDisplay eq "" } {
@@ -1207,6 +1236,53 @@ namespace eval ::Word {
         ::Cawt::Destroy $docId
     }
 
+    proc InsertFile { rangeId fileName { pasteFormat "" } } {
+        # Insert a file into a Word document.
+        #
+        # rangeId     - Identifier of the text range.
+        # fileName    - Name of the file to insert.
+        # pasteFormat - Value of enumeration type WdRecoveryType (see wordConst.tcl).
+        #
+        # Insert an external file a the text range identified by rangeId. If pasteFormat is
+        # not specified or an empty string, the method InsertFile is used.
+        # Otherwise the external file is opened in a new Word document, copied to the clipboard
+        # and pasted into the text range. For pasting the PasteAndFormat method is used, so it is 
+        # possible to merge the new text from the external file into the Word document in different ways.
+        #
+        # No return value.
+        #
+        # See also: SetHyperlink InsertCaption InsertImage InsertList InsertText
+
+        if { $pasteFormat ne "" } {
+            set tmpAppId [::Cawt::GetApplicationId $rangeId]
+            set tmpDocId [::Word::OpenDocument $tmpAppId [file nativename $fileName] false]
+            set tmpRangeId [::Word::GetStartRange $tmpDocId]
+            $tmpRangeId WholeStory
+            $tmpRangeId Copy
+
+            $rangeId PasteAndFormat $pasteFormat
+
+            # Workaround: Select a small portion of text and copy it to clipboard
+            # to avoid an alert message regarding lots of data in clipboard.
+            # Setting DisplayAlerts to false does not help here.
+            set dummyRange [::Word::CreateRange $tmpDocId 0 1]
+            $dummyRange Copy
+            ::Cawt::Destroy $dummyRange
+
+            ::Word::Close $tmpDocId
+            ::Cawt::Destroy $tmpRangeId
+            ::Cawt::Destroy $tmpDocId
+            ::Cawt::Destroy $tmpAppId
+        } else {
+            # InsertFile(FileName, Range, ConfirmConversions, Link, Attachment)
+            $rangeId InsertFile [file nativename $fileName] \
+                                "" \
+                                [::Cawt::TclBool false] \
+                                [::Cawt::TclBool false] \
+                                [::Cawt::TclBool false]
+        }
+    }
+
     proc InsertImage { rangeId imgFileName { linkToFile false } { saveWithDocument false } } {
         # Insert an image into a range of a document.
         #
@@ -1221,7 +1297,7 @@ namespace eval ::Word {
         #
         # Return the identifier of the inserted image.
         #
-        # See also: CropImage
+        # See also: CropImage InsertFile InsertCaption InsertList InsertText
 
 	set fileName [file nativename $imgFileName]
         if { 0 } {
@@ -1268,7 +1344,7 @@ namespace eval ::Word {
         #
         # Return the new extended range.
         #
-        # See also: ConfigureCaption
+        # See also: ConfigureCaption InsertFile InsertImage InsertList InsertText
  
         $rangeId InsertCaption $labelId $text "" [expr $pos] 0
         return $rangeId

@@ -50,16 +50,16 @@ set range3 [::Word::AppendText $docId "This is text with orange underlining colo
 set range4 [::Word::AppendText $docId $msg3 true]
 ::Word::SetRangeFontBold $range4 true
 
-# Generate a text file for testing the hyperlink capabilities.
-set fileName [file join [pwd] "testOut" "Word-03_Text.txt"]
-set fp [open $fileName "w"]
-puts $fp "This is the text file linked from Word."
-close $fp
+# Test inserting different types of list.
+set rangeId [::Word::AppendText $docId "Different types of lists" true]
 
-::Word::AppendParagraph $docId
-set rangeLink [::Word::AppendText $docId "Dummy"]
-::Word::SetHyperlink $rangeLink [format "file://%s" $fileName] "File Link"
-::Word::AppendParagraph $docId
+set listRange [::Word::CreateRangeAfter $rangeId]
+set listRange [::Word::InsertList $listRange [list "Unordered list entry 1" "Unordered list entry 2" "Unordered list entry 3"]]
+
+set listRange [::Word::CreateRangeAfter $listRange]
+set listRange [::Word::InsertList $listRange \
+                   [list "Ordered list entry 1" "Ordered list entry 2" "Ordered list entry 3"] \
+                   $::Word::wdNumberGallery $::Word::wdListListNumOnly]
 
 # Insert lines of text. When we get to 7 inches from top of the
 # document, insert a hard page break.
@@ -79,15 +79,6 @@ set rangeId [::Word::AppendText $docId "This is page 2." true]
 ::Word::AppendParagraph $docId 30
 set rangeId [::Word::AppendText $docId "There must be two paragraphs before this line." true]
 
-set rangeId [::Word::AppendText $docId "Different types of lists" true]
-
-set listRange [::Word::CreateRangeAfter $rangeId]
-set listRange [::Word::InsertList $listRange [list "Unordered list entry 1" "Unordered list entry 2" "Unordered list entry 3"]]
-
-set listRange [::Word::CreateRangeAfter $listRange]
-set listRange [::Word::InsertList $listRange \
-                   [list "Ordered list entry 1" "Ordered list entry 2" "Ordered list entry 3"] \
-                   $::Word::wdNumberGallery $::Word::wdListListNumOnly]
 
 ::Word::SetRangeStartIndex $rangeId "begin"
 ::Word::SetRangeEndIndex   $rangeId 5

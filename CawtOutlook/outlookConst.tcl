@@ -1118,4 +1118,200 @@ namespace eval ::Outlook {
     variable olMaximized 0
     variable olMinimized 1
     variable olNormalWindow 2
+
+    variable enums
+
+    array set enums {
+        OlAccountType { olEas 4 olExchange 0 olHttp 3 olImap 1 olOtherAccount 5 olPop3 2 }
+        OlActionCopyLike { olForward 2 olReply 0 olReplyAll 1 olReplyFolder 3 olRespond 4 }
+        OlActionReplyStyle { olEmbedOriginalItem 1 olIncludeOriginalText 2 olIndentOriginalText 3 olLinkOriginalItem 4 olOmitOriginalText 0 olReplyTickOriginalText 1000 olUserPreference 5 }
+        OlActionResponseStyle { olOpen 0 olPrompt 2 olSend 1 }
+        OlActionShowOn { olDontShow 0 olMenu 1 olMenuAndToolbar 2 }
+        OlAddressEntryUserType { olExchangeAgentAddressEntry 3 olExchangeDistributionListAddressEntry 1 olExchangeOrganizationAddressEntry 4 olExchangePublicFolderAddressEntry 2 olExchangeRemoteUserAddressEntry 5 olExchangeUserAddressEntry 0 olLdapAddressEntry 20 olOtherAddressEntry 40 olOutlookContactAddressEntry 10 olOutlookDistributionListAddressEntry 11 olSmtpAddressEntry 30 }
+        OlAddressListType { olCustomAddressList 4 olExchangeContainer 1 olExchangeGlobalAddressList 0 olOutlookAddressList 2 olOutlookLdapAddressList 3 }
+        OlAlign { olAlignCenter 1 olAlignLeft 0 olAlignRight 2 }
+        OlAlignment { olAlignmentLeft 0 olAlignmentRight 1 }
+        OlAlwaysDeleteConversation { olAlwaysDelete 1 olAlwaysDeleteUnsupported 2 olDoNotDelete 0 }
+        OlAppointmentCopyOptions { olCopyAsAccept 2 olCreateAppointment 1 olPromptUser 0 }
+        OlAppointmentTimeField { olAppointmentTimeFieldEnd 3 olAppointmentTimeFieldNone 1 olAppointmentTimeFieldStart 2 }
+        OlAttachmentBlockLevel { olAttachmentBlockLevelNone 0 olAttachmentBlockLevelOpen 1 }
+        OlAttachmentType { olByReference 4 olByValue 1 olEmbeddeditem 5 olOLE 6 }
+        OlAutoDiscoverConnectionMode { olAutoDiscoverConnectionExternal 1 olAutoDiscoverConnectionInternal 2 olAutoDiscoverConnectionInternalDomain 3 olAutoDiscoverConnectionUnknown 0 }
+        OlAutoPreview { olAutoPreviewAll 0 olAutoPreviewNone 2 olAutoPreviewUnread 1 }
+        OlBackStyle { olBackStyleOpaque 1 olBackStyleTransparent 0 }
+        OlBodyFormat { olFormatHTML 2 olFormatPlain 1 olFormatRichText 3 olFormatUnspecified 0 }
+        OlBorderStyle { olBorderStyleNone 0 olBorderStyleSingle 1 }
+        OlBusinessCardType { olBusinessCardTypeInterConnect 1 olBusinessCardTypeOutlook 0 }
+        OlBusyStatus { olBusy 2 olFree 0 olOutOfOffice 3 olTentative 1 olWorkingElsewhere 4 }
+        OlCalendarDetail { olFreeBusyAndSubject 1 olFreeBusyOnly 0 olFullDetails 2 }
+        OlCalendarMailFormat { olCalendarMailFormatDailySchedule 0 olCalendarMailFormatEventList 1 }
+        OlCalendarViewMode { olCalendarView5DayWeek 4 olCalendarViewDay 0 olCalendarViewMonth 2 olCalendarViewMultiDay 3 olCalendarViewWeek 1 }
+        OlCategoryColor { olCategoryColorBlack 15 olCategoryColorBlue 8 olCategoryColorDarkBlue 23 olCategoryColorDarkGray 14 olCategoryColorDarkGreen 20 olCategoryColorDarkMaroon 25 olCategoryColorDarkOlive 22 olCategoryColorDarkOrange 17 olCategoryColorDarkPeach 18 olCategoryColorDarkPurple 24 olCategoryColorDarkRed 16 olCategoryColorDarkSteel 12 olCategoryColorDarkTeal 21 olCategoryColorDarkYellow 19 olCategoryColorGray 13 olCategoryColorGreen 5 olCategoryColorMaroon 10 olCategoryColorNone 0 olCategoryColorOlive 7 olCategoryColorOrange 2 olCategoryColorPeach 3 olCategoryColorPurple 9 olCategoryColorRed 1 olCategoryColorSteel 11 olCategoryColorTeal 6 olCategoryColorYellow 4 }
+        OlCategoryShortcutKey { olCategoryShortcutKeyCtrlF10 9 olCategoryShortcutKeyCtrlF11 10 olCategoryShortcutKeyCtrlF12 11 olCategoryShortcutKeyCtrlF2 1 olCategoryShortcutKeyCtrlF3 2 olCategoryShortcutKeyCtrlF4 3 olCategoryShortcutKeyCtrlF5 4 olCategoryShortcutKeyCtrlF6 5 olCategoryShortcutKeyCtrlF7 6 olCategoryShortcutKeyCtrlF8 7 olCategoryShortcutKeyCtrlF9 8 olCategoryShortcutKeyNone 0 }
+        OlColor { olAutoColor 0 olColorAqua 15 olColorBlack 1 olColorBlue 13 olColorFuchsia 14 olColorGray 8 olColorGreen 3 olColorLime 11 olColorMaroon 2 olColorNavy 5 olColorOlive 4 olColorPurple 6 olColorRed 10 olColorSilver 9 olColorTeal 7 olColorWhite 16 olColorYellow 12 }
+        OlComboBoxStyle { olComboBoxStyleCombo 0 olComboBoxStyleList 2 }
+        OlContactPhoneNumber { olContactPhoneAssistant 0 olContactPhoneBusiness 1 olContactPhoneBusiness2 2 olContactPhoneBusinessFax 3 olContactPhoneCallback 4 olContactPhoneCar 5 olContactPhoneCompany 6 olContactPhoneHome 7 olContactPhoneHome2 8 olContactPhoneHomeFax 9 olContactPhoneISDN 10 olContactPhoneMobile 11 olContactPhoneOther 12 olContactPhoneOtherFax 13 olContactPhonePager 14 olContactPhonePrimary 15 olContactPhoneRadio 16 olContactPhoneTTYTTD 18 olContactPhoneTelex 17 }
+        OlContextMenu { olAttachmentContextMenu 3 olFolderContextMenu 2 olItemContextMenu 0 olShortcutContextMenu 5 olStoreContextMenu 4 olViewContextMenu 1 }
+        OlDayWeekTimeScale { olTimeScale10Minutes 2 olTimeScale15Minutes 3 olTimeScale30Minutes 4 olTimeScale5Minutes 0 olTimeScale60Minutes 5 olTimeScale6Minutes 1 }
+        OlDaysOfWeek { olFriday 32 olMonday 2 olSaturday 64 olSunday 1 olThursday 16 olTuesday 4 olWednesday 8 }
+        OlDefaultExpandCollapseSetting { olAllCollapsed 1 olAllExpanded 0 olLastViewed 2 }
+        OlDefaultFolders { olFolderCalendar 9 olFolderConflicts 19 olFolderContacts 10 olFolderDeletedItems 3 olFolderDrafts 16 olFolderInbox 6 olFolderJournal 11 olFolderJunk 23 olFolderLocalFailures 21 olFolderManagedEmail 29 olFolderNotes 12 olFolderOutbox 4 olFolderRssFeeds 25 olFolderSentMail 5 olFolderServerFailures 22 olFolderSuggestedContacts 30 olFolderSyncIssues 20 olFolderTasks 13 olFolderToDo 28 olPublicFoldersAllPublicFolders 18 }
+        OlDefaultSelectNamesDisplayMode { olDefaultDelegates 6 olDefaultMail 1 olDefaultMeeting 2 olDefaultMembers 5 olDefaultPickRooms 8 olDefaultSharingRequest 4 olDefaultSingleName 7 olDefaultTask 3 }
+        OlDisplayType { olAgent 3 olDistList 1 olForum 2 olOrganization 4 olPrivateDistList 5 olRemoteUser 6 olUser 0 }
+        OlDownloadState { olFullItem 1 olHeaderOnly 0 }
+        OlDragBehavior { olDragBehaviorDisabled 0 olDragBehaviorEnabled 1 }
+        OlEditorType { olEditorHTML 2 olEditorRTF 3 olEditorText 1 olEditorWord 4 }
+        OlEnterFieldBehavior { olEnterFieldBehaviorRecallSelection 1 olEnterFieldBehaviorSelectAll 0 }
+        OlExchangeConnectionMode { olCachedConnectedDrizzle 600 olCachedConnectedFull 700 olCachedConnectedHeaders 500 olCachedDisconnected 400 olCachedOffline 200 olDisconnected 300 olNoExchange 0 olOffline 100 olOnline 800 }
+        OlExchangeStoreType { olAdditionalExchangeMailbox 4 olExchangeMailbox 1 olExchangePublicFolder 2 olNotExchange 3 olPrimaryExchangeMailbox 0 }
+        OlFlagIcon { olBlueFlagIcon 5 olGreenFlagIcon 3 olNoFlagIcon 0 olOrangeFlagIcon 2 olPurpleFlagIcon 1 olRedFlagIcon 6 olYellowFlagIcon 4 }
+        OlFlagStatus { olFlagComplete 1 olFlagMarked 2 olNoFlag 0 }
+        OlFolderDisplayMode { olFolderDisplayFolderOnly 1 olFolderDisplayNoNavigation 2 olFolderDisplayNormal 0 }
+        OlFormRegionIcon { olFormRegionIconDefault 1 olFormRegionIconEncrypted 9 olFormRegionIconForwarded 5 olFormRegionIconPage 11 olFormRegionIconRead 3 olFormRegionIconRecurring 12 olFormRegionIconReplied 4 olFormRegionIconSigned 8 olFormRegionIconSubmitted 7 olFormRegionIconUnread 2 olFormRegionIconUnsent 6 olFormRegionIconWindow 10 }
+        OlFormRegionMode { olFormRegionCompose 1 olFormRegionPreview 2 olFormRegionRead 0 }
+        OlFormRegionSize { olFormRegionTypeAdjoining 1 olFormRegionTypeSeparate 0 }
+        OlFormRegistry { olDefaultRegistry 0 olFolderRegistry 3 olOrganizationRegistry 4 olPersonalRegistry 2 }
+        OlFormatCurrency { olFormatCurrencyDecimal 1 olFormatCurrencyNonDecimal 2 }
+        OlFormatDateTime { OlFormatDateTimeLongDayDate 5 olFormatDateTimeBestFit 17 olFormatDateTimeLongDate 6 olFormatDateTimeLongDateReversed 7 olFormatDateTimeLongDayDateTime 1 olFormatDateTimeLongTime 15 olFormatDateTimeShortDate 8 olFormatDateTimeShortDateNumOnly 9 olFormatDateTimeShortDateTime 2 olFormatDateTimeShortDayDate 13 olFormatDateTimeShortDayDateTime 3 olFormatDateTimeShortDayMonth 10 olFormatDateTimeShortDayMonthDateTime 4 olFormatDateTimeShortMonthYear 11 olFormatDateTimeShortMonthYearNumOnly 12 olFormatDateTimeShortTime 16 }
+        OlFormatDuration { olFormatDurationLong 2 olFormatDurationLongBusiness 4 olFormatDurationShort 1 olFormatDurationShortBusiness 3 }
+        OlFormatEnumeration { olFormatEnumBitmap 1 olFormatEnumText 2 }
+        OlFormatInteger { olFormatIntegerComputer1 2 olFormatIntegerComputer2 3 olFormatIntegerComputer3 4 olFormatIntegerPlain 1 }
+        OlFormatKeywords { olFormatKeywordsText 1 }
+        OlFormatNumber { olFormatNumber1Decimal 3 olFormatNumber2Decimal 4 olFormatNumberAllDigits 1 olFormatNumberComputer1 6 olFormatNumberComputer2 7 olFormatNumberComputer3 8 olFormatNumberRaw 9 olFormatNumberScientific 5 olFormatNumberTruncated 2 }
+        OlFormatPercent { olFormatPercent1Decimal 2 olFormatPercent2Decimal 3 olFormatPercentAllDigits 4 olFormatPercentRounded 1 }
+        OlFormatSmartFrom { olFormatSmartFromFromOnly 2 olFormatSmartFromFromTo 1 }
+        OlFormatText { olFormatTextText 1 }
+        OlFormatYesNo { olFormatYesNoIcon 4 olFormatYesNoOnOff 2 olFormatYesNoTrueFalse 3 olFormatYesNoYesNo 1 }
+        OlGender { olFemale 1 olMale 2 olUnspecified 0 }
+        OlGridLineStyle { olGridLineDashes 3 olGridLineLargeDots 2 olGridLineNone 0 olGridLineSmallDots 1 olGridLineSolid 4 }
+        OlGroupType { olCustomFoldersGroup 0 olFavoriteFoldersGroup 4 olMyFoldersGroup 1 olOtherFoldersGroup 3 olPeopleFoldersGroup 2 olReadOnlyGroup 6 olRoomsGroup 5 }
+        OlHorizontalLayout { olHorizontalLayoutAlignCenter 1 olHorizontalLayoutAlignLeft 0 olHorizontalLayoutAlignRight 2 olHorizontalLayoutGrow 3 }
+        OlIconViewPlacement { olIconAutoArrange 2 olIconDoNotArrange 0 olIconLineUp 1 olIconSortAndAutoArrange 3 }
+        OlIconViewType { olIconViewLarge 0 olIconViewList 2 olIconViewSmall 1 }
+        OlImportance { olImportanceHigh 2 olImportanceLow 0 olImportanceNormal 1 }
+        OlInspectorClose { olDiscard 1 olPromptForSave 2 olSave 0 }
+        OlItemType { olAppointmentItem 1 olContactItem 2 olDistributionListItem 7 olJournalItem 4 olMailItem 0 olMobileItemMMS 12 olMobileItemSMS 11 olNoteItem 5 olPostItem 6 olTaskItem 3 }
+        OlJournalRecipientType { olAssociatedContact 1 }
+        OlMailRecipientType { olBCC 3 olCC 2 olOriginator 0 olTo 1 }
+        OlMailingAddress { olBusiness 2 olHome 1 olNone 0 olOther 3 }
+        OlMarkInterval { olMarkComplete 5 olMarkNextWeek 3 olMarkNoDate 4 olMarkThisWeek 2 olMarkToday 0 olMarkTomorrow 1 }
+        OlMatchEntry { olMatchEntryComplete 1 olMatchEntryFirstLetter 0 olMatchEntryNone 2 }
+        OlMeetingRecipientType { olOptional 2 olOrganizer 0 olRequired 1 olResource 3 }
+        OlMeetingResponse { olMeetingAccepted 3 olMeetingDeclined 4 olMeetingTentative 2 }
+        OlMeetingStatus { olMeeting 1 olMeetingCanceled 5 olMeetingReceived 3 olMeetingReceivedAndCanceled 7 olNonMeeting 0 }
+        OlMobileFormat { olMMS 1 olSMS 0 }
+        OlMouseButton { olMouseButtonLeft 1 olMouseButtonMiddle 4 olMouseButtonRight 2 }
+        OlMousePointer { olMousePointerAppStarting 13 olMousePointerArrow 1 olMousePointerCross 2 olMousePointerCustom 99 olMousePointerDefault 0 olMousePointerHelp 14 olMousePointerHourGlass 11 olMousePointerIBeam 3 olMousePointerNoDrop 12 olMousePointerSizeAll 15 olMousePointerSizeNESW 6 olMousePointerSizeNS 7 olMousePointerSizeNWSE 8 olMousePointerSizeWE 9 olMousePointerUpArrow 10 }
+        OlMultiLine { olAlwaysMultiLine 2 olAlwaysSingleLine 1 olWidthMultiLine 0 }
+        OlMultiSelect { olMultiSelectExtended 2 olMultiSelectMulti 1 olMultiSelectSingle 0 }
+        OlNavigationModuleType { olModuleCalendar 1 olModuleContacts 2 olModuleFolderList 6 olModuleJournal 4 olModuleMail 0 olModuleNotes 5 olModuleShortcuts 7 olModuleSolutions 8 olModuleTasks 3 }
+        OlNetMeetingType { olExchangeConferencing 2 olNetMeeting 0 olNetShow 1 }
+        OlNoteColor { olBlue 0 olGreen 1 olPink 2 olWhite 4 olYellow 3 }
+        OlObjectClass { olAccount 105 olAccountRuleCondition 135 olAccounts 106 olAction 32 olActions 33 olAddressEntries 21 olAddressEntry 8 olAddressList 7 olAddressLists 20 olAddressRuleCondition 170 olApplication 0 olAppointment 26 olAssignToCategoryRuleAction 122 olAttachment 5 olAttachmentSelection 169 olAttachments 18 olAutoFormatRule 147 olAutoFormatRules 148 olCalendarModule 159 olCalendarSharing 151 olCategories 153 olCategory 152 olCategoryRuleCondition 130 olClassBusinessCardView 168 olClassCalendarView 139 olClassCardView 138 olClassIconView 137 olClassNavigationPane 155 olClassPeopleView 183 olClassTableView 136 olClassTimeLineView 140 olClassTimeZone 174 olClassTimeZones 175 olColumn 154 olColumnFormat 149 olColumns 150 olConflict 102 olConflicts 103 olContact 40 olContactsModule 160 olConversation 178 olConversationHeader 182 olDistributionList 69 olDocument 41 olException 30 olExceptions 29 olExchangeDistributionList 111 olExchangeUser 110 olExplorer 34 olExplorers 60 olFolder 2 olFolders 15 olFormDescription 37 olFormNameRuleCondition 131 olFormRegion 129 olFromRssFeedRuleCondition 173 olFromRuleCondition 132 olImportanceRuleCondition 128 olInspector 35 olInspectors 61 olItemProperties 98 olItemProperty 99 olItems 16 olJournal 42 olJournalModule 162 olLink 75 olLinks 76 olMail 43 olMailModule 158 olMarkAsTaskRuleAction 124 olMeetingCancellation 54 olMeetingForwardNotification 181 olMeetingRequest 53 olMeetingResponseNegative 55 olMeetingResponsePositive 56 olMeetingResponseTentative 57 olMobile 176 olMoveOrCopyRuleAction 118 olNamespace 1 olNavigationFolder 167 olNavigationFolders 166 olNavigationGroup 165 olNavigationGroups 164 olNavigationModule 157 olNavigationModules 156 olNewItemAlertRuleAction 125 olNote 44 olNotesModule 163 olOrderField 144 olOrderFields 145 olOutlookBarGroup 66 olOutlookBarGroups 65 olOutlookBarPane 63 olOutlookBarShortcut 68 olOutlookBarShortcuts 67 olOutlookBarStorage 64 olOutspace 180 olPages 36 olPanes 62 olPlaySoundRuleAction 123 olPost 45 olPropertyAccessor 112 olPropertyPageSite 70 olPropertyPages 71 olRecipient 4 olRecipients 17 olRecurrencePattern 28 olReminder 101 olReminders 100 olRemote 47 olReport 46 olResults 78 olRow 121 olRule 115 olRuleAction 117 olRuleActions 116 olRuleCondition 127 olRuleConditions 126 olRules 114 olSearch 77 olSelectNamesDialog 109 olSelection 74 olSendRuleAction 119 olSenderInAddressListRuleCondition 133 olSharing 104 olSimpleItems 179 olSolutionsModule 177 olStorageItem 113 olStore 107 olStores 108 olSyncObject 72 olSyncObjects 73 olTable 120 olTask 48 olTaskRequest 49 olTaskRequestAccept 51 olTaskRequestDecline 52 olTaskRequestUpdate 50 olTasksModule 161 olTextRuleCondition 134 olUserDefinedProperties 172 olUserDefinedProperty 171 olUserProperties 38 olUserProperty 39 olView 80 olViewField 142 olViewFields 141 olViewFont 146 olViews 79 }
+        OlOfficeDocItemsType { olExcelWorkSheetItem 8 olPowerPointShowItem 10 olWordDocumentItem 9 }
+        OlOutlookBarViewType { olLargeIcon 0 olSmallIcon 1 }
+        OlPageType { olPageTypePlanner 0 olPageTypeTracker 1 }
+        OlPane { olFolderList 2 olNavigationPane 4 olOutlookBar 1 olPreview 3 olToDoBar 5 }
+        OlPermission { olDoNotForward 1 olPermissionTemplate 2 olUnrestricted 0 }
+        OlPermissionService { olPassport 2 olUnknown 0 olWindows 1 }
+        OlPictureAlignment { olPictureAlignmentLeft 0 olPictureAlignmentTop 1 }
+        OlRecipientSelectors { olShowNone 0 olShowTo 1 olShowToCc 2 olShowToCcBcc 3 }
+        OlRecurrenceState { olApptException 3 olApptMaster 1 olApptNotRecurring 0 olApptOccurrence 2 }
+        OlRecurrenceType { olRecursDaily 0 olRecursMonthNth 3 olRecursMonthly 2 olRecursWeekly 1 olRecursYearNth 6 olRecursYearly 5 }
+        OlReferenceType { olStrong 1 olWeak 0 }
+        OlRemoteStatus { olMarkedForCopy 3 olMarkedForDelete 4 olMarkedForDownload 2 olRemoteStatusNone 0 olUnMarked 1 }
+        OlResponseStatus { olResponseAccepted 3 olResponseDeclined 4 olResponseNone 0 olResponseNotResponded 5 olResponseOrganized 1 olResponseTentative 2 }
+        OlRuleActionType { olRuleActionAssignToCategory 2 olRuleActionCcMessage 27 olRuleActionClearCategories 30 olRuleActionCopyToFolder 5 olRuleActionCustomAction 22 olRuleActionDefer 28 olRuleActionDelete 3 olRuleActionDeletePermanently 4 olRuleActionDesktopAlert 24 olRuleActionFlagClear 13 olRuleActionFlagColor 12 olRuleActionFlagForActionInDays 11 olRuleActionForward 6 olRuleActionForwardAsAttachment 7 olRuleActionImportance 14 olRuleActionMarkAsTask 29 olRuleActionMarkRead 19 olRuleActionMoveToFolder 1 olRuleActionNewItemAlert 23 olRuleActionNotifyDelivery 26 olRuleActionNotifyRead 25 olRuleActionPlaySound 17 olRuleActionPrint 16 olRuleActionRedirect 8 olRuleActionRunScript 20 olRuleActionSensitivity 15 olRuleActionServerReply 9 olRuleActionStartApplication 18 olRuleActionStop 21 olRuleActionTemplate 10 olRuleActionUnknown 0 }
+        OlRuleConditionType { olConditionAccount 3 olConditionAnyCategory 29 olConditionBody 13 olConditionBodyOrSubject 14 olConditionCategory 18 olConditionCc 9 olConditionDateRange 22 olConditionFlaggedForAction 8 olConditionFormName 23 olConditionFrom 1 olConditionFromAnyRssFeed 31 olConditionFromRssFeed 30 olConditionHasAttachment 20 olConditionImportance 6 olConditionLocalMachineOnly 27 olConditionMeetingInviteOrUpdate 26 olConditionMessageHeader 15 olConditionNotTo 11 olConditionOOF 19 olConditionOnlyToMe 4 olConditionOtherMachine 28 olConditionProperty 24 olConditionRecipientAddress 16 olConditionSenderAddress 17 olConditionSenderInAddressBook 25 olConditionSensitivity 7 olConditionSentTo 12 olConditionSizeRange 21 olConditionSubject 2 olConditionTo 5 olConditionToOrCc 10 olConditionUnknown 0 }
+        OlRuleExecuteOption { olRuleExecuteAllMessages 0 olRuleExecuteReadMessages 1 olRuleExecuteUnreadMessages 2 }
+        OlRuleType { olRuleReceive 0 olRuleSend 1 }
+        OlSaveAsType { olDoc 4 olHTML 5 olICal 8 olMHTML 10 olMSG 3 olMSGUnicode 9 olRTF 1 olTXT 0 olTemplate 2 olVCal 7 olVCard 6 }
+        OlScrollBars { olScrollBarsBoth 3 olScrollBarsHorizontal 1 olScrollBarsNone 0 olScrollBarsVertical 2 }
+        OlSearchScope { olSearchScopeAllFolders 1 olSearchScopeAllOutlookItems 2 olSearchScopeCurrentFolder 0 olSearchScopeCurrentStore 4 olSearchScopeSubfolders 3 }
+        OlSelectionContents { olConversationHeaders 1 }
+        OlSelectionLocation { olAttachmentWell 4 olDailyTaskList 3 olToDoBarAppointmentList 2 olToDoBarTaskList 1 olViewList 0 }
+        OlSensitivity { olConfidential 3 olNormal 0 olPersonal 1 olPrivate 2 }
+        OlSharingMsgType { olSharingMsgTypeInvite 2 olSharingMsgTypeInviteAndRequest 3 olSharingMsgTypeRequest 1 olSharingMsgTypeResponseAllow 4 olSharingMsgTypeResponseDeny 5 olSharingMsgTypeUnknown 0 }
+        OlSharingProvider { olProviderExchange 1 olProviderFederate 7 olProviderICal 4 olProviderPubCal 3 olProviderRSS 6 olProviderSharePoint 5 olProviderUnknown 0 olProviderWebCal 2 }
+        OlShiftState { olShiftStateAltMask 4 olShiftStateCtrlMask 2 olShiftStateShiftMask 1 }
+        OlShowItemCount { olNoItemCount 0 olShowTotalItemCount 2 olShowUnreadItemCount 1 }
+        OlSolutionScope { olHideInDefaultModules 0 olShowInDefaultModules 1 }
+        OlSortOrder { olAscending 1 olDescending 2 olSortNone 0 }
+        OlSpecialFolders { olSpecialFolderAllTasks 0 olSpecialFolderReminders 1 }
+        OlStorageIdentifierType { olIdentifyByEntryID 1 olIdentifyByMessageClass 2 olIdentifyBySubject 0 }
+        OlStoreType { olStoreANSI 3 olStoreDefault 1 olStoreUnicode 2 }
+        OlSyncState { olSyncStarted 1 olSyncStopped 0 }
+        OlTableContents { olHiddenItems 1 olUserItems 0 }
+        OlTaskDelegationState { olTaskDelegationAccepted 2 olTaskDelegationDeclined 3 olTaskDelegationUnknown 1 olTaskNotDelegated 0 }
+        OlTaskOwnership { olDelegatedTask 1 olNewTask 0 olOwnTask 2 }
+        OlTaskRecipientType { olFinalStatus 3 olUpdate 2 }
+        OlTaskResponse { olTaskAccept 2 olTaskAssign 1 olTaskDecline 3 olTaskSimple 0 }
+        OlTaskStatus { olTaskComplete 2 olTaskDeferred 4 olTaskInProgress 1 olTaskNotStarted 0 olTaskWaiting 3 }
+        OlTextAlign { olTextAlignCenter 2 olTextAlignLeft 1 olTextAlignRight 3 }
+        OlTimeStyle { olTimeStyleShortDuration 4 olTimeStyleTimeDuration 1 olTimeStyleTimeOnly 0 }
+        OlTimelineViewMode { olTimelineViewDay 0 olTimelineViewMonth 2 olTimelineViewWeek 1 }
+        OlTrackingStatus { olTrackingDelivered 1 olTrackingNone 0 olTrackingNotDelivered 2 olTrackingNotRead 3 olTrackingRead 6 olTrackingRecallFailure 4 olTrackingRecallSuccess 5 olTrackingReplied 7 }
+        OlUserPropertyType { olCombination 19 olCurrency 14 olDateTime 5 olDuration 7 olEnumeration 21 olFormula 18 olInteger 20 olKeywords 11 olNumber 3 olOutlookInternal 0 olPercent 12 olSmartFrom 22 olText 1 olYesNo 6 }
+        OlVerticalLayout { olVerticalLayoutAlignBottom 2 olVerticalLayoutAlignMiddle 1 olVerticalLayoutAlignTop 0 olVerticalLayoutGrow 3 }
+        OlViewSaveOption { olViewSaveOptionAllFoldersOfType 2 olViewSaveOptionThisFolderEveryone 0 olViewSaveOptionThisFolderOnlyMe 1 }
+        OlViewType { olBusinessCardView 5 olCalendarView 2 olCardView 1 olDailyTaskListView 6 olIconView 3 olPeopleView 7 olTableView 0 olTimelineView 4 }
+        OlWindowState { olMaximized 0 olMinimized 1 olNormalWindow 2 }
+    }
+
+    proc GetEnumTypes { } {
+        # Return a list of available enumeration types.
+        #
+        # See also: GetEnumNames GetEnumVal GetEnum
+
+        variable enums
+
+        return [lsort [array names enums]]
+    }
+
+    proc GetEnumNames { enum } {
+        # Return a list of names of a given enumeration type.
+        #
+        # See also: GetEnumTypes GetEnumVal GetEnum
+
+        variable enums
+
+        if { [info exists enums($enum)] } {
+            foreach { key val } $enums($enum) {
+                lappend nameList $key
+            }
+            return $nameList
+        } else {
+            return [list]
+        }
+    }
+
+    proc GetEnumVal { enum } {
+        # Return the numeric value of an enumeration name.
+        #
+        # See also: GetEnumTypes GetEnumNames GetEnum
+
+        variable enums
+
+        foreach enumType [GetEnumTypes] {
+            set ind [lsearch -exact $enums($enumType) $enum]
+            if { $ind >= 0 } {
+                return [lindex $enums($enumType) [expr { $ind + 1 }]]
+            }
+        }
+        return ""
+    }
+
+    proc GetEnum { enumOrString } {
+        # Return the numeric value of an enumeration.
+        #
+        # See also: GetEnumTypes GetEnumVal GetEnumNames
+
+        set retVal [catch { expr int($enumOrString) } enumInt]
+        if { $retVal == 0 } {
+            return $enumInt
+        } else {
+            return [GetEnumVal $enumOrString]
+        }
+    }
+
 }

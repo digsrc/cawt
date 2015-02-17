@@ -43,6 +43,16 @@ puts [format "%-30s: %s" "Appl. name (from Application)" \
 puts [format "%-30s: %s" "Appl. name (from Presentation)" \
          [::Cawt::GetApplicationName [::Cawt::GetApplicationId $presId]]]
 
+puts ""
+puts "PowerPoint has [llength [::Ppt::GetEnumTypes]] enumeration types."
+set exampleEnum [lindex [::Ppt::GetEnumTypes] 0]
+puts "  $exampleEnum names : [::Ppt::GetEnumNames $exampleEnum]"
+puts -nonewline "  $exampleEnum values:"
+foreach name [::Ppt::GetEnumNames $exampleEnum] {
+    puts -nonewline " [::Ppt::GetEnumVal $name]"
+}
+
+puts ""
 ::Ppt::Close $presId
 
 if { [lindex $argv 0] eq "auto" } {

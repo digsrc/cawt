@@ -51,7 +51,7 @@ set rangeId [::Excel::SelectCellByIndex $worksheetId 3 1 true]
 set rangeId [::Excel::SelectCellByIndex $worksheetId 4 1 true]
 ::Excel::SetRangeFillColor $rangeId 0 0 255
 ::Excel::SetRangeTextColor $rangeId 255 0 0
-::Excel::SetRangeBorders $rangeId $::Excel::xlThick
+::Excel::SetRangeBorders $rangeId xlThick
 ::Cawt::CheckList [list 0 0 255] [::Excel::GetRangeFillColor $rangeId] "Fill color of cell 4,1"
 
 set rangeId [::Excel::SelectRangeByIndex $worksheetId 5 1 5 1 true]
@@ -61,7 +61,7 @@ set rangeId [::Excel::SelectRangeByIndex $worksheetId 5 1 5 1 true]
 set rangeId [::Excel::SelectRangeByIndex $worksheetId 6 1 7 2 true]
 ::Excel::SetRangeFillColor $rangeId 0 255 0
 ::Excel::SetRangeTextColor $rangeId 0 0 255
-::Excel::SetRangeBorders $rangeId $::Excel::xlThin $::Excel::xlDash
+::Excel::SetRangeBorders $rangeId xlThin xlDash
 
 set rangeId [::Excel::SelectRangeByString $worksheetId "A8:C10" true]
 ::Excel::SetRangeFillColor $rangeId 0 0 255
@@ -84,11 +84,11 @@ puts "  FormulaLocal: [$cell FormulaLocal]"
 
 set rangeId [::Excel::SelectCellByIndex $worksheetId 3 [expr $numCols + 2] true]
 ::Excel::SetRangeFontBold $rangeId true
-::Excel::SetRangeBorders $rangeId $::Excel::xlThin $::Excel::xlContinuous 255 0 0
+::Excel::SetRangeBorders $rangeId xlThin xlContinuous 255 0 0
 
 set rangeId [::Excel::SelectCellByIndex $worksheetId 4 [expr $numCols + 2] true]
 ::Excel::SetRangeFontItalic $rangeId true
-::Excel::SetRangeBorders $rangeId $::Excel::xlThin $::Excel::xlContinuous 0 0 255
+::Excel::SetRangeBorders $rangeId xlThin xlContinuous 0 0 255
 
 set rangeId [::Excel::SelectCellByIndex $worksheetId 5 [expr $numCols + 2] true]
 ::Excel::SetRangeFontSubscript $rangeId true
@@ -106,7 +106,7 @@ set rangeId [::Excel::SelectCellByIndex $worksheetId 8 [expr $numCols + 2] true]
 ::Excel::SetCellValue $worksheetId 1 6 "MergedCells"
 set rangeId [::Excel::SelectRangeByIndex $worksheetId 1 6 2 8 true]
 ::Excel::SetRangeMergeCells $rangeId true
-::Excel::SetRangeBorders $rangeId $::Excel::xlThick
+::Excel::SetRangeBorders $rangeId xlThick
 
 # Test the search capabilities.
 # Search only first 20 rows and columns for an existing string.
@@ -148,10 +148,10 @@ set copyWorksheetId [::Excel::AddWorksheet $workbookId "Copy"]
 ::Excel::CopyWorksheetAfter  $worksheetId $copyWorksheetId "CopyAfter"
 
 # Adjust the page setup of the worksheets.
-::Excel::SetWorksheetOrientation $worksheetId $::Excel::xlLandscape
+::Excel::SetWorksheetOrientation $worksheetId xlLandscape
 ::Excel::SetWorksheetZoom $worksheetId 50
 
-::Excel::SetWorksheetOrientation $copyWorksheetId $::Excel::xlPortrait
+::Excel::SetWorksheetOrientation $copyWorksheetId xlPortrait
 ::Excel::SetWorksheetFitToPages $copyWorksheetId
 
 puts "Saving as Excel file: $xlsFile"

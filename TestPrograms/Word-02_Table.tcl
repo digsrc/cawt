@@ -55,7 +55,7 @@ for { set r 1 } { $r <= $numRows } { incr r } {
 set table(2,Rows) [expr $numRows+2]
 
 ::Word::SetTableBorderLineStyle $table(2,Id)
-::Word::SetTableBorderLineWidth $table(2,Id) $::Word::wdLineWidth300pt
+::Word::SetTableBorderLineWidth $table(2,Id) wdLineWidth300pt
 
 set rowRange [::Word::GetRowRange $table(2,Id) 1]
 ::Word::SetRangeFontBold $rowRange true
@@ -87,7 +87,7 @@ set matrixList [::Word::GetMatrixValues $table(2,Id) 1 1 $numRows $numCols]
 
 ::Word::SetColumnsWidth $table(3,Id) 1 [expr $numCols+1] [::Cawt::InchesToPoints 1.9]
 ::Word::SetTableBorderLineStyle $table(3,Id) \
-        $::Word::wdLineStyleEmboss3D $::Word::wdLineStyleDashDot
+        wdLineStyleEmboss3D wdLineStyleDashDot
 
 # Insert values into empty column starting at row 3.
 set colList [list "Row-3" "Row-4" "Row-5" "Row-6"]

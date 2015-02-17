@@ -230,7 +230,7 @@ namespace eval ::Word {
         #
         # See also: GetStartRange GetEndRange PrintRange
 
-        return [$rangeId Information $type]
+        return [$rangeId Information [::Word::GetEnum $type]]
     }
 
     proc PrintRange { rangeId { msg "Range: " } } {
@@ -354,7 +354,7 @@ namespace eval ::Word {
         # See also: SetRangeFontSize SetRangeFontName
 
         set docId [::Word::GetDocumentId $rangeId]
-        $rangeId Style [$docId -with { Styles } Item [expr $style]]
+        $rangeId Style [$docId -with { Styles } Item [::Word::GetEnum $style]]
         ::Cawt::Destroy $docId
     }
 
@@ -412,7 +412,7 @@ namespace eval ::Word {
         $rangeId -with { Font } Italic [::Cawt::TclInt $onOff]
     }
 
-    proc SetRangeFontUnderline { rangeId { onOff true } { color $::Word::wdColorAutomatic } } {
+    proc SetRangeFontUnderline { rangeId { onOff true } { color wdColorAutomatic } } {
         # Toggle the underline font style of a text range.
         #
         # rangeId - Identifier of the text range.
@@ -426,7 +426,7 @@ namespace eval ::Word {
 
         $rangeId -with { Font } Underline [::Cawt::TclInt $onOff]
         if { $onOff } {
-            $rangeId -with { Font } UnderlineColor [expr $color]
+            $rangeId -with { Font } UnderlineColor [::Word::GetEnum $color]
         }
     }
 
@@ -448,7 +448,7 @@ namespace eval ::Word {
         } elseif { $align eq "right" } {
             set alignEnum $::Word::wdAlignParagraphRight
         } else {
-            set alignEnum $align
+            set alignEnum [::Word::GetEnum $align]
         }
 
         $rangeId -with { ParagraphFormat } Alignment $alignEnum
@@ -464,7 +464,7 @@ namespace eval ::Word {
         #
         # See also: SetRangeBackgroundColorByEnum
 
-        $rangeId HighlightColorIndex $colorEnum
+        $rangeId HighlightColorIndex [::Word::GetEnum $colorEnum]
     }
 
     proc SetRangeBackgroundColorByEnum { rangeId colorEnum } {
@@ -477,7 +477,7 @@ namespace eval ::Word {
         #
         # See also: SetRangeBackgroundColor SetRangeHighlightColorByEnum
 
-        $rangeId -with { Cells Shading } BackgroundPatternColor $colorEnum
+        $rangeId -with { Cells Shading } BackgroundPatternColor [::Word::GetEnum $colorEnum]
     }
 
     proc SetRangeBackgroundColor { rangeId r g b } {
@@ -557,7 +557,7 @@ namespace eval ::Word {
         #
         # See also: GetListTemplateId InsertList
 
-        return [$appId -with { ListGalleries } Item [expr $galleryType]]
+        return [$appId -with { ListGalleries } Item [::Word::GetEnum $galleryType]]
     }
 
     proc GetListTemplateId { galleryId listType } {
@@ -570,12 +570,12 @@ namespace eval ::Word {
         #
         # See also: GetListGalleryId InsertList
 
-        return [$galleryId -with { ListTemplates } Item [expr $listType]]
+        return [$galleryId -with { ListTemplates } Item [::Word::GetEnum $listType]]
     }
 
     proc InsertList { rangeId stringList \
-                      { galleryType $::Word::wdBulletGallery } \
-                      { listType $::Word::wdListListNumOnly } } {
+                      { galleryType wdBulletGallery } \
+                      { listType wdListListNumOnly } } {
         # Insert a Word list.
         #
         # rangeId     - Identifier of the text range.
@@ -861,7 +861,7 @@ namespace eval ::Word {
                 $docId SaveAs $fileName
             }
         } else {
-            $docId SaveAs $fileName $fmt
+            $docId SaveAs $fileName [::Word::GetEnum $fmt]
         }
         ::Cawt::ShowAlerts $appId true
     }
@@ -911,7 +911,7 @@ namespace eval ::Word {
         ::Cawt::ShowAlerts $appId true
     }
 
-    proc SetCompatibilityMode { docId { mode $::Word::wdWord2010 } } {
+    proc SetCompatibilityMode { docId { mode wdWord2010 } } {
         # Set the compatibility mode of a document.
         #
         # docId - Identifier of the document.
@@ -927,7 +927,7 @@ namespace eval ::Word {
         variable wordVersion
 
         if { $wordVersion >= 14.0 } {
-            $docId SetCompatibilityMode [expr $mode]
+            $docId SetCompatibilityMode [::Word::GetEnum $mode]
         }
     }
 
@@ -949,7 +949,7 @@ namespace eval ::Word {
         set docs [$appId Documents]
         # Add([Template], [NewTemplate], [DocumentType], [Visible]) As Document
         set docId [$docs -callnamedargs Add \
-                         DocumentType $type \
+                         DocumentType [::Word::GetEnum $type] \
                          Visible [::Cawt::TclInt $visible]]
         ::Cawt::Destroy $docs
         return $docId
@@ -1077,7 +1077,7 @@ namespace eval ::Word {
         return $rangeId
     }
 
-    proc InsertText { docId text { addParagraph false } { style $::Word::wdStyleNormal } } {
+    proc InsertText { docId text { addParagraph false } { style wdStyleNormal } } {
         # Insert text in a Word document.
         #
         # docId        - Identifier of the document.
@@ -1097,11 +1097,11 @@ namespace eval ::Word {
         if { $addParagraph } {
             $newRange InsertParagraphAfter
         }
-        ::Word::SetRangeStyle $newRange [expr $style]
+        ::Word::SetRangeStyle $newRange $style
         return $newRange
     }
 
-    proc AppendText { docId text { addParagraph false } { style $::Word::wdStyleNormal } } {
+    proc AppendText { docId text { addParagraph false } { style wdStyleNormal } } {
         # Append text to a Word document.
         #
         # docId        - Identifier of the document.
@@ -1120,11 +1120,11 @@ namespace eval ::Word {
         if { $addParagraph } {
             $newRange InsertParagraphAfter
         }
-        ::Word::SetRangeStyle $newRange [expr $style]
+        ::Word::SetRangeStyle $newRange $style
         return $newRange
     }
 
-    proc AddText { rangeId text { addParagraph false } { style $::Word::wdStyleNormal } } {
+    proc AddText { rangeId text { addParagraph false } { style wdStyleNormal } } {
         # Add text to a Word document.
         #
         # rangeId      - Identifier of the text range.
@@ -1144,7 +1144,7 @@ namespace eval ::Word {
         if { $addParagraph } {
             $newRange InsertParagraphAfter
         }
-        ::Word::SetRangeStyle $newRange [expr $style]
+        ::Word::SetRangeStyle $newRange $style
         ::Cawt::Destroy $docId
         return $newRange
     }
@@ -1260,7 +1260,7 @@ namespace eval ::Word {
             $tmpRangeId WholeStory
             $tmpRangeId Copy
 
-            $rangeId PasteAndFormat $pasteFormat
+            $rangeId PasteAndFormat [::Word::GetEnum $pasteFormat]
 
             # Workaround: Select a small portion of text and copy it to clipboard
             # to avoid an alert message regarding lots of data in clipboard.
@@ -1333,7 +1333,7 @@ namespace eval ::Word {
         $imgId -with { PictureFormat } CropRight  $cropRight
     }
 
-    proc InsertCaption { rangeId labelId text { pos $::Word::wdCaptionPositionBelow } } {
+    proc InsertCaption { rangeId labelId text { pos wdCaptionPositionBelow } } {
         # Insert a caption into a range of a document.
         #
         # rangeId - Identifier of the text range.
@@ -1346,13 +1346,13 @@ namespace eval ::Word {
         #
         # See also: ConfigureCaption InsertFile InsertImage InsertList InsertText
  
-        $rangeId InsertCaption $labelId $text "" [expr $pos] 0
+        $rangeId InsertCaption [::Word::GetEnum $labelId] $text "" [::Word::GetEnum $pos] 0
         return $rangeId
     }
 
     proc ConfigureCaption { appId labelId chapterStyleLevel { includeChapterNumber true } \
-                            { numberStyle $::Word::wdCaptionNumberStyleArabic } \
-                            { separator $::Word::wdSeparatorHyphen } } {
+                            { numberStyle wdCaptionNumberStyleArabic } \
+                            { separator wdSeparatorHyphen } } {
         # Configure style of a caption type identified by it's label identifier.
         #
         # appId                - Identifier of the Word instance.
@@ -1367,11 +1367,11 @@ namespace eval ::Word {
         #
         # See also: InsertCaption
 
-        set captionItem [[$appId CaptionLabels] Item $labelId]
+        set captionItem [[$appId CaptionLabels] Item [::Word::GetEnum $labelId]]
         $captionItem ChapterStyleLevel    [expr $chapterStyleLevel]
         $captionItem IncludeChapterNumber [::Cawt::TclBool $includeChapterNumber]
-        $captionItem NumberStyle          [expr $numberStyle]
-        $captionItem Separator            [expr $separator]
+        $captionItem NumberStyle          [::Word::GetEnum $numberStyle]
+        $captionItem Separator            [::Word::GetEnum $separator]
     }
 
     proc AddTable { rangeId numRows numCols { spaceAfter -1 } } {
@@ -1425,8 +1425,8 @@ namespace eval ::Word {
     }
 
     proc SetTableBorderLineStyle { tableId \
-              { outsideLineStyle -1 } \
-              { insideLineStyle  -1 } } {
+              { outsideLineStyle wdLineStyleSingle } \
+              { insideLineStyle  wdLineStyleSingle } } {
         # Set the border line styles of a Word table.
         #
         # tableId          - Identifier of the Word table.
@@ -1438,21 +1438,15 @@ namespace eval ::Word {
         #
         # See also: AddTable SetTableBorderLineWidth
 
-        if { $outsideLineStyle < 0 } {
-            set outsideLineStyle $::Word::wdLineStyleSingle
-        }
-        if { $insideLineStyle < 0 } {
-            set insideLineStyle $::Word::wdLineStyleSingle
-        }
         set border [$tableId Borders]
-        $border OutsideLineStyle $outsideLineStyle
-        $border InsideLineStyle  $insideLineStyle
+        $border OutsideLineStyle [::Word::GetEnum $outsideLineStyle]
+        $border InsideLineStyle  [::Word::GetEnum $insideLineStyle]
         ::Cawt::Destroy $border
     }
 
     proc SetTableBorderLineWidth { tableId \
-              { outsideLineWidth -1 } \
-              { insideLineWidth  -1 } } {
+              { outsideLineWidth wdLineWidth050pt } \
+              { insideLineWidth  wdLineWidth050pt } } {
         # Set the border line widths of a Word table.
         #
         # tableId          - Identifier of the Word table.
@@ -1464,15 +1458,9 @@ namespace eval ::Word {
         #
         # See also: AddTable SetTableBorderLineStyle
 
-        if { $outsideLineWidth < 0 } {
-            set outsideLineWidth $::Word::wdLineWidth050pt
-        }
-        if { $insideLineWidth < 0 } {
-            set insideLineWidth $::Word::wdLineWidth050pt
-        }
         set border [$tableId Borders]
-        $border OutsideLineWidth $outsideLineWidth
-        $border InsideLineWidth  $insideLineWidth
+        $border OutsideLineWidth [::Word::GetEnum $outsideLineWidth]
+        $border InsideLineWidth  [::Word::GetEnum $insideLineWidth]
         ::Cawt::Destroy $border
     }
 

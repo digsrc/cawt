@@ -211,7 +211,7 @@ namespace eval ::Excel {
 
         switch [::Excel::GetVersion $appId] {
             "12.0" {
-                set chartId [[[$worksheetId Shapes] AddChart $chartType] Chart]
+                set chartId [[[$worksheetId Shapes] AddChart [::Excel::GetEnum $chartType]] Chart]
             }
             default {
                 set chartId [$appId -with { Charts } Add]

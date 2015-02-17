@@ -36,6 +36,17 @@ puts [format "%-25s: %s" "User Folder Pathname" \
 puts [format "%-30s: %s" "Appl. name (from Application)" \
          [::Cawt::GetApplicationName $appId]]
 
+puts ""
+puts "Outlook has [llength [::Outlook::GetEnumTypes]] enumeration types."
+set exampleEnum [lindex [::Outlook::GetEnumTypes] end]
+puts "  $exampleEnum names : [::Outlook::GetEnumNames $exampleEnum]"
+puts -nonewline "  $exampleEnum values:"
+foreach name [::Outlook::GetEnumNames $exampleEnum] {
+    puts -nonewline " [::Outlook::GetEnumVal $name]"
+}
+
+puts ""
+
 if { [lindex $argv 0] eq "auto" } {
     ::Outlook::Quit $appId
     ::Cawt::Destroy

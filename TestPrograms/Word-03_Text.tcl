@@ -33,7 +33,7 @@ set range1 [::Word::AppendText $docId $msg1]
 ::Word::SetRangeFontItalic $range1 true
 ::Word::SetRangeFontSize $range1 12
 ::Word::SetRangeFontName $range1 "Courier"
-::Word::SetRangeHighlightColorByEnum $range1 $::Word::wdYellow
+::Word::SetRangeHighlightColorByEnum $range1 wdYellow
 
 # 1 paragraph character + string
 set expectedChars [expr 1 + [string length $msg1]]
@@ -44,7 +44,7 @@ set range2 [::Word::AppendText $docId "This is text with default underlining col
 ::Word::SetRangeFontUnderline $range2
 
 set range3 [::Word::AppendText $docId "This is text with orange underlining color.\n"]
-::Word::SetRangeFontUnderline $range3 true $::Word::wdColorLightOrange
+::Word::SetRangeFontUnderline $range3 true wdColorLightOrange
 
 # Insert a longer piece of text as one paragraph.
 set range4 [::Word::AppendText $docId $msg3 true]
@@ -59,7 +59,7 @@ set listRange [::Word::InsertList $listRange [list "Unordered list entry 1" "Uno
 set listRange [::Word::CreateRangeAfter $listRange]
 set listRange [::Word::InsertList $listRange \
                    [list "Ordered list entry 1" "Ordered list entry 2" "Ordered list entry 3"] \
-                   $::Word::wdNumberGallery $::Word::wdListListNumOnly]
+                   wdNumberGallery wdListListNumOnly]
 
 # Insert lines of text. When we get to 7 inches from top of the
 # document, insert a hard page break.
@@ -67,7 +67,7 @@ set pos [::Cawt::InchesToPoints 7]
 while { true } {
     ::Word::AppendText $docId "More lines of text." true
     set endRange [::Word::GetEndRange $docId]
-    if { $pos < [::Word::GetRangeInformation $endRange $::Word::wdVerticalPositionRelativeToPage] } {
+    if { $pos < [::Word::GetRangeInformation $endRange wdVerticalPositionRelativeToPage] } {
         break
     }
 }

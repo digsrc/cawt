@@ -20,7 +20,7 @@ append inFile [::Word::GetExtString $appId]
 
 # Open an existing document. Set compatibility mode to Word 2003.
 set inDocId  [::Word::OpenDocument $appId $inFile]
-::Word::SetCompatibilityMode $inDocId $::Word::wdWord2003
+::Word::SetCompatibilityMode $inDocId wdWord2003
 
 set range [::Word::GetStartRange $inDocId]
 if { [::Word::GetRangeStartIndex $range] != 0 || \
@@ -50,7 +50,7 @@ set range [::Word::ExtendRange $range 0 end]
                         ::Word::SetRangeFontItalic true
 # TODO This does not work
 #::Word::ReplaceByProc [::Word::GetStartRange $inDocId] "paragraph" \
-#                        ::Word::SetRangeHighlightColorByEnum $::Word::wdYellow
+#                        ::Word::SetRangeHighlightColorByEnum wdYellow
 
 ::Word::InsertText $inDocId "Inserted text at beginning of document\n"
 

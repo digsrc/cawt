@@ -36,7 +36,7 @@ puts "#"
 puts "# Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)"
 puts "# Distributed under BSD license."
 puts ""
-puts "namespace eval ::$nsName {"
+puts "namespace eval ::$nsName \{"
 
 foreach enum [lsort [dict keys $allEnumDict]] {
     puts ""
@@ -48,7 +48,27 @@ foreach enum [lsort [dict keys $allEnumDict]] {
     }
 }
 
-puts "}"
+puts ""
+puts "    variable enums"
+puts ""
+puts "    array set enums \{"
+foreach enum [lsort [dict keys $allEnumDict]] {
+    puts -nonewline "        $enum \{"
+    set enumDict [dict get $allEnumDict $enum]
+    set valueDict [dict get $enumDict "-values"]
+    foreach var [lsort [dict keys $valueDict]] {
+        puts -nonewline " $var [dict get $valueDict $var]"
+    }
+    puts " \}"
+}
+puts "    \}"
+
+set fp [open "constUtilProcs.tcl" "r"]
+puts ""
+puts [read $fp]
+close $fp
+
+puts "\}"
 
 $typeLib Release
 

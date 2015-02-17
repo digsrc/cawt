@@ -34,17 +34,17 @@ set img3Id [::Ppt::InsertImage $slideId3 $imgName \
            [::Cawt::CentiMetersToPoints 6] [::Cawt::CentiMetersToPoints 6]]
 
 # Test switching the ViewType.
-::Ppt::SetViewType $presId $Ppt::ppViewSlide
+::Ppt::SetViewType $presId ppViewSlide
 ::Cawt::CheckNumber $::Ppt::ppViewSlide [::Ppt::GetViewType $presId] "ViewType"
 
-::Ppt::SetViewType $presId $Ppt::ppViewSlideSorter
+::Ppt::SetViewType $presId ppViewSlideSorter
 ::Cawt::CheckNumber $::Ppt::ppViewSlideSorter [::Ppt::GetViewType $presId] "ViewType"
 
 puts "Saving as PowerPoint file: $pptFile"
 ::Ppt::SaveAs $presId $pptFile
 
 puts "Saving as GIF image files: $imgDir"
-::Ppt::SaveAs $presId $imgDir $::Ppt::ppSaveAsGIF
+::Ppt::SaveAs $presId $imgDir ppSaveAsGIF
 
 if { [lindex $argv 0] eq "auto" } {
     ::Ppt::Quit $appId

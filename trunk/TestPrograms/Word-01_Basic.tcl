@@ -43,6 +43,16 @@ puts [format "%-30s: %s" "Appl. name (from Application)" \
 puts [format "%-30s: %s" "Appl. name (from Document)" \
          [::Cawt::GetApplicationName [::Cawt::GetApplicationId $docId]]]
 
+puts ""
+puts "Word has [llength [::Word::GetEnumTypes]] enumeration types."
+set exampleEnum [lindex [::Word::GetEnumTypes] 0]
+puts "  $exampleEnum names : [::Word::GetEnumNames $exampleEnum]"
+puts -nonewline "  $exampleEnum values:"
+foreach name [::Word::GetEnumNames $exampleEnum] {
+    puts -nonewline " [::Word::GetEnumVal $name]"
+}
+
+puts ""
 ::Word::Close $docId
 
 if { [lindex $argv 0] eq "auto" } {

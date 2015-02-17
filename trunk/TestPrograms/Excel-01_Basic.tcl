@@ -78,6 +78,17 @@ for { set col 1 } { $col <= $maxCols } { incr col } {
     ::Cawt::CheckNumber $col $colNum "Convert column indices. Column number $col" false
 }
 
+puts ""
+puts "Excel has [llength [::Excel::GetEnumTypes]] enumeration types."
+set exampleEnum [lindex [::Excel::GetEnumTypes] end]
+puts "  $exampleEnum names : [::Excel::GetEnumNames $exampleEnum]"
+puts -nonewline "  $exampleEnum values:"
+foreach name [::Excel::GetEnumNames $exampleEnum] {
+    puts -nonewline " [::Excel::GetEnumVal $name]"
+}
+
+puts ""
+
 ::Excel::Close $workbookId
 
 if { [lindex $argv 0] eq "auto" } {

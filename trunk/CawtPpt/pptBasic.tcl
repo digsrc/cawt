@@ -225,7 +225,7 @@ namespace eval ::Ppt {
         } else {
             $presId -callnamedargs SaveAs \
                      FileName $fileName \
-                     FileFormat [expr $fmt] \
+                     FileFormat [::Ppt::GetEnum $fmt] \
                      EmbedTrueTypeFonts [::Cawt::TclInt $embedFonts]
         }
         ::Cawt::ShowAlerts $appId true
@@ -300,7 +300,7 @@ namespace eval ::Ppt {
 
         set appId [::Cawt::GetApplicationId $presId]
         set actWin [$appId ActiveWindow]
-        $actWin ViewType $viewType
+        $actWin ViewType [::Ppt::GetEnum $viewType]
         ::Cawt::Destroy $actWin
         ::Cawt::Destroy $appId
     }
@@ -320,7 +320,7 @@ namespace eval ::Ppt {
         return $viewType
     }
 
-    proc AddSlide { presId { type $::Ppt::ppLayoutBlank } { slideIndex -1 } } {
+    proc AddSlide { presId { type ppLayoutBlank } { slideIndex -1 } } {
         # Add a new slide to a presentation.
         #
         # presId     - Identifier of the presentation.
@@ -339,8 +339,9 @@ namespace eval ::Ppt {
 
         variable pptVersion
 
-        set retVal [catch { expr int($type) } typeInt]
-        if { $retVal != 0 } {
+        set typeInt [::Ppt::GetEnum $type]
+        #set retVal [catch { expr int($type) } typeInt]
+        if { $typeInt eq "" } {
             # type seems to be a CustomLayout object.
             if { $pptVersion < 12.0 } {
                 set appId [::Cawt::GetApplicationId $presId]
@@ -352,10 +353,10 @@ namespace eval ::Ppt {
         if { $slideIndex eq "" || $slideIndex < 0 } {
             set slideIndex [expr [::Ppt::GetNumSlides $presId] +1]
         }
-        if { $retVal != 0 } {
+        if { $typeInt eq "" } {
             set newSlide [$presId -with { Slides } AddSlide $slideIndex $type]
         } else {
-            set newSlide [$presId -with { Slides } Add $slideIndex [expr $typeInt]]
+            set newSlide [$presId -with { Slides } Add $slideIndex $typeInt]
         }
         set newSlideIndex [::Ppt::GetSlideIndex $newSlide]
         ::Ppt::ShowSlide $presId $newSlideIndex

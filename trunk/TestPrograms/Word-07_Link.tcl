@@ -50,12 +50,12 @@ set endRange [::Word::GetEndRange $docId]
 puts "Insert external file via PasteAndFormat wdPasteDefault ..."
 ::Word::AppendText $docId "Inserted external file via PasteAndFormat wdPasteDefault" true
 set endRange [::Word::GetEndRange $docId]
-::Word::InsertFile $endRange $inFile $::Word::wdPasteDefault
+::Word::InsertFile $endRange $inFile wdPasteDefault
 
 puts "Insert external file via PasteAndFormat wdFormatOriginalFormatting ..."
 ::Word::AppendText $docId "Inserted external file via PasteAndFormat wdFormatOriginalFormatting" true
 set endRange [::Word::GetEndRange $docId]
-::Word::InsertFile $endRange $inFile $::Word::wdFormatOriginalFormatting
+::Word::InsertFile $endRange $inFile wdFormatOriginalFormatting
 
 # Save document as Word file.
 puts "Saving as Word file: $wordFile"

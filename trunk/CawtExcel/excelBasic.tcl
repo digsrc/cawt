@@ -415,7 +415,7 @@ namespace eval ::Excel {
         #
         # See also: SetRangeVerticalAlignment SelectRangeByIndex SelectRangeByString
 
-        $rangeId HorizontalAlignment [expr $align]
+        $rangeId HorizontalAlignment [::Excel::GetEnum $align]
     }
 
     proc SetRangeVerticalAlignment { rangeId align } {
@@ -428,7 +428,7 @@ namespace eval ::Excel {
         #
         # See also: SetRangeHorizontalAlignment SelectRangeByIndex SelectRangeByString
 
-        $rangeId VerticalAlignment [expr $align]
+        $rangeId VerticalAlignment [::Excel::GetEnum $align]
     }
 
     proc ToggleAutoFilter { rangeId } {
@@ -499,8 +499,8 @@ namespace eval ::Excel {
     }
 
     proc SetRangeBorder { rangeId side \
-                          { weight $::Excel::xlThin } \
-                          { lineStyle $::Excel::xlContinuous } \
+                          { weight xlThin } \
+                          { lineStyle xlContinuous } \
                           { r 0 } { g 0 } { b 0 } } {
         # Set the attributes of one border of a cell range.
         #
@@ -524,14 +524,16 @@ namespace eval ::Excel {
 
         set color [::Cawt::RgbToColor $r $g $b]
         set borders [$rangeId Borders]
-        [$borders Item $side] Weight    [expr $weight]
-        [$borders Item $side] LineStyle [expr $lineStyle]
-        [$borders Item $side] Color     [expr $color]
+        set sideInt [::Excel::GetEnum $side]
+        [$borders Item $sideInt] Weight    [::Excel::GetEnum $weight]
+        [$borders Item $sideInt] LineStyle [::Excel::GetEnum $lineStyle]
+        [$borders Item $sideInt] Color     $color
+        ::Cawt::Destroy $borders
     }
 
     proc SetRangeBorders { rangeId \
-                          { weight $::Excel::xlThin } \
-                          { lineStyle $::Excel::xlContinuous } \
+                          { weight xlThin } \
+                          { lineStyle xlContinuous } \
                           { r 0 } { g 0 } { b 0 } } {
         # Set the attributes of all borders of a cell range.
         #
@@ -551,10 +553,10 @@ namespace eval ::Excel {
         #
         # See also: SetRangeBorder SelectRangeByIndex SelectRangeByString
 
-        ::Excel::SetRangeBorder $rangeId $::Excel::xlEdgeLeft   $weight $lineStyle $r $g $b
-        ::Excel::SetRangeBorder $rangeId $::Excel::xlEdgeRight  $weight $lineStyle $r $g $b
-        ::Excel::SetRangeBorder $rangeId $::Excel::xlEdgeBottom $weight $lineStyle $r $g $b
-        ::Excel::SetRangeBorder $rangeId $::Excel::xlEdgeTop    $weight $lineStyle $r $g $b
+        ::Excel::SetRangeBorder $rangeId xlEdgeLeft   $weight $lineStyle $r $g $b
+        ::Excel::SetRangeBorder $rangeId xlEdgeRight  $weight $lineStyle $r $g $b
+        ::Excel::SetRangeBorder $rangeId xlEdgeBottom $weight $lineStyle $r $g $b
+        ::Excel::SetRangeBorder $rangeId xlEdgeTop    $weight $lineStyle $r $g $b
     }
 
     proc SetRangeFormat { rangeId fmt { subFmt "" } } {
@@ -846,7 +848,7 @@ namespace eval ::Excel {
         $appId ScreenUpdating [::Cawt::TclBool $onOff]
     }
 
-    proc SetWindowState { appId { windowState $::Excel::xlNormal } } {
+    proc SetWindowState { appId { windowState xlNormal } } {
         # Set the window state of an Excel application.
         #
         # appId       - Identifier of the Excel instance.
@@ -857,10 +859,10 @@ namespace eval ::Excel {
         #
         # See also: Open Visible ArrangeWindows
 
-        $appId -with { Application } WindowState [expr $windowState]
+        $appId -with { Application } WindowState [::Excel::GetEnum $windowState]
     }
 
-    proc ArrangeWindows { appId { arrangeStyle $::Excel::xlArrangeStyleVertical } } {
+    proc ArrangeWindows { appId { arrangeStyle xlArrangeStyleVertical } } {
         # Arrange the windows of an Excel application.
         #
         # appId        - Identifier of the Excel instance.
@@ -872,7 +874,7 @@ namespace eval ::Excel {
         #
         # See also: Open Visible SetWindowState
 
-        $appId -with { Windows } Arrange [expr $arrangeStyle]
+        $appId -with { Windows } Arrange [::Excel::GetEnum $arrangeStyle]
     }
 
     proc Close { workbookId } {
@@ -917,7 +919,7 @@ namespace eval ::Excel {
             # [TextVisualLayout], [Local])
             $workbookId -callnamedargs SaveAs \
                         FileName $fileName \
-                        FileFormat [expr $fmt] \
+                        FileFormat [::Excel::GetEnum $fmt] \
                         CreateBackup [::Cawt::TclInt $backup]
         }
         ::Cawt::ShowAlerts $appId true
@@ -946,7 +948,7 @@ namespace eval ::Excel {
         ::Cawt::ShowAlerts $appId true
     }
 
-    proc AddWorkbook { appId { type $::Excel::xlWorksheet } } {
+    proc AddWorkbook { appId { type xlWorksheet } } {
         # Add a new workbook with 1 worksheet.
         #
         # appId - Identifier of the Excel instance.
@@ -958,7 +960,7 @@ namespace eval ::Excel {
         #
         # See also: OpenWorkbook Close SaveAs
 
-        return [$appId -with { Workbooks } Add [expr $type]]
+        return [$appId -with { Workbooks } Add [::Excel::GetEnum $type]]
     }
 
     proc OpenWorkbook { appId fileName { readOnly false } } {
@@ -1031,7 +1033,7 @@ namespace eval ::Excel {
         }
     }
 
-    proc AddWorksheet { workbookId name { visibleType $::Excel::xlSheetVisible } } {
+    proc AddWorksheet { workbookId name { visibleType xlSheetVisible } } {
         # Add a new worksheet to the end of a workbook.
         #
         # workbookId  - Identifier of the workbook containing the new worksheet.
@@ -1047,7 +1049,7 @@ namespace eval ::Excel {
         set lastWorksheet [$worksheets Item [$worksheets Count]]
         set worksheetId [$worksheets Add]
         $worksheetId Name $name
-        $worksheetId Visible [expr $visibleType]
+        $worksheetId Visible [::Excel::GetEnum $visibleType]
         ::Cawt::Destroy $worksheets
         return $worksheetId
     }
@@ -1391,7 +1393,7 @@ namespace eval ::Excel {
         #
         # See also: AddWorksheet
 
-        $worksheetId -with { PageSetup } Orientation $orientation
+        $worksheetId -with { PageSetup } Orientation [::Excel::GetEnum $orientation]
     }
 
     proc SetWorksheetFitToPages { worksheetId { wide 1 } { tall 1 } } {

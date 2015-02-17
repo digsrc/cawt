@@ -50,14 +50,14 @@ for { set s 1 } { $s <= $numTestSuites } { incr s } {
     # Add test suite name as heading type 1.
     set title [format $testSuiteTmpl $s]
     set titleRange [::Word::AppendText $docId $title true]
-    ::Word::SetRangeStyle $titleRange $::Word::wdStyleHeading1
+    ::Word::SetRangeStyle $titleRange wdStyleHeading1
     #::Word::AppendParagraph $docId
     ::Word::AppendText $docId "Test cases of test suite $s\n"
     for { set t 1 } { $t <= $numTestCases } { incr t } {
         # Add test case name as heading type 2.
         set title [format $testCaseTmpl $t]
         set titleRange [::Word::AppendText $docId $title]
-        ::Word::SetRangeStyle $titleRange $::Word::wdStyleHeading2
+        ::Word::SetRangeStyle $titleRange wdStyleHeading2
         set titleRange [::Word::AppendParagraph $docId]
 
         # Add test result.
@@ -69,7 +69,7 @@ for { set s 1 } { $s <= $numTestSuites } { incr s } {
             incr numTestsFail
         }
         set result [format $testResultTmpl $success]
-        set resultRange [::Word::AppendText $docId $result true $::Word::wdStyleBodyText]
+        set resultRange [::Word::AppendText $docId $result true wdStyleBodyText]
         set bookmarkIds($s.$t) [::Word::AddBookmark $resultRange "Bookmark-$s-$t"]
 
         # Add the image related to current test case via the clipboard.
@@ -95,14 +95,14 @@ for { set s 1 } { $s <= $numTestSuites } { incr s } {
 set summaryRange [::Word::GetStartRange $docId]
 ::Word::ReplaceString $summaryRange "%SUMMARY%" "Summary of performed tests"
 set summaryRange [::Word::AddParagraph $summaryRange]
-::Word::SetRangeStyle $summaryRange $::Word::wdStyleHeading1
+::Word::SetRangeStyle $summaryRange wdStyleHeading1
 
 set summary "\n"
 append summary "Number of test suites     : $numTestSuites\n"
 append summary "Number of test cases      : $numTests\n"
 append summary "Number of successful tests: $numTestsOk\n"
 append summary "Number of failed tests    : $numTestsFail\n"
-set sumRange [::Word::AddText $summaryRange $summary false $::Word::wdStylePlainText]
+set sumRange [::Word::AddText $summaryRange $summary false wdStylePlainText]
 set sumRange [::Word::AddParagraph $sumRange]
 
 ::Word::SelectRange $sumRange

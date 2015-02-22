@@ -85,7 +85,7 @@ namespace eval ::Word {
     }
 
     proc DiffWordFiles { wordBaseFile wordNewFile } {
-        # Compare 2 Word files visually.
+        # Compare two Word files visually.
         #
         # wordBaseFile - Name of the base Word file.
         # wordNewFile  - Name of the new Word file.

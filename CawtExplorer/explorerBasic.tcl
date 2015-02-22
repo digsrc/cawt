@@ -45,7 +45,7 @@ namespace eval ::Explorer {
     }
 
     proc Open { { visible true } { width -1 } { height -1 } } {
-        # Open an Internet Explorer instance.
+        # Open an Internet Explorer instance. Use an already running instance, if available.
         # Use an already running Internet Explorer, if available.
         #
         # visible - true: Show the application window.
@@ -71,7 +71,7 @@ namespace eval ::Explorer {
     }
 
     proc Quit { appId } {
-        # Quit a Internet Explorer application instance.
+        # Quit an Internet Explorer instance.
         #
         # appId - Identifier of the Internet Explorer instance.
         #
@@ -83,7 +83,7 @@ namespace eval ::Explorer {
     }
 
     proc Visible { appId visible } {
-        # Toggle the visibilty of an Internet Explorer application window.
+        # Toggle the visibility of an Internet Explorer application window.
         #
         # appId   - Identifier of the Internet Explorer instance.
         # visible - true: Show the application window.

@@ -776,7 +776,7 @@ namespace eval ::Excel {
     }
 
     proc Open { { visible true } { width -1 } { height -1 } } {
-        # Open an Excel instance. Use an already running Excel, if available.
+        # Open an Excel instance. Use an already running instance, if available.
         #
         # visible - true: Show the application window.
         #           false: Hide the application window.
@@ -804,7 +804,7 @@ namespace eval ::Excel {
     }
 
     proc Quit { appId { showAlert true } } {
-        # Quit an Excel application instance.
+        # Quit an Excel instance.
         #
         # appId     - Identifier of the Excel instance.
         # showAlert - true: Show an alert window, if there are unsaved changes.
@@ -821,7 +821,7 @@ namespace eval ::Excel {
     }
 
     proc Visible { appId visible } {
-        # Toggle the visibilty of an Excel application window.
+        # Toggle the visibility of an Excel application window.
         #
         # appId   - Identifier of the Excel instance.
         # visible - true: Show the application window.
@@ -949,7 +949,7 @@ namespace eval ::Excel {
     }
 
     proc AddWorkbook { appId { type xlWorksheet } } {
-        # Add a new workbook with 1 worksheet.
+        # Add a new workbook with one worksheet.
         #
         # appId - Identifier of the Excel instance.
         # type  - Value of enumeration type XlSheetType (see excelConst.tcl).
@@ -964,7 +964,7 @@ namespace eval ::Excel {
     }
 
     proc OpenWorkbook { appId fileName { readOnly false } } {
-        # Open a workbook, i.e load an Excel file.
+        # Open a workbook, i.e. load an Excel file.
         #
         # appId    - Identifier of the Excel instance.
         # fileName - Name of the Excel file (as absolute path).
@@ -1082,7 +1082,7 @@ namespace eval ::Excel {
     }
 
     proc DeleteWorksheetByIndex { workbookId index } {
-        # Delete a worksheet identified by it's index.
+        # Delete a worksheet identified by its index.
         #
         # workbookId - Identifier of the workbook containing the worksheet.
         # index      - Index of the worksheet to delete.
@@ -1226,7 +1226,7 @@ namespace eval ::Excel {
     }
 
     proc GetWorksheetIdByIndex { workbookId index { activate true } } {
-        # Find a worksheet by it's index.
+        # Find a worksheet by its index.
         #
         # workbookId - Identifier of the workbook containing the worksheet.
         # index      - Index of the worksheet to find.
@@ -1257,7 +1257,7 @@ namespace eval ::Excel {
     }
 
     proc GetWorksheetIdByName { workbookId worksheetName { activate true } } {
-        # Find a worksheet by it's name.
+        # Find a worksheet by its name.
         #
         # workbookId    - Identifier of the workbook containing the worksheet.
         # worksheetName - Name of the worksheet to find.
@@ -1287,7 +1287,7 @@ namespace eval ::Excel {
     }
 
     proc GetWorksheetIndexByName { workbookId worksheetName { activate true } } {
-        # Find a worksheet index by it's name.
+        # Find a worksheet index by its name.
         #
         # workbookId    - Identifier of the workbook containing the worksheet.
         # worksheetName - Name of the worksheet to find.
@@ -1509,7 +1509,7 @@ namespace eval ::Excel {
     }
 
     proc SelectCellByIndex { worksheetId row col { visSel false } } {
-        # Select a cell by it's row/column index.
+        # Select a cell by its row/column index.
         #
         # worksheetId - Identifier of the worksheet.
         # row         - Row number. Row numbering starts with 1.
@@ -1525,7 +1525,7 @@ namespace eval ::Excel {
     }
 
     proc ShowCellByIndex { worksheetId row col } {
-        # Show a cell identified by it's row/column index.
+        # Show a cell identified by its row/column index.
         #
         # worksheetId - Identifier of the worksheet.
         # row         - Row number. Row numbering starts with 1.
@@ -1549,7 +1549,7 @@ namespace eval ::Excel {
     }
 
     proc FreezePanes { worksheetId row col { onOff true } } {
-        # Freeze a range in a worksheet identified by it's row/column index.
+        # Freeze a range in a worksheet identified by its row/column index.
         #
         # worksheetId - Identifier of the worksheet.
         # row         - Row number. Row numbering starts with 1.

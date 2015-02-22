@@ -730,7 +730,7 @@ namespace eval ::Word {
     }
 
     proc Open { { visible true } { width -1 } { height -1 } } {
-        # Open a Word instance. Use an already running Word, if available.
+        # Open a Word instance. Use an already running instance, if available.
         #
         # visible - true: Show the application window.
         #           false: Hide the application window.
@@ -757,7 +757,7 @@ namespace eval ::Word {
     }
 
     proc Quit { appId { showAlert true } } {
-        # Quit a Word application instance.
+        # Quit a Word instance.
         #
         # appId     - Identifier of the Word instance.
         # showAlert - true: Show an alert window, if there are unsaved changes.
@@ -774,7 +774,7 @@ namespace eval ::Word {
     }
 
     proc Visible { appId visible } {
-        # Toggle the visibilty of a Word application window.
+        # Toggle the visibility of a Word application window.
         #
         # appId   - Identifier of the Word instance.
         # visible - true: Show the application window.
@@ -966,7 +966,7 @@ namespace eval ::Word {
     }
 
     proc OpenDocument { appId fileName { readOnly false } } {
-        # Open a document, i.e load a Word file.
+        # Open a document, i.e. load a Word file.
         #
         # appId    - Identifier of the Word instance.
         # fileName - Name of the Word file.
@@ -1001,7 +1001,7 @@ namespace eval ::Word {
     }
 
     proc GetDocumentIdByIndex { appId index } {
-        # Find a document by it's index.
+        # Find a document by its index.
         #
         # appId - Identifier of the Word instance.
         # index - Index of the document to find.
@@ -1353,7 +1353,7 @@ namespace eval ::Word {
     proc ConfigureCaption { appId labelId chapterStyleLevel { includeChapterNumber true } \
                             { numberStyle wdCaptionNumberStyleArabic } \
                             { separator wdSeparatorHyphen } } {
-        # Configure style of a caption type identified by it's label identifier.
+        # Configure style of a caption type identified by its label identifier.
         #
         # appId                - Identifier of the Word instance.
         # labelId              - Value of enumeration type WdCaptionLabelID. 
@@ -1406,7 +1406,7 @@ namespace eval ::Word {
     }
 
     proc GetTableIdByIndex { docId index } {
-        # Find a table by it's index.
+        # Find a table by its index.
         #
         # docId - Identifier of the document.
         # index - Index of the table to find.

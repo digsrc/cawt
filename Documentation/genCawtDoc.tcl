@@ -44,6 +44,8 @@ if { $option eq "ref" || $option eq "all" } {
 if { $option eq "user" || $option eq "all" } {
     cd $docDir
 
+    set refUrl "http://www.posoft.de/download/extensions/Cawt/CawtReference.html"
+
     puts "Generating user manual from Word and PowerPoint files ..."
     set pptInFile  [file join [pwd] "UserManual" "CawtFigures.ppt"]
     set wordInFile [file join [pwd] "UserManual" "CawtManualTemplate.doc"]
@@ -59,6 +61,7 @@ if { $option eq "user" || $option eq "all" } {
 
     # Copy the user manual template to new location and name.
     # Open the user manual template and perform the following actions:
+    #   Fill module specific reference tables.
     #   Insert a table with the test programs available (from folder TestPrograms).
     #   Insert the generated figures replacing the placeholder text.
     # Then save the finished user manual in the Final folder.
@@ -67,15 +70,65 @@ if { $option eq "user" || $option eq "all" } {
     set docId [::Word::OpenDocument $wordId $userManFile false]
     ::Word::SetCompatibilityMode $docId $::Word::wdWord2003
 
-    set placeHolder "%TABLE TestPrograms%"
     set numTables [::Word::GetNumTables $docId]
+
+    for { set n 1 } { $n <= $numTables } {incr n } {
+        set tableId [::Word::GetTableIdByIndex $docId $n]
+        # Placeholder must be listed in row 2, column 1.
+        set cellCont [::Word::GetCellValue $tableId 2 1]
+        foreach module [list "Cawt" "Earth" "Excel" "Explorer" "Matlab" "Ocr" "Outlook" "Ppt" "Word"] {
+            if { $cellCont eq "%TABLE ${module}%" } {
+                puts "    Replacing table \"%TABLE ${module}%\" with procedure reference list ..."
+                set procList [lsort -dictionary [info commands ${module}::*]]
+                set procFullNameList  [list]
+                set procShortNameList [list]
+                foreach procFullName $procList {
+                    set procShortName [lindex [split $procFullName ":"] end]
+                    if { [string match "_*" $procShortName] } {
+                        # Internal procedures start with "_". Do not add to table.
+                        continue
+                    }
+                    lappend procFullNameList  $procFullName
+                    lappend procShortNameList $procShortName
+                }
+                set numRows [::Word::GetNumRows $tableId]
+                set missingRows [expr [llength $procFullNameList] - $numRows +1]
+                for { set r 1 } { $r <= $missingRows } {incr r } {
+                    ::Word::AddRow $tableId
+                }
+                set row 2
+                foreach procFullName $procFullNameList procShortName $procShortNameList {
+                    set procBody [info body $procFullName]
+                    set description "N/A"
+                    set strBegin [string first "#" $procBody]
+                    if { $strBegin >= 0 } {
+                        set strEnd [string first "\n" $procBody [expr { $strBegin + 1 }]]
+                        if { $strEnd > $strBegin } {
+                            set description [string range $procBody [expr { $strBegin + 1 }] [expr { $strEnd - 1 }]]
+                        } else {
+                            set description [string range $procBody [expr { $strBegin + 1 }] end]
+                        }
+                    }
+                    set description [string trim $description]
+                    ::Word::SetCellValue $tableId $row 1 $procShortName
+                    set rangeId [::Word::GetCellRange $tableId $row 1]
+                    set url [format "%s#%s" $refUrl $procFullName]
+                    ::Word::SetHyperlink $rangeId $url $procShortName
+                    ::Word::SetCellValue $tableId $row 2 $description
+                    incr row
+                }
+            }
+        }
+    }
+
+    set placeHolder "%TABLE TestPrograms%"
     set foundPlaceHolder false
     for { set n 1 } { $n <= $numTables } {incr n } {
         set tableId [::Word::GetTableIdByIndex $docId $n]
         # Placeholder must be listed in row 2, column 1.
         set cellCont [::Word::GetCellValue $tableId 2 1]
         if { $cellCont eq $placeHolder } {
-            puts "    Replacing placeholder \"$placeHolder\" with list of test programs."
+            puts "    Replacing table \"$placeHolder\" with list of test programs ..."
             set testFileList [lsort [glob -directory $testDir Earth* Excel* Explorer* Matlab* Outlook* Ocr* Ppt* Word*]]
             set numRows [::Word::GetNumRows $tableId]
             set missingRows [expr [llength $testFileList] - $numRows +1]

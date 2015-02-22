@@ -4,7 +4,7 @@
 namespace eval ::Cawt {
 
     proc CheckString { expected value msg { printCheck true } } {
-        # Check, if 2 string values are identical.
+        # Check, if two string values are identical.
         #
         # expected   - Expected string value.
         # value      - Test string value.
@@ -27,7 +27,7 @@ namespace eval ::Cawt {
     }
 
     proc CheckNumber { expected value msg { printCheck true } } {
-        # Check, if 2 numerical values are identical.
+        # Check, if two numerical values are identical.
         #
         # expected   - Expected numeric value.
         # value      - Test numeric value.
@@ -50,7 +50,7 @@ namespace eval ::Cawt {
     }
 
     proc CheckList { expected value msg { printCheck true } } {
-        # Check, if 2 lists are identical.
+        # Check, if two lists are identical.
         #
         # expected   - Expected list.
         # value      - Test list.
@@ -81,7 +81,7 @@ namespace eval ::Cawt {
     }
 
     proc CheckMatrix { expected value msg { printCheck true } } {
-        # Check, if 2 matrices are identical.
+        # Check, if two matrices are identical.
         #
         # expected   - Expected matrix.
         # value      - Test matrix.

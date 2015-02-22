@@ -12,7 +12,7 @@ namespace eval ::Outlook {
     }
 
     proc GetVersion { appId { useString false } } {
-        # Return the version of a Outlook application.
+        # Return the version of an Outlook application.
         #
         # appId     - Identifier of the Outlook instance.
         # useString - true: Return the version name (ex. "Outlook 2000").
@@ -73,7 +73,7 @@ namespace eval ::Outlook {
     }
 
     proc Open { { width -1 } { height -1 } } {
-        # Open a Outlook instance. Use an already running Outlook, if available.
+        # Open an Outlook instance. Use an already running instance, if available.
         #
         # width   - Width of the application window. If negative, open with last used width.
         # height  - Height of the application window. If negative, open with last used height.
@@ -97,7 +97,7 @@ namespace eval ::Outlook {
     }
 
     proc Quit { appId { showAlert true } } {
-        # Quit a Outlook application instance.
+        # Quit an Outlook instance.
         #
         # appId     - Identifier of the Outlook instance.
         # showAlert - true: Show an alert window, if there are unsaved changes.

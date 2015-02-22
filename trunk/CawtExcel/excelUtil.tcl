@@ -56,7 +56,7 @@ namespace eval ::Excel {
     }
 
     proc DiffExcelFiles { excelBaseFile excelNewFile { r 255 } { g 0 } { b 0 } } {
-        # Compare 2 Excel files visually.
+        # Compare two Excel files visually.
         #
         # excelBaseFile - Name of the base Excel file.
         # excelNewFile  - Name of the new Excel file.
@@ -306,7 +306,8 @@ namespace eval ::Excel {
         #
         # No return value.
         #
-        # See also: WorksheetToImg ImgToClipboard RawImageFileToWorksheet SetRowHeight SetColumnWidth
+        # See also: WorksheetToImg UseImgTransparency
+        #           ImgToClipboard RawImageFileToWorksheet SetRowHeight SetColumnWidth
 
         variable sUseTransparency
 
@@ -355,7 +356,8 @@ namespace eval ::Excel {
         #
         # Return the photo image identifier.
         #
-        # See also: ImgToWorksheet ImgToClipboard RawImageFileToWorksheet
+        # See also: ImgToWorksheet UseImgTransparency
+        #           ImgToClipboard RawImageFileToWorksheet
         #           GetLastUsedRow GetLastUsedColumn
 
         variable sUseTransparency
@@ -398,6 +400,12 @@ namespace eval ::Excel {
     }
     
     proc UseImgTransparency { onOff } {
+        # Toggle usage of transparency channel of an image.
+        #
+        # Only valid for ImgToWorksheet and WorksheetToImg procedures.
+        #
+        # See also: ImgToWorksheet WorksheetToImg
+
         variable sUseTransparency
 
         set sUseTransparency $onOff

@@ -28,7 +28,7 @@ namespace eval ::Matlab {
     }
 
     proc Open { { visible true } } {
-        # Open a Matlab instance. Use an already running Matlab, if available.
+        # Open a Matlab instance. Use an already running instance, if available.
         #
         # visible - true: Show the application window.
         #           false: Hide the application window.
@@ -45,7 +45,7 @@ namespace eval ::Matlab {
     }
 
     proc Visible { appId visible } {
-        # Toggle the visibilty of a Matlab application window.
+        # Toggle the visibility of a Matlab application window.
         #
         # appId   - Identifier of the Matlab instance.
         # visible - true: Show the application window.
@@ -59,7 +59,7 @@ namespace eval ::Matlab {
     }
 
     proc Quit { appId } {
-        # Quit a Matlab application instance.
+        # Quit a Matlab instance.
         #
         # appId - Identifier of the Matlab instance.
         #

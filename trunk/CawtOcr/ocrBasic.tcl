@@ -79,7 +79,7 @@ namespace eval ::Ocr {
     }
 
     proc GetFullText { layoutId } {
-        # Return the recognized text of a OCR layout.
+        # Return the recognized text of an OCR layout.
         #
         # layoutId - Identifier of the OCR layout.
         #

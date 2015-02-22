@@ -26,7 +26,7 @@ namespace eval ::Earth {
     }
 
     proc Open {} {
-        # Open a GoogleEarth instance. Use an already running GoogleEarth, if available.
+        # Open a GoogleEarth instance. Use an already running instance, if available.
         #
         # Return the identifier of the GoogleEarth application instance.
         #
@@ -39,7 +39,7 @@ namespace eval ::Earth {
     }
 
     proc Quit { appId } {
-        # Quit a GoogleEarth application instance.
+        # Quit a GoogleEarth instance.
         #
         # appId - Identifier of the GoogleEarth instance.
         #

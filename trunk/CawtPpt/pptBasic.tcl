@@ -108,7 +108,7 @@ namespace eval ::Ppt {
     }
 
     proc Open { { width -1 } { height -1 } } {
-        # Open a PowerPoint instance. Use an already running PowerPoint, if available.
+        # Open a PowerPoint instance. Use an already running instance, if available.
         #
         # width   - Width of the application window. If negative, open with last used width.
         # height  - Height of the application window. If negative, open with last used height.
@@ -133,7 +133,7 @@ namespace eval ::Ppt {
     }
 
     proc Quit { appId { showAlert true } } {
-        # Quit a PowerPoint application instance.
+        # Quit a PowerPoint instance.
         #
         # appId     - Identifier of the PowerPoint instance.
         # showAlert - true: Show an alert window, if there are unsaved changes.
@@ -150,7 +150,7 @@ namespace eval ::Ppt {
     }
 
     proc Visible { appId visible } {
-        # Toggle the visibilty of a PowerPoint application window.
+        # Toggle the visibility of a PowerPoint application window.
         #
         # appId   - Identifier of the PowerPoint instance.
         # visible - true: Show the application window.
@@ -251,7 +251,7 @@ namespace eval ::Ppt {
     }
 
     proc OpenPres { appId fileName { readOnly false } } {
-        # Open a presentation, i.e load a PowerPoint file.
+        # Open a presentation, i.e. load a PowerPoint file.
         #
         # appId    - Identifier of the PowerPoint instance.
         # fileName - Name of the PowerPoint file (as absolute path).
@@ -572,7 +572,7 @@ namespace eval ::Ppt {
     }
 
     proc SlideShowNext { slideShowId } {
-        # Goto next slide in slide show.
+        # Go to next slide in slide show.
         #
         # slideShowId - Identifier of the slide show.
         #
@@ -584,7 +584,7 @@ namespace eval ::Ppt {
     }
 
     proc SlideShowPrev { slideShowId } {
-        # Goto previous slide in slide show.
+        # Go to previous slide in slide show.
         #
         # slideShowId - Identifier of the slide show.
         #
@@ -596,7 +596,7 @@ namespace eval ::Ppt {
     }
 
     proc SlideShowFirst { slideShowId } {
-        # Goto first slide in slide show.
+        # Go to first slide in slide show.
         #
         # slideShowId - Identifier of the slide show.
         #
@@ -608,7 +608,7 @@ namespace eval ::Ppt {
     }
 
     proc SlideShowLast { slideShowId } {
-        # Goto last slide in slide show.
+        # Go to last slide in slide show.
         #
         # slideShowId - Identifier of the slide show.
         #
@@ -675,7 +675,7 @@ namespace eval ::Ppt {
     }
 
     proc GetCustomLayoutId { presId indexOrName } {
-        # Get a custom layout by it's index or name.
+        # Get a custom layout by its index or name.
         #
         # presId      - Identifier of the presentation containing the custom layout.
         # indexOrName - Index or name of the custom layout to find.

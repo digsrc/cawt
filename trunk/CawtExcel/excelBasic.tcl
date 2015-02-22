@@ -1713,35 +1713,44 @@ namespace eval ::Excel {
         ::Cawt::Destroy $destRangeId
     }
 
-    proc InsertImage { worksheetId imgFileName { row 1 } { col 1 } } {
+    proc InsertImage { worksheetId imgFileName { row 1 } { col 1 } { linkToFile false } { saveWithDoc true } } {
         # Insert an image into a worksheet.
         #
         # worksheetId - Identifier of the worksheet where the image is inserted.
         # imgFileName - File name of the image (as absolute path).
         # row         - Row number. Row numbering starts with 1.
         # col         - Column number. Column numbering starts with 1.
+        # linkToFile  - Insert a link to the image file.
+        # saveWithDoc - Embed the image into the Excel document.
         #
         # The file name of the image must be an absolute pathname. Use a
         # construct like [file join [pwd] "myImage.gif"] to insert
         # images from the current directory.
         #
-        # Return the identifier of the inserted image.
+        # If both linkToFile and saveWithDoc are set to false, an error is thrown.
+        #
+        # Return the identifier of the inserted image as a shape.
         #
         # See also: ScaleImage
 
+        if { ! $linkToFile && ! $saveWithDoc } { 
+            error "InsertImage: linkToFile and saveWithDoc are both set to false."
+        }
+
         set cellId [SelectCellByIndex $worksheetId $row $col true]
-        set pictures [$worksheetId Pictures]
         set fileName [file nativename $imgFileName]
-        set picId [$pictures Insert $fileName]
+        set shapeId [$cellId -with { Parent Shapes } AddPicture $fileName \
+            [::Cawt::TclInt $linkToFile] \
+            [::Cawt::TclInt $saveWithDoc] \
+            [$cellId Left] [$cellId Top] -1 -1]
         ::Cawt::Destroy $cellId
-        ::Cawt::Destroy $pictures
-        return $picId
+        return $shapeId
     }
 
-    proc ScaleImage { picId scaleWidth scaleHeight } {
+    proc ScaleImage { shapeId scaleWidth scaleHeight } {
         # Scale an image.
         #
-        # picId       - Identifier of the image.
+        # shapeId     - Identifier of the image shape.
         # scaleWidth  - Horizontal scale factor.
         # scaleHeight - Vertical scale factor.
         #
@@ -1751,10 +1760,9 @@ namespace eval ::Excel {
         #
         # See also: InsertImage
 
-        set rangeId [$picId ShapeRange]
-        $rangeId ScaleWidth  [expr double($scaleWidth)]  [::Cawt::TclInt true]
-        $rangeId ScaleHeight [expr double($scaleHeight)] [::Cawt::TclInt true]
-        ::Cawt::Destroy $rangeId
+        $shapeId LockAspectRatio [Cawt::TclInt false]
+        $shapeId ScaleWidth  [expr double($scaleWidth)]  [::Cawt::TclInt true]
+        $shapeId ScaleHeight [expr double($scaleHeight)] [::Cawt::TclInt true]
     }
 
     proc SetCellValue { worksheetId row col val { fmt "text" } { subFmt "" } } {

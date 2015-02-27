@@ -63,26 +63,28 @@ namespace eval ::Ppt {
             # is not available.
             set retVal [catch {$actWin ViewType $::Ppt::ppViewTitleMaster}]
             if { $retVal == 0 } {
-                set shape [[$actPres TitleMaster] Shapes]
+                set shape [$actPres -with { TitleMaster } Shapes]
                 $shape SelectAll
                 set curSelection [$actWin Selection]
                 # Delete all shapes from the master slide. No problem, as
                 # we opened the presentation in read-only mode.
                 if { [$curSelection Type] != $::Ppt::ppSelectionNone } {
-                    [[$actWin Selection] ShapeRange] Delete
-                    ::Cawt::Destroy $shape
+                    $actWin -with { Selection ShapeRange } Delete
                 }
+                ::Cawt::Destroy $curSelection
+                ::Cawt::Destroy $shape
             }
 
             set retVal [catch {$actWin ViewType $::Ppt::ppViewSlideMaster}]
             if { $retVal == 0 } {
-                set shape [[$actPres SlideMaster] Shapes]
+                set shape [$actPres -with { SlideMaster } Shapes]
                 $shape SelectAll
                 set curSelection [$actWin Selection]
                 if { [$curSelection Type] != $::Ppt::ppSelectionNone } {
-                    [[$actWin Selection] ShapeRange] Delete
-                    ::Cawt::Destroy $shape
+                    $actWin -with { Selection ShapeRange } Delete
                 }
+                ::Cawt::Destroy $curSelection
+                ::Cawt::Destroy $shape
             }
         }
         $actWin ViewType $::Ppt::ppViewSlide
@@ -94,6 +96,11 @@ namespace eval ::Ppt {
         ::Ppt::ExportSlides $actPres $outputDir $outputFileFmt $startIndex $endIndex $imgType $width $height
         ::Ppt::Close $presId
         ::Ppt::Quit $appId
+
+        ::Cawt::Destroy $actWin
+        ::Cawt::Destroy $actPres
+        ::Cawt::Destroy $presId
+        ::Cawt::Destroy $appId
 
         if { $genHtmlTable } {
             package require Tk

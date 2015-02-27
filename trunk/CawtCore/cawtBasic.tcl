@@ -294,10 +294,22 @@ namespace eval ::Cawt {
         #
         # comObj - The COM object.
         #
-        # Return true, if "comObj" is a valid object.
+        # Return true, if comObj is a valid object.
         # Otherwise return false.
 
-        return [expr { $comObj ne "" && ![$comObj -isnull] } ]
+        return [expr { [twapi::comobj? $comObj] && ! [$comObj -isnull] } ]
+    }
+
+    proc GetComObjects {} {
+        # Return the COM objects currently in use as a list.
+
+        return [twapi::comobj_instances]
+    }
+
+    proc GetNumComObjects {} {
+        # Return the number of COM objects currently in use.
+
+        return [llength [GetComObjects]]
     }
 
     proc Destroy { { comObj "" } } {
@@ -316,11 +328,9 @@ namespace eval ::Cawt {
         if { $comObj ne "" } {
             $comObj -destroy
         } else {
-            # puts "Before: [llength [twapi::comobj_instances]]"
-            foreach obj [twapi::comobj_instances] {
+            foreach obj [GetComObjects] {
                 $obj -destroy
             }
-            # puts "After: [llength [twapi::comobj_instances]]"
         }
     }
 

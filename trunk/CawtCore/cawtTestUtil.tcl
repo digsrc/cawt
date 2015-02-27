@@ -3,6 +3,29 @@
 
 namespace eval ::Cawt {
 
+    proc CheckComObjects { expected msg { printCheck true } } {
+        # Check, if the number of COM objects fits expected value.
+        #
+        # expected   - Expected number of COM objects.
+        # msg        - Message for test case.
+        # printCheck - Print message for successful test case.
+        #
+        # Return true, if the number of COM objects fits expected value.
+        # If "printCheck" is set to true, a line prepended with "Check:" and the
+        # message supplied in "msg" is printed to standard output.
+        # If the check fails, return false and print message prepended with "Error:".
+
+        set value [Cawt::GetNumComObjects]
+        if { $expected != $value } {
+            puts "Error: $msg (Expected: $expected Have: $value)"
+            return false
+        }
+        if { $printCheck } {
+            puts "Check: $msg (Expected: $expected Have: $value)"
+        }
+        return true
+    }
+
     proc CheckString { expected value msg { printCheck true } } {
         # Check, if two string values are identical.
         #

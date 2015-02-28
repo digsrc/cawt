@@ -27,68 +27,121 @@ namespace eval ::Word {
         return $str
     }
 
-    proc FindString { rangeId str { matchCase true } } {
-        # Find a string in a text range.
+    proc _IsDocument { objId } {
+        # ActiveTheme is a property of the Word Document class.
+        set retVal [catch {$objId ActiveTheme} errMsg]
+        if { $retVal == 0 } {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    proc _FindOrReplace { objId mode searchStr matchCase { replaceStr "" } { howMuch "one" } } {
+        set myFind [$objId Find]
+
+        # Execute([FindText], [MatchCase], [MatchWholeWord], [MatchWildcards],
+        # [MatchSoundsLike], [MatchAllWordForms], [Forward], [Wrap], [Format],
+        # [ReplaceWith], [Replace], [MatchKashida], [MatchDiacritics],
+        # [MatchAlefHamza], [MatchControl]) As Boolean
+        if { $mode eq "find" } {
+            set retVal [$myFind -callnamedargs Execute \
+                                FindText $searchStr \
+                                MatchCase [::Cawt::TclBool $matchCase] \
+                                Wrap $::Word::wdFindStop \
+                                Forward True]
+        } else {
+            set howMuchEnum $::Word::wdReplaceOne
+            if { $howMuch ne "one" } {
+                set howMuchEnum $::Word::wdReplaceAll
+            }
+            set retVal [$myFind -callnamedargs Execute \
+                                FindText $searchStr \
+                                ReplaceWith $replaceStr \
+                                Replace $howMuchEnum \
+                                Wrap $::Word::wdFindStop \
+                                MatchCase [::Cawt::TclBool $matchCase] \
+                                Forward True]
+        }
+        ::Cawt::Destroy $myFind
+        return $retVal
+    }
+
+    proc FindString { rangeOrDocId str { matchCase true } } {
+        # Find a string in a text range or a document.
         #
-        # rangeId   - Identifier of the text range.
-        # str       - Search string.
-        # matchCase - Flag indicating case sensitive search.
+        # rangeOrDocId - Identifier of a text range or a document identifier.
+        # str          - Search string.
+        # matchCase    - Flag indicating case sensitive search.
         #
         # Return true, if string was found. Otherwise false.
         # If the string was found, the selection is set to the found string.
         #
         # See also: ReplaceString GetSelectionRange
 
-        set myFind [$rangeId Find]
-        # Execute([FindText], [MatchCase], [MatchWholeWord], [MatchWildcards],
-        # [MatchSoundsLike], [MatchAllWordForms], [Forward], [Wrap], [Format],
-        # [ReplaceWith], [Replace], [MatchKashida], [MatchDiacritics],
-        # [MatchAlefHamza], [MatchControl]) As Boolean
-        set retVal [$myFind -callnamedargs Execute \
-                            FindText $str \
-                            MatchCase [::Cawt::TclBool $matchCase] \
-                            Wrap $::Word::wdFindStop \
-                            Forward True]
-        ::Cawt::Destroy $myFind
-        if { $retVal } {
-            return true
+        if { [::Word::_IsDocument $rangeOrDocId] } {
+            set numFound 0
+            set stories [$rangeOrDocId StoryRanges]
+            $stories -iterate story {
+                lappend storyList $story
+                set retVal [::Word::_FindOrReplace $story "find" $str $matchCase]
+                incr numFound
+                set nextStory [$story NextStoryRange]
+                while { [::Cawt::IsValidId $nextStory] } {
+                    lappend storyList $nextStory
+                    set retVal [::Word::_FindOrReplace $nextStory "find" $str $matchCase]
+                    incr numFound
+                    set nextStory [$nextStory NextStoryRange]
+                }
+            }
+            foreach story $storyList {
+                ::Cawt::Destroy $story
+            }
+            ::Cawt::Destroy $stories
+            return $numFound
+        } else {
+            return [::Word::_FindOrReplace $rangeOrDocId "find" $str $matchCase]
         }
-        return false
     }
 
-    proc ReplaceString { rangeId searchStr replaceStr \
+    proc ReplaceString { rangeOrDocId searchStr replaceStr \
                         { howMuch "one" } { matchCase true } } {
-        # Replace a string in a text range. Simple case.
+        # Replace a string in a text range or a document. Simple case.
         #
-        # rangeId    - Identifier of the text range.
-        # searchStr  - Search string.
-        # replaceStr - Replacement string.
-        # howMuch    - "one" to replace first occurence only. "all" to replace all occurences.
-        # matchCase  - Flag indicating case sensitive search.
+        # rangeOrDocId - Identifier of a text range or a document identifier.
+        # searchStr    - Search string.
+        # replaceStr   - Replacement string.
+        # howMuch      - "one" to replace first occurence only. "all" to replace all occurences.
+        # matchCase    - Flag indicating case sensitive search.
         #
         # Return true, if string could be replaced, i.e. the search string was found.
         # Otherwise false.
         #
         # See also: SearchString ReplaceByProc
 
-        set howMuchEnum $::Word::wdReplaceOne
-        if { $howMuch ne "one" } {
-            set howMuchEnum $::Word::wdReplaceAll
+        if { [::Word::_IsDocument $rangeOrDocId] } {
+            set numReplaced 0
+            set stories [$rangeOrDocId StoryRanges]
+            $stories -iterate story {
+                lappend storyList $story
+                set retVal [::Word::_FindOrReplace $story "replace" $searchStr $matchCase $replaceStr $howMuch]
+                incr numReplaced
+                set nextStory [$story NextStoryRange]
+                while { [::Cawt::IsValidId $nextStory] } {
+                    lappend storyList $nextStory
+                    set retVal [::Word::_FindOrReplace $nextStory "replace" $searchStr $matchCase $replaceStr $howMuch]
+                    incr numReplaced
+                    set nextStory [$nextStory NextStoryRange]
+                }
+            }
+            foreach story $storyList {
+                ::Cawt::Destroy $story
+            }
+            ::Cawt::Destroy $stories
+            return $numReplaced
+        } else {
+            return [::Word::_FindOrReplace $rangeOrDocId "replace" $searchStr $matchCase $replaceStr $howMuch]
         }
-        set myFind [$rangeId Find]
-        # See proc FindString for parameter list of Execute command.
-        set retVal [$myFind -callnamedargs Execute \
-                            FindText $searchStr \
-                            ReplaceWith $replaceStr \
-                            Replace $howMuchEnum \
-                            Wrap $::Word::wdFindStop \
-                            MatchCase [::Cawt::TclBool $matchCase] \
-                            Forward True]
-        ::Cawt::Destroy $myFind
-        if { $retVal } {
-            return true
-        }
-        return false
     }
 
     proc ReplaceByProc { rangeId str func args } {
@@ -217,6 +270,7 @@ namespace eval ::Word {
         ::Cawt::Destroy $endOfDoc
         ::Cawt::Destroy $bookMarks
         set endIndex [::Word::GetRangeEndIndex $endRange]
+        ::Cawt::Destroy $endRange
         return [::Word::CreateRange $docId $endIndex $endIndex]
     }
 
@@ -334,7 +388,9 @@ namespace eval ::Word {
             set endIndex [expr $endIndex + $endIncr]
         } elseif { $endIncr eq "end" } {
             set docId [::Word::GetDocumentId $rangeId]
-            set endIndex [[GetEndRange $docId] End]
+            set endRange [GetEndRange $docId]
+            set endIndex [$endRange End]
+            ::Cawt::Destroy $endRange
             ::Cawt::Destroy $docId
         }
         $rangeId Start $startIndex
@@ -354,7 +410,9 @@ namespace eval ::Word {
         # See also: SetRangeFontSize SetRangeFontName
 
         set docId [::Word::GetDocumentId $rangeId]
-        $rangeId Style [$docId -with { Styles } Item [::Word::GetEnum $style]]
+        set styleId [$docId -with { Styles } Item [::Word::GetEnum $style]]
+        $rangeId Style $styleId
+        ::Cawt::Destroy $styleId
         ::Cawt::Destroy $docId
     }
 
@@ -812,11 +870,16 @@ namespace eval ::Word {
 
         set stories [$docId StoryRanges]
         $stories -iterate story {
+            lappend storyList $story
             $story -with { Fields } Update
-            while { [::Cawt::IsValidId [$story NextStoryRange]] } {
-                set story [$story NextStoryRange]
-                $story -with { Fields } Update
+            set nextStory [$story NextStoryRange]
+            while { [::Cawt::IsValidId $nextStory] } {
+                lappend storyList $nextStory
+                $nextStory -with { Fields } Update
+                set nextStory [$nextStory NextStoryRange]
             }
+        }
+        foreach story $storyList {
             ::Cawt::Destroy $story
         }
         ::Cawt::Destroy $stories
@@ -1172,10 +1235,11 @@ namespace eval ::Word {
         set hyperlinks [$docId Hyperlinks]
         # Add(Anchor As Object, [Address], [SubAddress], [ScreenTip],
         # [TextToDisplay], [Target]) As Hyperlink
-        $hyperlinks -callnamedargs Add \
+        set hyperlink [$hyperlinks -callnamedargs Add \
                  Anchor  $rangeId \
                  Address $link \
-                 TextToDisplay $textDisplay
+                 TextToDisplay $textDisplay]
+        ::Cawt::Destroy $hyperlink
         ::Cawt::Destroy $hyperlinks
         ::Cawt::Destroy $docId
     }
@@ -1367,7 +1431,7 @@ namespace eval ::Word {
         #
         # See also: InsertCaption
 
-        set captionItem [[$appId CaptionLabels] Item [::Word::GetEnum $labelId]]
+        set captionItem [$appId -with { CaptionLabels } Item [::Word::GetEnum $labelId]]
         $captionItem ChapterStyleLevel    [expr $chapterStyleLevel]
         $captionItem IncludeChapterNumber [::Cawt::TclBool $includeChapterNumber]
         $captionItem NumberStyle          [::Word::GetEnum $numberStyle]
@@ -1499,14 +1563,18 @@ namespace eval ::Word {
 
         set rowsId [$tableId Rows]
         if { $beforeRowNum eq "end" } {
-            $rowsId Add
+            set newRowId [$rowsId Add]
+            ::Cawt::Destroy $newRowId
         } else {
             if { $beforeRowNum < 1 || $beforeRowNum > [::Word::GetNumRows $tableId] } {
                 error "AddRow: Invalid row number $beforeRowNum given."
             }
             set rowId [$tableId -with { Rows } Item $beforeRowNum]
-            $rowsId Add $rowId
+            set newRowId [$rowsId Add $rowId]
+            ::Cawt::Destroy $newRowId
+            ::Cawt::Destroy $rowId
         }
+        ::Cawt::Destroy $rowsId
     }
 
     proc GetCellRange { tableId row col } {
@@ -1570,12 +1638,13 @@ namespace eval ::Word {
         # col     - Column number. Column numbering starts with 1.
         # val     - String value of the cell.
         #
+        # No return value.
+        #
         # See also: GetCellValue SetRowValues SetMatrixValues
 
         set rangeId [::Word::GetCellRange $tableId $row $col]
         $rangeId Text $val
         ::Cawt::Destroy $rangeId
-        return $rangeId
     }
 
     proc GetCellValue { tableId row col } {

@@ -4,7 +4,9 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Ppt {
+namespace eval Ppt {
+
+    namespace ensemble create
 
     # Enumeration MsoAnimAccumulate
     variable msoAnimAccumulateAlways 2
@@ -1834,6 +1836,11 @@ namespace eval ::Ppt {
         XlUnderlineStyle { xlUnderlineStyleDouble -4119 xlUnderlineStyleDoubleAccounting 5 xlUnderlineStyleNone -4142 xlUnderlineStyleSingle 2 xlUnderlineStyleSingleAccounting 4 }
         XlVAlign { xlVAlignBottom -4107 xlVAlignCenter -4108 xlVAlignDistributed -4117 xlVAlignJustify -4130 xlVAlignTop -4160 }
     }
+
+    namespace export GetEnum
+    namespace export GetEnumNames
+    namespace export GetEnumTypes
+    namespace export GetEnumVal
 
     proc GetEnumTypes { } {
         # Return a list of available enumeration types.

@@ -36,7 +36,9 @@ puts "#"
 puts "# Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)"
 puts "# Distributed under BSD license."
 puts ""
-puts "namespace eval ::$nsName \{"
+puts "namespace eval $nsName \{"
+puts ""
+puts "    namespace ensemble create"
 
 foreach enum [lsort [dict keys $allEnumDict]] {
     puts ""

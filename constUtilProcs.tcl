@@ -1,3 +1,8 @@
+    namespace export GetEnum
+    namespace export GetEnumNames
+    namespace export GetEnumTypes
+    namespace export GetEnumVal
+
     proc GetEnumTypes { } {
         # Return a list of available enumeration types.
         #

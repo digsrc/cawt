@@ -118,6 +118,7 @@ namespace eval ::Excel {
             puts "Fall back to fast mode because [::Excel::GetWorkbookName $newWorkbookId] is protected.");
             set fastMode true
         }
+        ::Cawt::Destroy $winId
 
         # Create a special workbook for formula convertion.
         set convWorkbookId [::Excel::AddWorkbook $appId]
@@ -135,6 +136,8 @@ namespace eval ::Excel {
                 set dummyWorksheetId [::Excel::CopyWorksheetAfter $baseWorksheetId $lastWorksheetId "Dummy_for_Comparison_$i"]
                 $dummyWorksheetId Visible [expr $::Excel::xlSheetVisible]
                 ::Excel::SetWorksheetTabColor $dummyWorksheetId 127 127 255
+                ::Cawt::Destroy $dummyWorksheetId
+                ::Cawt::Destroy $lastWorksheetId
             }
 
             if { [::Excel::IsWorksheetProtected $newWorksheetId] } {
@@ -151,7 +154,10 @@ namespace eval ::Excel {
                 $newWorksheetId -with { Cells FormatConditions } Add $::Excel::xlCellValue $::Excel::xlNotEqual $formula
                 set formatCondition [$newWorksheetId -with { Cells FormatConditions } Item 1]
                 $formatCondition -with { Interior } Color [::Cawt::RgbToColor $r $g $b]
+                ::Cawt::Destroy $formatCondition
             }
+            ::Cawt::Destroy $newWorksheetId
+            ::Cawt::Destroy $baseWorksheetId
         }
 
         # Close the special workbook quietly
@@ -336,6 +342,7 @@ namespace eval ::Excel {
                     ::Excel::SetRangeFillColor $rangeId $r $g $b
                 }
                 incr curCol
+                ::Cawt::Destroy $rangeId
             }
             incr curRow
         }
@@ -393,6 +400,7 @@ namespace eval ::Excel {
                     $phImg put $colorVal -to $x $y
                 }
                 incr curCol
+                ::Cawt::Destroy $rangeId
             }
             incr curRow
         }

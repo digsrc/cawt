@@ -312,7 +312,10 @@ namespace eval ::Excel {
         #
         # See also: CopyWorksheet
 
-        return [[::Cawt::GetApplicationId $worksheetId] Cells]
+        set appId [::Cawt::GetApplicationId $worksheetId]
+        set cellsId [$appId Cells]
+        ::Cawt::Destroy $appId
+        return $cellsId
     }
 
     proc GetRangeCharacters { rangeId { start 1 } { length -1 } } {
@@ -525,9 +528,11 @@ namespace eval ::Excel {
         set color [::Cawt::RgbToColor $r $g $b]
         set borders [$rangeId Borders]
         set sideInt [::Excel::GetEnum $side]
-        [$borders Item $sideInt] Weight    [::Excel::GetEnum $weight]
-        [$borders Item $sideInt] LineStyle [::Excel::GetEnum $lineStyle]
-        [$borders Item $sideInt] Color     $color
+        set border [$borders Item $sideInt]
+        $border Weight    [::Excel::GetEnum $weight]
+        $border LineStyle [::Excel::GetEnum $lineStyle]
+        $border Color     $color
+        ::Cawt::Destroy $border
         ::Cawt::Destroy $borders
     }
 
@@ -923,6 +928,7 @@ namespace eval ::Excel {
                         CreateBackup [::Cawt::TclInt $backup]
         }
         ::Cawt::ShowAlerts $appId true
+        ::Cawt::Destroy $appId
     }
 
     proc SaveAsCsv { workbookId worksheetId fileName } {
@@ -946,6 +952,7 @@ namespace eval ::Excel {
                      Filename $fileName \
                      FileFormat $::Excel::xlCSV
         ::Cawt::ShowAlerts $appId true
+        ::Cawt::Destroy $appId
     }
 
     proc AddWorkbook { appId { type xlWorksheet } } {
@@ -1050,6 +1057,7 @@ namespace eval ::Excel {
         set worksheetId [$worksheets Add]
         $worksheetId Name $name
         $worksheetId Visible [::Excel::GetEnum $visibleType]
+        ::Cawt::Destroy $lastWorksheet
         ::Cawt::Destroy $worksheets
         return $worksheetId
     }
@@ -1079,6 +1087,7 @@ namespace eval ::Excel {
         $worksheetId Delete
         # Turn the alerts back on.
         ::Cawt::ShowAlerts $appId true
+        ::Cawt::Destroy $appId
     }
 
     proc DeleteWorksheetByIndex { workbookId index } {
@@ -1113,6 +1122,7 @@ namespace eval ::Excel {
         # Turn the alerts back on.
         ::Cawt::ShowAlerts $appId true
         ::Cawt::Destroy $worksheetId
+        ::Cawt::Destroy $appId
     }
 
     proc CopyWorksheet { fromWorksheetId toWorksheetId } {
@@ -1178,6 +1188,9 @@ namespace eval ::Excel {
             ::Excel::SetWorksheetName $newWorksheetId $worksheetName
         }
         $newWorksheetId Activate
+
+        ::Cawt::Destroy $beforeWorkbookId
+        ::Cawt::Destroy $fromWorkbookId
         return $newWorksheetId
     }
 
@@ -1222,6 +1235,9 @@ namespace eval ::Excel {
             ::Excel::SetWorksheetName $newWorksheetId $worksheetName
         }
         $newWorksheetId Activate
+
+        ::Cawt::Destroy $afterWorkbookId
+        ::Cawt::Destroy $fromWorkbookId
         return $newWorksheetId
     }
 
@@ -1542,10 +1558,12 @@ namespace eval ::Excel {
             error "Column number $col is invalid."
         }
         $worksheetId Activate
-        set actWin [[::Cawt::GetApplicationId $worksheetId] ActiveWindow]
+        set appId [::Cawt::GetApplicationId $worksheetId]
+        set actWin [$appId ActiveWindow]
         $actWin ScrollColumn $col
         $actWin ScrollRow $row
         ::Cawt::Destroy $actWin
+        ::Cawt::Destroy $appId
     }
 
     proc FreezePanes { worksheetId row col { onOff true } } {
@@ -1564,7 +1582,8 @@ namespace eval ::Excel {
         # See also: SelectCellByIndex
 
         $worksheetId Activate
-        set actWin [[::Cawt::GetApplicationId $worksheetId] ActiveWindow]
+        set appId [::Cawt::GetApplicationId $worksheetId]
+        set actWin [$appId ActiveWindow]
         if { $onOff } {
             if { $col > 0 } {
                 $actWin SplitColumn $col
@@ -1575,6 +1594,7 @@ namespace eval ::Excel {
         }
         $actWin FreezePanes [::Cawt::TclBool $onOff]
         ::Cawt::Destroy $actWin
+        ::Cawt::Destroy $appId
     }
 
     proc SetHyperlink { worksheetId row col link { textDisplay "" } } {
@@ -1916,7 +1936,7 @@ namespace eval ::Excel {
         set cell [SelectCellByIndex $worksheetId $row 1]
         set curRow [$cell EntireRow]
         if { $height == 0 } {
-            [$curRow Rows] AutoFit
+            $curRow -with { Rows } AutoFit
         } else {
             $curRow RowHeight $height
         }
@@ -1959,7 +1979,7 @@ namespace eval ::Excel {
         set cell [SelectCellByIndex $worksheetId 1 $col]
         set curCol [$cell EntireColumn]
         if { $width == 0 } {
-            [$curCol Columns] AutoFit
+            $curCol -with { Columns } AutoFit
         } else {
             $curCol ColumnWidth $width
         }

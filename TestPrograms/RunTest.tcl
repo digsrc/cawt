@@ -131,6 +131,9 @@ if { $opts(RunCoverage) } {
         set allProcList [lsort [info commands ${nsName}::*]]
         foreach cmd $allProcList {
             if { ! [string match "*Obsolete:*" [info body $cmd]] } {
+                if { [string first "::" $cmd] == 0 } {
+                    set cmd [string range $cmd 2 end]
+                }
                 lappend procList $cmd
             }
         }
@@ -148,7 +151,8 @@ if { $opts(RunCoverage) } {
             set fp [open $testFile "r"]
             while { [gets $fp line] >= 0 } {
                 foreach cmd $procList {
-                    if { [string match "*${cmd}*" $line] } {
+                    set ens [string map { "::" " " } $cmd]
+                    if { [string match "*${cmd}*" $line] || [string match "*${ens}*" $line] } {
                         #puts "Found proc $cmd in file $testFile"
                         set found($cmd) 1
                     }

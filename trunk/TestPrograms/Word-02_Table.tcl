@@ -42,7 +42,7 @@ for { set r 1 } { $r <= $numRows } { incr r } {
 set numRows 5
 set numCols 2
 ::Word::AppendParagraph $docId
-::Word::AppendText $docId "Another table with changed properties:"
+::Word::AppendText $docId "Another table with changed properties and added rows:"
 set table(2,Id) [::Word::AddTable [::Word::GetEndRange $docId] $numRows $numCols 6]
 
 for { set r 1 } { $r <= $numRows } { incr r } {
@@ -51,9 +51,9 @@ for { set r 1 } { $r <= $numRows } { incr r } {
     }
 }
 
-::Word::AddRow $table(2,Id) 1
+::Word::AddRow $table(2,Id) 1 2
 ::Word::AddRow $table(2,Id)
-set table(2,Rows) [expr $numRows+2]
+set table(2,Rows) [expr $numRows+3]
 
 ::Word::SetTableBorderLineStyle $table(2,Id)
 ::Word::SetTableBorderLineWidth $table(2,Id) wdLineWidth300pt
@@ -71,7 +71,7 @@ set colRange [::Word::GetColumnRange $table(2,Id) 2]
 # Read the number of rows and columns and check them.
 set numRowsRead [::Word::GetNumRows $table(2,Id)]
 set numColsRead [::Word::GetNumColumns $table(2,Id)]
-::Cawt::CheckNumber [expr $numRows + 2] $numRowsRead "GetNumRows"
+::Cawt::CheckNumber [expr $numRows + 3] $numRowsRead "GetNumRows"
 ::Cawt::CheckNumber $numCols $numColsRead "GetNumColumns"
 
 # Read back the contents of the table and insert them into a newly created table

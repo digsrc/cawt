@@ -115,9 +115,8 @@ if { $option eq "user" || $option eq "all" } {
                     puts "    Replacing table \"%TABLE ${module}%\" with $numProcs procedure references ..."
                     set numRows [::Word::GetNumRows $tableId]
                     set missingRows [expr {$numProcs - $numRows + 1 }]
-                    for { set r 1 } { $r <= $missingRows } {incr r } {
-                        ::Word::AddRow $tableId
-                    }
+                    ::Word::AddRow $tableId end $missingRows
+
                     set row 2
                     foreach procFullName $procFullNameList($module) procShortName $procShortNameList($module) {
                         set procBody [info body $procFullName]
@@ -162,9 +161,7 @@ if { $option eq "user" || $option eq "all" } {
                 set testFileList [lsort [glob -directory $testDir Earth* Excel* Explorer* Matlab* Outlook* Ocr* Ppt* Word*]]
                 set numRows [::Word::GetNumRows $tableId]
                 set missingRows [expr [llength $testFileList] - $numRows + 1]
-                for { set r 1 } { $r <= $missingRows } {incr r } {
-                    ::Word::AddRow $tableId
-                }
+                ::Word::AddRow $tableId end $missingRows
 
                 set row 2
                 foreach testFile $testFileList {

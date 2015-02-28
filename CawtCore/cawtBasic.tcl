@@ -296,26 +296,86 @@ namespace eval ::Cawt {
         #
         # Return true, if comObj is a valid object.
         # Otherwise return false.
+        #
+        # See also: GetComObjects GetNumComObjects PrintNumComObjects
 
         return [expr { [twapi::comobj? $comObj] && ! [$comObj -isnull] } ]
     }
 
     proc GetComObjects {} {
         # Return the COM objects currently in use as a list.
+        #
+        # See also: IsValidId GetNumComObjects PrintNumComObjects
 
         return [twapi::comobj_instances]
     }
 
     proc GetNumComObjects {} {
         # Return the number of COM objects currently in use.
+        #
+        # See also: IsValidId GetComObjects PrintNumComObjects
 
         return [llength [GetComObjects]]
     }
 
     proc PrintNumComObjects {} {
         # Print the number of currently available COM objects to stdout.
+        #
+        # See also: IsValidId GetComObjects GetNumComObjects
 
         puts "Number of COM objects: [GetNumComObjects]"
+    }
+
+    proc _PrintComObjStack { msg } {
+        variable comObjStack
+
+        puts "$msg :"
+        set num 1
+        foreach entry $comObjStack {
+            puts "$num: $entry"
+            incr num
+        }
+    }
+
+    proc PushComObjects { { printStack false } } {
+        # Push current list of COM objects onto a stack.
+        #
+        # printStack - Print stack content after pushing onto stdout.
+        #
+        # See also: PopComObjects
+
+        variable comObjStack
+
+        lappend comObjStack [lsort -dictionary [GetComObjects]]
+
+        if { $printStack } {
+            _PrintComObjStack "PushComObjects"
+        }
+    }
+
+    proc PopComObjects { { printStack false } } {
+        # Pop last entry from COM objects stack.
+        #
+        # printStack - Print stack content after popping onto stdout.
+        #
+        # Pop last entry from COM objects stack and
+        # remove all COM objects currently in use which 
+        # are not contained in the popped entry.
+        #
+        # See also: PushComObjects
+
+        variable comObjStack
+
+        set lastEntry [lindex $comObjStack end]
+        set comObjStack [lrange $comObjStack 0 end-1]
+        foreach comObj [lsort -dictionary [GetComObjects]] {
+            if { [lsearch -exact $lastEntry $comObj] < 0 } {
+                ::Cawt::Destroy $comObj
+            }
+        }
+        if { $printStack } {
+            _PrintComObjStack "PopComObjects"
+        }
     }
 
     proc Destroy { { comObj "" } } {

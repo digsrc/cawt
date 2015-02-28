@@ -49,6 +49,8 @@ set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId 1]
 puts "Saving as Excel file: $xlsFile"
 ::Excel::SaveAs $workbookId $xlsFile
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $appId
     ::Cawt::Destroy

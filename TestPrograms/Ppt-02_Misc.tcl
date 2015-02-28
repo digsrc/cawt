@@ -46,6 +46,8 @@ puts "Saving as PowerPoint file: $pptFile"
 puts "Saving as GIF image files: $imgDir"
 ::Ppt::SaveAs $presId $imgDir ppSaveAsGIF
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Ppt::Quit $appId
     ::Cawt::Destroy

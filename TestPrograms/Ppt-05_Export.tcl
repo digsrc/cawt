@@ -20,5 +20,7 @@ file delete -force $outDir
 ::Ppt::ExportPptFile $inFile $outDir "Slide-%02d.gif" 1 end \
                      "GIF" 1000 700 false true 3 250
 
+::Cawt::PrintNumComObjects
+
 ::Cawt::Destroy
 exit 0

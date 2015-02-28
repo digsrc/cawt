@@ -53,6 +53,8 @@ set matrixList2 [::Excel::GetWorksheetAsMatrix $worksheetId2]
 
 ::Excel::SaveAs $workbookId $xlsOutFile
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $appId
     ::Cawt::Destroy

@@ -92,6 +92,8 @@ puts "Saving as Excel file: $xlsFile"
 set appId2 [::Excel::OpenNew]
 set workbookId [::Excel::OpenWorkbook $appId2 $xlsFile]
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $appId
     ::Excel::Quit $appId2

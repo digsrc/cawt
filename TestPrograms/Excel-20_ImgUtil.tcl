@@ -55,6 +55,8 @@ set shapeId2 [::Excel::InsertImage $worksheetId3 $portraitImg 2 5]
 puts "Saving as Excel file: $xlsFile"
 ::Excel::SaveAs $workbookId $xlsFile "" false
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $appId
     ::Cawt::Destroy

@@ -18,6 +18,7 @@ file delete -force $wordFile
 # Create a new document.
 set docId [::Word::AddDocument $appId]
 
+
 # Create a table with a header line.
 set numRows 3
 set numCols 5
@@ -103,6 +104,7 @@ set numTables [::Word::GetNumTables $docId]
 for { set n 1 } { $n <= $numTables } {incr n } {
     set tableId [::Word::GetTableIdByIndex $docId $n]
     ::Cawt::CheckNumber $table($n,Rows) [::Word::GetNumRows $tableId] "Table $n GetNumRows"
+    ::Cawt::Destroy $tableId
 }
 
 # Test inserting an image.
@@ -111,12 +113,15 @@ set imgId [::Word::InsertImage [::Word::GetEndRange $docId] [file join [pwd] "te
 
 # CropImage imgId cropBottom cropTop cropLeft cropRight
 ::Word::CropImage $imgId 0 0 0 [::Cawt::CentiMetersToPoints 0.3]
+::Cawt::Destroy $imgId
 
 ::Word::UpdateFields $docId
 
 # Save document as Word file.
 puts "Saving as Word file: $wordFile"
 ::Word::SaveAs $docId $wordFile
+
+::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     ::Word::Quit $appId

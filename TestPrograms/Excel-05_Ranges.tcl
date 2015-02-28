@@ -43,6 +43,8 @@ puts "Using as maximum column value: $maxCols ([::Excel::ColumnIntToChar $maxCol
 puts "Saving as Excel file: $xlsFile"
 ::Excel::SaveAs $workbookId $xlsFile "" false
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $appId
     ::Cawt::Destroy

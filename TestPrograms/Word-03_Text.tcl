@@ -96,6 +96,8 @@ if { $catchVal } {
     puts "Error: $retVal"
 }
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Word::Quit $appId
     ::Cawt::Destroy

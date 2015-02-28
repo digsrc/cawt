@@ -292,6 +292,8 @@ if { $retVal == 0 } {
 puts "Saving as Excel file: $xlsFile"
 ::Excel::SaveAs $workbookId $xlsFile
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $appId
     ::Cawt::Destroy

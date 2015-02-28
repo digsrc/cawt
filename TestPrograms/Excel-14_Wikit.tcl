@@ -65,6 +65,8 @@ set appId3 [::Excel::WikitFileToExcelFile $outFileWiki1 $xlsOutFile2 true false]
 puts "Copy Excel file $xlsOutFile1 to Wikit file"
 ::Excel::ExcelFileToWikitFile $xlsOutFile1 $outFileWiki2 "WikitTable" true true
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $appId2
     ::Excel::Quit $appId3

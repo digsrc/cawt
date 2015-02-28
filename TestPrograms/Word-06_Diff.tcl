@@ -47,6 +47,8 @@ set docId [::Word::AddDocument $appId]
 puts "Comparing base and new file ..."
 set diffAppId [::Word::DiffWordFiles $wordBaseFile $wordNewFile]
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Word::Quit $diffAppId
     ::Cawt::Destroy

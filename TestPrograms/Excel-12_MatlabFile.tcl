@@ -66,6 +66,8 @@ set excelAppId2 [::Excel::MatlabFileToExcelFile $matFile $xlsOutFile2 true false
 puts "Convert Excel file $xlsOutFile2 to Matlab file."
 ::Excel::ExcelFileToMatlabFile $xlsOutFile2 $matOutFile3 1 true true
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $excelAppId1
     ::Excel::Quit $excelAppId2

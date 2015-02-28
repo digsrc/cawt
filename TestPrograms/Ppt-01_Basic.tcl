@@ -55,6 +55,8 @@ foreach name [::Ppt::GetEnumNames $exampleEnum] {
 puts ""
 ::Ppt::Close $presId
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Ppt::Quit $appId
     ::Cawt::Destroy

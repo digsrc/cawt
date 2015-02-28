@@ -52,6 +52,8 @@ if { $retVal == 0 } {
     .l2 configure -image $phImg2
 }
 
+::Cawt::PrintNumComObjects
+
 ::Cawt::Destroy
 if { [lindex $argv 0] eq "auto" } {
     exit 0

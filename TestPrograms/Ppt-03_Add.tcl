@@ -56,6 +56,8 @@ puts "Saving as PowerPoint file: $pptFile2"
 # Reopen presentation 2.
 ::Ppt::OpenPres $appId $pptFile2
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Ppt::Quit $appId
     ::Cawt::Destroy

@@ -312,6 +312,12 @@ namespace eval ::Cawt {
         return [llength [GetComObjects]]
     }
 
+    proc PrintNumComObjects {} {
+        # Print the number of currently available COM objects to stdout.
+
+        puts "Number of COM objects: [GetNumComObjects]"
+    }
+
     proc Destroy { { comObj "" } } {
         # Destroy one or all COM objects.
         #

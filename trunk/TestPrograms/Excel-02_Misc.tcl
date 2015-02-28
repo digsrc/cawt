@@ -147,6 +147,7 @@ set copyWorksheetId [::Excel::AddWorksheet $workbookId "Copy"]
 ::Excel::CopyWorksheetBefore $worksheetId $copyWorksheetId "CopyBefore"
 ::Excel::CopyWorksheetAfter  $worksheetId $copyWorksheetId "CopyAfter"
 
+
 # Adjust the page setup of the worksheets.
 ::Excel::SetWorksheetOrientation $worksheetId xlLandscape
 ::Excel::SetWorksheetZoom $worksheetId 50
@@ -156,6 +157,8 @@ set copyWorksheetId [::Excel::AddWorksheet $workbookId "Copy"]
 
 puts "Saving as Excel file: $xlsFile"
 ::Excel::SaveAs $workbookId $xlsFile "" false
+
+::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $appId

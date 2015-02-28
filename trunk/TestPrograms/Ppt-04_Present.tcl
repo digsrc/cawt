@@ -50,6 +50,8 @@ after 500
 #        .Run
 #    End With
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Ppt::Quit $appId
     ::Cawt::Destroy

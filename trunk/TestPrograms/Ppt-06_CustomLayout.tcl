@@ -44,6 +44,8 @@ set customLayoutId [::Ppt::GetCustomLayoutId $presId end]
 puts "Saving as PowerPoint file: $pptFile"
 ::Ppt::SaveAs $presId $pptFile
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Ppt::Quit $appId
     ::Cawt::Destroy

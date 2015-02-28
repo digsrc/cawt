@@ -71,6 +71,8 @@ for { set i 1 } { $i <= $numDocs } { incr i } {
 }
 ::Word::Close $newDocId
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Word::Quit $appId
     ::Cawt::Destroy

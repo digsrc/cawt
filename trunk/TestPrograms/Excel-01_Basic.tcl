@@ -91,6 +91,8 @@ puts ""
 
 ::Excel::Close $workbookId
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $appId
     ::Cawt::Destroy

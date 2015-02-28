@@ -55,6 +55,8 @@ foreach name [::Word::GetEnumNames $exampleEnum] {
 puts ""
 ::Word::Close $docId
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Word::Quit $appId
     ::Cawt::Destroy

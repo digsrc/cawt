@@ -61,6 +61,8 @@ set endRange [::Word::GetEndRange $docId]
 puts "Saving as Word file: $wordFile"
 ::Word::SaveAs $docId $wordFile
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Word::Quit $appId false
     ::Cawt::Destroy

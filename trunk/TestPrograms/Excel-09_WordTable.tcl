@@ -106,6 +106,8 @@ puts "Saving as Excel file: $xlsFile"
 puts "Saving as Word file : $docFile"
 ::Word::SaveAs $docId $docFile
 
+::Cawt::PrintNumComObjects
+
 if { [lindex $argv 0] eq "auto" } {
     ::Excel::Quit $excelAppId
     ::Word::Quit  $wordAppId

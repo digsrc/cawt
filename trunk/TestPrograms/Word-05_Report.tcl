@@ -121,6 +121,7 @@ foreach key [lsort [array names bookmarkIds]] {
     ::Word::SetCellValue $tableId $row 2 [::Word::GetBookmarkName $bookmarkIds($key)]
     set cellRange [::Word::GetCellRange $tableId $row 2]
     ::Word::SetLinkToBookmark $cellRange $bookmarkIds($key) "Link to test case $key"
+    ::Cawt::Destroy $cellRange
     incr row
     incr req
 }
@@ -130,6 +131,8 @@ foreach key [lsort [array names bookmarkIds]] {
 # Save document as Word file.
 puts "Saving as Word file: $wordFile"
 ::Word::SaveAs $docId $wordFile
+
+::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     ::Word::Quit $appId

@@ -104,6 +104,8 @@ puts "Reading CSV file $outFileMultiCsv"
 set csvMatrix [::Excel::ReadCsvFile $outFileMultiCsv]
 ::Cawt::CheckMatrix $excelMatrix $csvMatrix "ExcelMatrixMulti vs. CsvMatrixMulti"
 
+::Cawt::PrintNumComObjects
+
 ::Cawt::Destroy
 if { [lindex $argv 0] eq "auto" } {
     exit 0

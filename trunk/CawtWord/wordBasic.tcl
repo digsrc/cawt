@@ -1549,7 +1549,7 @@ namespace eval ::Word {
     }
 
     proc AddRow { tableId { beforeRowNum end } { numRows 1 } } {
-        # Add a new row to a table.
+        # Add one or more rows to a table.
         #
         # tableId      - Identifier of the Word table.
         # beforeRowNum - Insertion row number. Row numbering starts with 1.
@@ -1562,11 +1562,12 @@ namespace eval ::Word {
         #
         # See also: GetNumRows
 
+        ::Cawt::PushComObjects
+
         set rowsId [$tableId Rows]
         if { $beforeRowNum eq "end" } {
             for { set r 1 } { $r <= $numRows } {incr r } {
-                set newRowId [$rowsId Add]
-                ::Cawt::Destroy $newRowId
+                $rowsId Add
             }
         } else {
             if { $beforeRowNum < 1 || $beforeRowNum > [::Word::GetNumRows $tableId] } {
@@ -1574,12 +1575,11 @@ namespace eval ::Word {
             }
             set rowId [$tableId -with { Rows } Item $beforeRowNum]
             for { set r 1 } { $r <= $numRows } {incr r } {
-                set newRowId [$rowsId Add $rowId]
-                ::Cawt::Destroy $newRowId
+                $rowsId Add $rowId
             }
-            ::Cawt::Destroy $rowId
         }
-        ::Cawt::Destroy $rowsId
+
+        ::Cawt::PopComObjects
     }
 
     proc GetCellRange { tableId row col } {

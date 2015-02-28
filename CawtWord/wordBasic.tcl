@@ -1548,7 +1548,7 @@ namespace eval ::Word {
         return [$tableId -with { Columns } Count]
     }
 
-    proc AddRow { tableId { beforeRowNum end } } {
+    proc AddRow { tableId { beforeRowNum end } { numRows 1 } } {
         # Add a new row to a table.
         #
         # tableId      - Identifier of the Word table.
@@ -1556,6 +1556,7 @@ namespace eval ::Word {
         #                The new row is inserted before the given row number.
         #                If not specified or "end", the new row is appended at
         #                the end.
+        # numRows      - Number of rows to be inserted.
         #
         # No return value.
         #
@@ -1563,15 +1564,19 @@ namespace eval ::Word {
 
         set rowsId [$tableId Rows]
         if { $beforeRowNum eq "end" } {
-            set newRowId [$rowsId Add]
-            ::Cawt::Destroy $newRowId
+            for { set r 1 } { $r <= $numRows } {incr r } {
+                set newRowId [$rowsId Add]
+                ::Cawt::Destroy $newRowId
+            }
         } else {
             if { $beforeRowNum < 1 || $beforeRowNum > [::Word::GetNumRows $tableId] } {
                 error "AddRow: Invalid row number $beforeRowNum given."
             }
             set rowId [$tableId -with { Rows } Item $beforeRowNum]
-            set newRowId [$rowsId Add $rowId]
-            ::Cawt::Destroy $newRowId
+            for { set r 1 } { $r <= $numRows } {incr r } {
+                set newRowId [$rowsId Add $rowId]
+                ::Cawt::Destroy $newRowId
+            }
             ::Cawt::Destroy $rowId
         }
         ::Cawt::Destroy $rowsId

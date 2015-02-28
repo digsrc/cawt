@@ -6,18 +6,18 @@
 source "SetTestPathes.tcl"
 set retVal [catch {package require cawt} pkgVersion]
 
-set appId [::Ppt::OpenNew]
+set appId [Ppt OpenNew]
 
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
 puts [format "%-25s: %s" "Twapi version" [::Cawt::GetPkgVersion "twapi"]]
 
 puts [format "%-25s: %s (%s)" "PowerPoint Version" \
-                             [::Ppt::GetVersion $appId] \
-                             [::Ppt::GetVersion $appId true]]
+                             [Ppt GetVersion $appId] \
+                             [Ppt GetVersion $appId true]]
 
 puts [format "%-25s: %s" "PowerPoint extension" \
-                             [::Ppt::GetExtString $appId]]
+                             [Ppt GetExtString $appId]]
 
 puts [format "%-25s: %s" "Active Printer" \
                         [::Cawt::GetActivePrinter $appId]]
@@ -36,7 +36,7 @@ puts [format "%-25s: %s" "Installation Pathname" \
 puts [format "%-25s: %s" "User Folder Pathname" \
                          [::Cawt::GetUserPath $appId]]
 
-set presId [::Ppt::AddPres $appId]
+set presId [Ppt AddPres $appId]
 
 puts [format "%-30s: %s" "Appl. name (from Application)" \
          [::Cawt::GetApplicationName $appId]]
@@ -44,21 +44,21 @@ puts [format "%-30s: %s" "Appl. name (from Presentation)" \
          [::Cawt::GetApplicationName [::Cawt::GetApplicationId $presId]]]
 
 puts ""
-puts "PowerPoint has [llength [::Ppt::GetEnumTypes]] enumeration types."
-set exampleEnum [lindex [::Ppt::GetEnumTypes] 0]
-puts "  $exampleEnum names : [::Ppt::GetEnumNames $exampleEnum]"
+puts "PowerPoint has [llength [Ppt GetEnumTypes]] enumeration types."
+set exampleEnum [lindex [Ppt GetEnumTypes] 0]
+puts "  $exampleEnum names : [Ppt GetEnumNames $exampleEnum]"
 puts -nonewline "  $exampleEnum values:"
-foreach name [::Ppt::GetEnumNames $exampleEnum] {
-    puts -nonewline " [::Ppt::GetEnumVal $name]"
+foreach name [Ppt GetEnumNames $exampleEnum] {
+    puts -nonewline " [Ppt GetEnumVal $name]"
 }
 
 puts ""
-::Ppt::Close $presId
+Ppt Close $presId
 
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Ppt::Quit $appId
+    Ppt Quit $appId
     ::Cawt::Destroy
     exit 0
 }

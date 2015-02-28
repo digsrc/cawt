@@ -1,7 +1,11 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Ppt {
+namespace eval Ppt {
+    namespace ensemble create
+
+    namespace export ExportPptFile
+
     proc _CreateThumbImg { phImg phName maxThumbSize } {
         set w [image width  $phImg]
         set h [image height $phImg]
@@ -50,10 +54,10 @@ namespace eval ::Ppt {
         #
         # See also: ExportSlide ExportSlides
 
-        set appId [::Ppt::OpenNew]
+        set appId [Ppt::OpenNew]
 
         # Open presentation file in read-only mode
-        set presId [::Ppt::OpenPres $appId $pptFile true]
+        set presId [Ppt::OpenPres $appId $pptFile true]
 
         set actWin  [$appId ActiveWindow]
         set actPres [$appId ActivePresentation]
@@ -61,41 +65,41 @@ namespace eval ::Ppt {
         if { ! $useMaster } {
             # ViewType throws an error, if the corresponding master slide
             # is not available.
-            set retVal [catch {$actWin ViewType $::Ppt::ppViewTitleMaster}]
+            set retVal [catch {$actWin ViewType $Ppt::ppViewTitleMaster}]
             if { $retVal == 0 } {
                 set shape [$actPres -with { TitleMaster } Shapes]
                 $shape SelectAll
                 set curSelection [$actWin Selection]
                 # Delete all shapes from the master slide. No problem, as
                 # we opened the presentation in read-only mode.
-                if { [$curSelection Type] != $::Ppt::ppSelectionNone } {
+                if { [$curSelection Type] != $Ppt::ppSelectionNone } {
                     $actWin -with { Selection ShapeRange } Delete
                 }
                 ::Cawt::Destroy $curSelection
                 ::Cawt::Destroy $shape
             }
 
-            set retVal [catch {$actWin ViewType $::Ppt::ppViewSlideMaster}]
+            set retVal [catch {$actWin ViewType $Ppt::ppViewSlideMaster}]
             if { $retVal == 0 } {
                 set shape [$actPres -with { SlideMaster } Shapes]
                 $shape SelectAll
                 set curSelection [$actWin Selection]
-                if { [$curSelection Type] != $::Ppt::ppSelectionNone } {
+                if { [$curSelection Type] != $Ppt::ppSelectionNone } {
                     $actWin -with { Selection ShapeRange } Delete
                 }
                 ::Cawt::Destroy $curSelection
                 ::Cawt::Destroy $shape
             }
         }
-        $actWin ViewType $::Ppt::ppViewSlide
+        $actWin ViewType $Ppt::ppViewSlide
 
         if { [file isdir $outputDir] } {
             file delete -force $outputDir
         }
 
-        ::Ppt::ExportSlides $actPres $outputDir $outputFileFmt $startIndex $endIndex $imgType $width $height
-        ::Ppt::Close $presId
-        ::Ppt::Quit $appId
+        Ppt::ExportSlides $actPres $outputDir $outputFileFmt $startIndex $endIndex $imgType $width $height
+        Ppt::Close $presId
+        Ppt::Quit $appId
 
         ::Cawt::Destroy $actWin
         ::Cawt::Destroy $actPres
@@ -132,7 +136,7 @@ namespace eval ::Ppt {
                 set rootName  [file rootname $shortName]
                 set extension [file extension $shortName]
                 set catchVal [catch {image create photo -file $fileName} phImg]
-                set thumbImg [::Ppt::_CreateThumbImg $phImg "thumb" $thumbSize]
+                set thumbImg [Ppt::_CreateThumbImg $phImg "thumb" $thumbSize]
 
                 set thumbName [format "%s.thumb%s" $rootName $extension]
                 $thumbImg write [file join $dirName $thumbName] -format $imgType

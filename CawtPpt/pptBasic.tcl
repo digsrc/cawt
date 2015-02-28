@@ -1,8 +1,46 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Ppt {
+namespace eval Ppt {
 
+    namespace ensemble create
+
+    namespace export AddPres
+    namespace export AddSlide
+    namespace export Close
+    namespace export CloseAll
+    namespace export CopySlide
+    namespace export ExitSlideShow
+    namespace export ExportSlide
+    namespace export ExportSlides
+    namespace export GetActivePres
+    namespace export GetCustomLayoutId
+    namespace export GetCustomLayoutName
+    namespace export GetExtString
+    namespace export GetNumCustomLayouts
+    namespace export GetNumSlideShows
+    namespace export GetNumSlides
+    namespace export GetSlideId
+    namespace export GetSlideIndex
+    namespace export GetTemplateExtString
+    namespace export GetVersion
+    namespace export GetViewType
+    namespace export InsertImage
+    namespace export MoveSlide
+    namespace export Open
+    namespace export OpenNew
+    namespace export OpenPres
+    namespace export Quit
+    namespace export SaveAs
+    namespace export SetViewType
+    namespace export ShowSlide
+    namespace export SlideShowFirst
+    namespace export SlideShowLast
+    namespace export SlideShowNext
+    namespace export SlideShowPrev
+    namespace export UseSlideShow
+    namespace export Visible
+    
     variable pptVersion  "0.0"
     variable pptAppName  "PowerPoint.Application"
     variable _ruffdoc
@@ -96,8 +134,8 @@ namespace eval ::Ppt {
 	variable pptVersion
 
         set appId [::Cawt::GetOrCreateApp $pptAppName false]
-        set pptVersion [::Ppt::GetVersion $appId]
-        ::Ppt::Visible $appId true
+        set pptVersion [Ppt::GetVersion $appId]
+        Ppt::Visible $appId true
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -121,8 +159,8 @@ namespace eval ::Ppt {
 	variable pptVersion
 
         set appId [::Cawt::GetOrCreateApp $pptAppName true]
-        set pptVersion [::Ppt::GetVersion $appId]
-        ::Ppt::Visible $appId true
+        set pptVersion [Ppt::GetVersion $appId]
+        Ppt::Visible $appId true
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -225,7 +263,7 @@ namespace eval ::Ppt {
         } else {
             $presId -callnamedargs SaveAs \
                      FileName $fileName \
-                     FileFormat [::Ppt::GetEnum $fmt] \
+                     FileFormat [Ppt::GetEnum $fmt] \
                      EmbedTrueTypeFonts [::Cawt::TclInt $embedFonts]
         }
         ::Cawt::ShowAlerts $appId true
@@ -300,7 +338,7 @@ namespace eval ::Ppt {
 
         set appId [::Cawt::GetApplicationId $presId]
         set actWin [$appId ActiveWindow]
-        $actWin ViewType [::Ppt::GetEnum $viewType]
+        $actWin ViewType [Ppt::GetEnum $viewType]
         ::Cawt::Destroy $actWin
         ::Cawt::Destroy $appId
     }
@@ -339,27 +377,27 @@ namespace eval ::Ppt {
 
         variable pptVersion
 
-        set typeInt [::Ppt::GetEnum $type]
+        set typeInt [Ppt::GetEnum $type]
         #set retVal [catch { expr int($type) } typeInt]
         if { $typeInt eq "" } {
             # type seems to be a CustomLayout object.
             if { $pptVersion < 12.0 } {
                 set appId [::Cawt::GetApplicationId $presId]
-                set versionStr [::Ppt::GetVersion $appId true]
+                set versionStr [Ppt::GetVersion $appId true]
                 error "CustomLayout not supported with PowerPoint $versionStr"
             }
         }
         
         if { $slideIndex eq "" || $slideIndex < 0 } {
-            set slideIndex [expr [::Ppt::GetNumSlides $presId] +1]
+            set slideIndex [expr [Ppt::GetNumSlides $presId] +1]
         }
         if { $typeInt eq "" } {
             set newSlide [$presId -with { Slides } AddSlide $slideIndex $type]
         } else {
             set newSlide [$presId -with { Slides } Add $slideIndex $typeInt]
         }
-        set newSlideIndex [::Ppt::GetSlideIndex $newSlide]
-        ::Ppt::ShowSlide $presId $newSlideIndex
+        set newSlideIndex [Ppt::GetSlideIndex $newSlide]
+        Ppt::ShowSlide $presId $newSlideIndex
         return $newSlide
     }
 
@@ -385,20 +423,20 @@ namespace eval ::Ppt {
             set toPresId $presId
         }
         if { $toSlideIndex eq "end" || $toSlideIndex < 0 } {
-            set toSlideIndex [expr [::Ppt::GetNumSlides $toPresId] +1]
+            set toSlideIndex [expr [Ppt::GetNumSlides $toPresId] +1]
         }
         if { $fromSlideIndex eq "end" || $fromSlideIndex < 0 } {
-            set fromSlideIndex [expr [::Ppt::GetNumSlides $presId] +1]
+            set fromSlideIndex [expr [Ppt::GetNumSlides $presId] +1]
         }
 
-        set fromSlideId [::Ppt::GetSlideId $presId $fromSlideIndex]
+        set fromSlideId [Ppt::GetSlideId $presId $fromSlideIndex]
         $fromSlideId Copy
 
         $toPresId -with { Slides } Paste
         set toSlideId [GetSlideId $toPresId end]
-        ::Ppt::MoveSlide $toSlideId $toSlideIndex
+        Ppt::MoveSlide $toSlideId $toSlideIndex
 
-        ::Ppt::ShowSlide $toPresId $toSlideIndex
+        Ppt::ShowSlide $toPresId $toSlideIndex
 
         ::Cawt::Destroy $fromSlideId
 
@@ -455,7 +493,7 @@ namespace eval ::Ppt {
         #
         # See also: ExportPptFile ExportSlide
 
-        set numSlides [::Ppt::GetNumSlides $presId]
+        set numSlides [Ppt::GetNumSlides $presId]
         if { $startIndex < 1 || $startIndex > $numSlides } {
             error "startIndex ($startIndex) not in slide range."
         }
@@ -472,9 +510,9 @@ namespace eval ::Ppt {
         set nativeName [file nativename $outputDir]
 
         for { set i $startIndex } { $i <= $endIndex } { incr i } {
-            set slideId [::Ppt::GetSlideId $presId $i]
+            set slideId [Ppt::GetSlideId $presId $i]
             set outputFile [format [file join $outputDir $outputFileFmt] $i]
-            ::Ppt::ExportSlide $slideId $outputFile $imgType $width $height
+            Ppt::ExportSlide $slideId $outputFile $imgType $width $height
             ::Cawt::Destroy $slideId
         }
     }
@@ -688,7 +726,7 @@ namespace eval ::Ppt {
         #
         # See also: GetNumCustomLayouts AddPres
 
-        set count [::Ppt::GetNumCustomLayouts $presId]
+        set count [Ppt::GetNumCustomLayouts $presId]
         if { [string is integer $indexOrName] || $indexOrName eq "end" } {
             if { $indexOrName eq "end" } {
                 set indexOrName $count

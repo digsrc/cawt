@@ -6,37 +6,37 @@
 source "SetTestPathes.tcl"
 package require cawt
 
-set appId [::Ppt::Open]
+set appId [Ppt Open]
 
 set pptFile [file join [pwd] "testOut" "Ppt-02_Misc"]
-append pptFile [::Ppt::GetExtString $appId]
+append pptFile [Ppt GetExtString $appId]
 
-set presId [::Ppt::OpenPres $appId $pptFile true]
+set presId [Ppt OpenPres $appId $pptFile true]
 
-::Ppt::ShowSlide $presId 2
+Ppt ShowSlide $presId 2
 after 1000
 
-set slideCount [::Ppt::GetNumSlides $presId]
+set slideCount [Ppt GetNumSlides $presId]
 puts "Have $slideCount slides"
 
-puts "Have [::Ppt::GetNumSlideShows $appId] SlideShows"
-set slideShowId [::Ppt::UseSlideShow $presId 1]
-puts "Have [::Ppt::GetNumSlideShows $appId] SlideShows"
+puts "Have [Ppt GetNumSlideShows $appId] SlideShows"
+set slideShowId [Ppt UseSlideShow $presId 1]
+puts "Have [Ppt GetNumSlideShows $appId] SlideShows"
 
 for { set i 0 } { $i < 3 } { incr i } {
     for { set s 1 } { $s < $slideCount } { incr s } {
-        ::Ppt::SlideShowNext $slideShowId
+        Ppt SlideShowNext $slideShowId
         after 500
     }
-    ::Ppt::SlideShowFirst $slideShowId
+    Ppt SlideShowFirst $slideShowId
     after 500
 }
 after 500
-::Ppt::SlideShowLast $slideShowId
+Ppt SlideShowLast $slideShowId
 after 500
-::Ppt::SlideShowPrev $slideShowId
+Ppt SlideShowPrev $slideShowId
 
-::Ppt::ExitSlideShow $slideShowId
+Ppt ExitSlideShow $slideShowId
 
 # TODO
 # With ActivePresentation.SlideShowSettings
@@ -53,7 +53,7 @@ after 500
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Ppt::Quit $appId
+    Ppt Quit $appId
     ::Cawt::Destroy
     exit 0
 }

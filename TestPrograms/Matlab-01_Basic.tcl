@@ -6,7 +6,7 @@
 source "SetTestPathes.tcl"
 set retVal [catch {package require cawt} pkgVersion]
 
-set appId [::Matlab::OpenNew]
+set appId [Matlab OpenNew]
 
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
@@ -30,7 +30,7 @@ puts [format "%-25s: %s" "User Folder Pathname" \
                          [::Cawt::GetUserPath $appId]]
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Matlab::Quit $appId
+    Matlab Quit $appId
     ::Cawt::Destroy
     exit 0
 }

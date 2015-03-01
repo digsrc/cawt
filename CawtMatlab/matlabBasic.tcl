@@ -1,7 +1,15 @@
 # Copyright: 2011-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Matlab {
+namespace eval Matlab {
+
+    namespace ensemble create
+
+    namespace export ExecCmd
+    namespace export Open
+    namespace export OpenNew
+    namespace export Quit
+    namespace export Visible
 
     variable matlabAppName "Matlab.Application"
     variable _ruffdoc
@@ -23,7 +31,7 @@ namespace eval ::Matlab {
         variable matlabAppName
 
         set appId [::Cawt::GetOrCreateApp $matlabAppName false]
-        ::Matlab::Visible $appId $visible
+        Matlab Visible $appId $visible
         return $appId
     }
 
@@ -40,7 +48,7 @@ namespace eval ::Matlab {
         variable matlabAppName
 
         set appId [::Cawt::GetOrCreateApp $matlabAppName true]
-        ::Matlab::Visible $appId $visible
+        Matlab Visible $appId $visible
         return $appId
     }
 

@@ -11,7 +11,7 @@ set fp [open $mFile]
 set mContent [read $fp]
 close $fp
 
-set appId [::Matlab::OpenNew]
+set appId [Matlab OpenNew]
 
 # Extract directory and pure file name.
 set dirName  [file dirname $mFile]
@@ -19,16 +19,16 @@ set fileName [file tail $mFile]
 set cmdName  [file rootname $fileName]
 
 # Change working directory in Matlab.
-::Matlab::ExecCmd $appId "cd $dirName"
+Matlab ExecCmd $appId "cd $dirName"
 
 # Load the specified Matlab file.
 puts "Executing M-File $mFile"
 puts $mContent
-set result [::Matlab::ExecCmd $appId "$cmdName"]
+set result [Matlab ExecCmd $appId "$cmdName"]
 puts $result
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Matlab::Quit $appId
+    Matlab Quit $appId
     ::Cawt::Destroy
     exit 0
 }

@@ -1,7 +1,16 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Outlook {
+namespace eval Outlook {
+
+    namespace ensemble create
+
+    namespace export CreateMail
+    namespace export GetVersion
+    namespace export Open
+    namespace export OpenNew
+    namespace export Quit
+    namespace export SendMail
 
     variable outlookVersion "0.0"
     variable outlookAppName "Outlook.Application"
@@ -62,7 +71,7 @@ namespace eval ::Outlook {
 	variable outlookVersion
 
         set appId [::Cawt::GetOrCreateApp $outlookAppName false]
-        set outlookVersion [::Outlook::GetVersion $appId]
+        set outlookVersion [Outlook GetVersion $appId]
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -86,7 +95,7 @@ namespace eval ::Outlook {
 	variable outlookVersion
 
         set appId [::Cawt::GetOrCreateApp $outlookAppName true]
-        set outlookVersion [::Outlook::GetVersion $appId]
+        set outlookVersion [Outlook GetVersion $appId]
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -126,7 +135,7 @@ namespace eval ::Outlook {
         #
         # See also: SendMail
  
-        set mailId [$appId CreateItem $::Outlook::olMailItem]
+        set mailId [$appId CreateItem $Outlook::olMailItem]
 
         $mailId Display
         foreach recipient $recipientList {

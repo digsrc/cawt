@@ -4,7 +4,9 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Outlook {
+namespace eval Outlook {
+
+    namespace ensemble create
 
     # Enumeration OlAccountType
     variable olEas 4
@@ -1257,6 +1259,11 @@ namespace eval ::Outlook {
         OlViewType { olBusinessCardView 5 olCalendarView 2 olCardView 1 olDailyTaskListView 6 olIconView 3 olPeopleView 7 olTableView 0 olTimelineView 4 }
         OlWindowState { olMaximized 0 olMinimized 1 olNormalWindow 2 }
     }
+
+    namespace export GetEnum
+    namespace export GetEnumNames
+    namespace export GetEnumTypes
+    namespace export GetEnumVal
 
     proc GetEnumTypes { } {
         # Return a list of available enumeration types.

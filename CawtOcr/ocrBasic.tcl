@@ -2,7 +2,19 @@
 # Distributed under BSD license.
 # Idea taken from http://wiki.tcl.tk/38305
 
-namespace eval ::Ocr {
+namespace eval Ocr {
+
+    namespace ensemble create
+    
+    namespace export Close
+    namespace export GetFullText
+    namespace export GetNumImages
+    namespace export GetNumWords
+    namespace export GetWord
+    namespace export GetWordStats
+    namespace export Open
+    namespace export OpenDocument
+    namespace export Scan
 
     variable ocrAppName "MODI.Document"
     variable _ruffdoc

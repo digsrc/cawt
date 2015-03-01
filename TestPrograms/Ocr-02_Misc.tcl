@@ -19,11 +19,11 @@ if { $retVal == 0 } {
 }
 
 # Do the actual OCR scanning and store the scanned text in variable page.
-set ocrId [::Ocr::Open]
-::Ocr::OpenDocument $ocrId $inFile
-puts "Number of images in input file: [::Ocr::GetNumImages $ocrId]"
-set ocrLayout [::Ocr::Scan $ocrId 0]
-set page [::Ocr::GetFullText $ocrLayout]
+set ocrId [Ocr Open]
+Ocr OpenDocument $ocrId $inFile
+puts "Number of images in input file: [Ocr GetNumImages $ocrId]"
+set ocrLayout [Ocr Scan $ocrId 0]
+set page [Ocr GetFullText $ocrLayout]
 
 # Open new Word instance and create a new document.
 set appWordId [::Word::OpenNew true]
@@ -57,13 +57,13 @@ set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId 1]
 ::Excel::SetHeaderRow $worksheetId \
     { "Text" "Id" "Line" "RegionId" "FontId" "Confidence" }
 
-set numWords [::Ocr::GetNumWords $ocrLayout]
+set numWords [Ocr GetNumWords $ocrLayout]
 puts "Number of words recognized: $numWords"
 
 set row 2
 for { set i 0 } { $i < $numWords } { incr i } {
-    set wordText  [::Ocr::GetWord $ocrLayout $i]
-    set wordStats [::Ocr::GetWordStats $ocrLayout $i]
+    set wordText  [Ocr GetWord $ocrLayout $i]
+    set wordStats [Ocr GetWordStats $ocrLayout $i]
     ::Excel::SetRowValues $worksheetId $row [list \
         $wordText \
         [dict get $wordStats Id] \
@@ -75,7 +75,7 @@ for { set i 0 } { $i < $numWords } { incr i } {
 }
 ::Excel::SetColumnsWidth $worksheetId 1 6 0
 
-::Ocr::Close $ocrId
+Ocr Close $ocrId
 
 puts "Saving as Excel file: $xlsFile"
 ::Excel::SaveAs $workbookId $xlsFile

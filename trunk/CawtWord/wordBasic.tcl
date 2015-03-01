@@ -1,7 +1,95 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Word {
+namespace eval Word {
+
+    namespace ensemble create
+
+    namespace export AddBookmark
+    namespace export AddDocument
+    namespace export AddPageBreak
+    namespace export AddParagraph
+    namespace export AddRow
+    namespace export AddTable
+    namespace export AddText
+    namespace export AppendParagraph
+    namespace export AppendText
+    namespace export Close
+    namespace export ConfigureCaption
+    namespace export CreateRange
+    namespace export CreateRangeAfter
+    namespace export CropImage
+    namespace export ExtendRange
+    namespace export FindString
+    namespace export GetBookmarkName
+    namespace export GetCellRange
+    namespace export GetCellValue
+    namespace export GetColumnRange
+    namespace export GetColumnValues
+    namespace export GetCompatibilityMode
+    namespace export GetDocumentId
+    namespace export GetDocumentIdByIndex
+    namespace export GetDocumentName
+    namespace export GetEndRange
+    namespace export GetExtString
+    namespace export GetListGalleryId
+    namespace export GetListTemplateId
+    namespace export GetNumCharacters
+    namespace export GetNumColumns
+    namespace export GetNumDocuments
+    namespace export GetNumRows
+    namespace export GetNumTables
+    namespace export GetRangeEndIndex
+    namespace export GetRangeInformation
+    namespace export GetRangeStartIndex
+    namespace export GetRowRange
+    namespace export GetRowValues
+    namespace export GetSelectionRange
+    namespace export GetStartRange
+    namespace export GetTableIdByIndex
+    namespace export GetVersion
+    namespace export InsertCaption
+    namespace export InsertFile
+    namespace export InsertImage
+    namespace export InsertList
+    namespace export InsertText
+    namespace export Open
+    namespace export OpenDocument
+    namespace export OpenNew
+    namespace export PrintRange
+    namespace export Quit
+    namespace export ReplaceByProc
+    namespace export ReplaceString
+    namespace export SaveAs
+    namespace export SaveAsPdf
+    namespace export SelectRange
+    namespace export SetCellValue
+    namespace export SetColumnValues
+    namespace export SetColumnWidth
+    namespace export SetColumnsWidth
+    namespace export SetCompatibilityMode
+    namespace export SetHyperlink
+    namespace export SetInternalHyperlink
+    namespace export SetLinkToBookmark
+    namespace export SetRangeBackgroundColor
+    namespace export SetRangeBackgroundColorByEnum
+    namespace export SetRangeEndIndex
+    namespace export SetRangeFontBold
+    namespace export SetRangeFontItalic
+    namespace export SetRangeFontName
+    namespace export SetRangeFontSize
+    namespace export SetRangeFontUnderline
+    namespace export SetRangeHighlightColorByEnum
+    namespace export SetRangeHorizontalAlignment
+    namespace export SetRangeStartIndex
+    namespace export SetRangeStyle
+    namespace export SetRowValues
+    namespace export SetTableBorderLineStyle
+    namespace export SetTableBorderLineWidth
+    namespace export ToggleSpellCheck
+    namespace export TrimString
+    namespace export UpdateFields
+    namespace export Visible
 
     variable wordVersion "0.0"
     variable wordAppName "Word.Application"
@@ -48,18 +136,18 @@ namespace eval ::Word {
             set retVal [$myFind -callnamedargs Execute \
                                 FindText $searchStr \
                                 MatchCase [::Cawt::TclBool $matchCase] \
-                                Wrap $::Word::wdFindStop \
+                                Wrap $Word::wdFindStop \
                                 Forward True]
         } else {
-            set howMuchEnum $::Word::wdReplaceOne
+            set howMuchEnum $Word::wdReplaceOne
             if { $howMuch ne "one" } {
-                set howMuchEnum $::Word::wdReplaceAll
+                set howMuchEnum $Word::wdReplaceAll
             }
             set retVal [$myFind -callnamedargs Execute \
                                 FindText $searchStr \
                                 ReplaceWith $replaceStr \
                                 Replace $howMuchEnum \
-                                Wrap $::Word::wdFindStop \
+                                Wrap $Word::wdFindStop \
                                 MatchCase [::Cawt::TclBool $matchCase] \
                                 Forward True]
         }
@@ -79,17 +167,17 @@ namespace eval ::Word {
         #
         # See also: ReplaceString GetSelectionRange
 
-        if { [::Word::_IsDocument $rangeOrDocId] } {
+        if { [Word::_IsDocument $rangeOrDocId] } {
             set numFound 0
             set stories [$rangeOrDocId StoryRanges]
             $stories -iterate story {
                 lappend storyList $story
-                set retVal [::Word::_FindOrReplace $story "find" $str $matchCase]
+                set retVal [Word::_FindOrReplace $story "find" $str $matchCase]
                 incr numFound
                 set nextStory [$story NextStoryRange]
                 while { [::Cawt::IsValidId $nextStory] } {
                     lappend storyList $nextStory
-                    set retVal [::Word::_FindOrReplace $nextStory "find" $str $matchCase]
+                    set retVal [Word::_FindOrReplace $nextStory "find" $str $matchCase]
                     incr numFound
                     set nextStory [$nextStory NextStoryRange]
                 }
@@ -100,7 +188,7 @@ namespace eval ::Word {
             ::Cawt::Destroy $stories
             return $numFound
         } else {
-            return [::Word::_FindOrReplace $rangeOrDocId "find" $str $matchCase]
+            return [Word::_FindOrReplace $rangeOrDocId "find" $str $matchCase]
         }
     }
 
@@ -119,17 +207,17 @@ namespace eval ::Word {
         #
         # See also: SearchString ReplaceByProc
 
-        if { [::Word::_IsDocument $rangeOrDocId] } {
+        if { [Word::_IsDocument $rangeOrDocId] } {
             set numReplaced 0
             set stories [$rangeOrDocId StoryRanges]
             $stories -iterate story {
                 lappend storyList $story
-                set retVal [::Word::_FindOrReplace $story "replace" $searchStr $matchCase $replaceStr $howMuch]
+                set retVal [Word::_FindOrReplace $story "replace" $searchStr $matchCase $replaceStr $howMuch]
                 incr numReplaced
                 set nextStory [$story NextStoryRange]
                 while { [::Cawt::IsValidId $nextStory] } {
                     lappend storyList $nextStory
-                    set retVal [::Word::_FindOrReplace $nextStory "replace" $searchStr $matchCase $replaceStr $howMuch]
+                    set retVal [Word::_FindOrReplace $nextStory "replace" $searchStr $matchCase $replaceStr $howMuch]
                     incr numReplaced
                     set nextStory [$nextStory NextStoryRange]
                 }
@@ -140,7 +228,7 @@ namespace eval ::Word {
             ::Cawt::Destroy $stories
             return $numReplaced
         } else {
-            return [::Word::_FindOrReplace $rangeOrDocId "replace" $searchStr $matchCase $replaceStr $howMuch]
+            return [Word::_FindOrReplace $rangeOrDocId "replace" $searchStr $matchCase $replaceStr $howMuch]
         }
     }
 
@@ -214,9 +302,9 @@ namespace eval ::Word {
         #
         # See also: CreateRange SelectRange GetSelectionRange
 
-        set docId [::Word::GetDocumentId $rangeId]
-        set index [::Word::GetRangeEndIndex $rangeId]
-        set rangeId [::Word::CreateRange $docId $index $index]
+        set docId [Word GetDocumentId $rangeId]
+        set index [Word GetRangeEndIndex $rangeId]
+        set rangeId [Word CreateRange $docId $index $index]
         ::Cawt::Destroy $docId
         return $rangeId
     }
@@ -250,7 +338,7 @@ namespace eval ::Word {
         #
         # See also: CreateRange GetSelectionRange GetEndRange
 
-        return [::Word::CreateRange $docId 0 0]
+        return [Word CreateRange $docId 0 0]
     }
 
     proc GetEndRange { docId } {
@@ -269,9 +357,9 @@ namespace eval ::Word {
         set endRange  [$endOfDoc Range]
         ::Cawt::Destroy $endOfDoc
         ::Cawt::Destroy $bookMarks
-        set endIndex [::Word::GetRangeEndIndex $endRange]
+        set endIndex [Word GetRangeEndIndex $endRange]
         ::Cawt::Destroy $endRange
-        return [::Word::CreateRange $docId $endIndex $endIndex]
+        return [Word CreateRange $docId $endIndex $endIndex]
     }
 
     proc GetRangeInformation { rangeId type } {
@@ -284,7 +372,7 @@ namespace eval ::Word {
         #
         # See also: GetStartRange GetEndRange PrintRange
 
-        return [$rangeId Information [::Word::GetEnum $type]]
+        return [$rangeId Information [Word GetEnum $type]]
     }
 
     proc PrintRange { rangeId { msg "Range: " } } {
@@ -300,7 +388,7 @@ namespace eval ::Word {
         # See also: GetRangeStartIndex GetRangeEndIndex
 
         puts [format "%s %d %d" $msg \
-              [::Word::GetRangeStartIndex $rangeId] [::Word::GetRangeEndIndex $rangeId]]
+              [Word GetRangeStartIndex $rangeId] [Word GetRangeEndIndex $rangeId]]
     }
 
     proc GetRangeStartIndex { rangeId } {
@@ -356,7 +444,7 @@ namespace eval ::Word {
         # See also: SetRangeBeginIndex GetRangeEndIndex
 
         if { $index eq "end" } {
-            set docId [::Word::GetDocumentId $rangeId]
+            set docId [Word GetDocumentId $rangeId]
             set index [$docId End]
             ::Cawt::Destroy $docId
         }
@@ -377,8 +465,8 @@ namespace eval ::Word {
         #
         # See also: SetRangeBeginIndex SetRangeEndIndex
 
-        set startIndex [::Word::GetRangeStartIndex $rangeId]
-        set endIndex   [::Word::GetRangeEndIndex   $rangeId]
+        set startIndex [Word GetRangeStartIndex $rangeId]
+        set endIndex   [Word GetRangeEndIndex   $rangeId]
         if { [string is integer $startIncr] } {
             set startIndex [expr $startIndex + $startIncr]
         } elseif { $startIncr eq "begin" } {
@@ -387,7 +475,7 @@ namespace eval ::Word {
         if { [string is integer $endIncr] } {
             set endIndex [expr $endIndex + $endIncr]
         } elseif { $endIncr eq "end" } {
-            set docId [::Word::GetDocumentId $rangeId]
+            set docId [Word GetDocumentId $rangeId]
             set endRange [GetEndRange $docId]
             set endIndex [$endRange End]
             ::Cawt::Destroy $endRange
@@ -409,8 +497,8 @@ namespace eval ::Word {
         #
         # See also: SetRangeFontSize SetRangeFontName
 
-        set docId [::Word::GetDocumentId $rangeId]
-        set styleId [$docId -with { Styles } Item [::Word::GetEnum $style]]
+        set docId [Word GetDocumentId $rangeId]
+        set styleId [$docId -with { Styles } Item [Word GetEnum $style]]
         $rangeId Style $styleId
         ::Cawt::Destroy $styleId
         ::Cawt::Destroy $docId
@@ -484,7 +572,7 @@ namespace eval ::Word {
 
         $rangeId -with { Font } Underline [::Cawt::TclInt $onOff]
         if { $onOff } {
-            $rangeId -with { Font } UnderlineColor [::Word::GetEnum $color]
+            $rangeId -with { Font } UnderlineColor [Word GetEnum $color]
         }
     }
 
@@ -500,13 +588,13 @@ namespace eval ::Word {
         # See also: SetRangeHighlightColorByEnum
 
         if { $align eq "center" } {
-            set alignEnum $::Word::wdAlignParagraphCenter
+            set alignEnum $Word::wdAlignParagraphCenter
         } elseif { $align eq "left" } {
-            set alignEnum $::Word::wdAlignParagraphLeft
+            set alignEnum $Word::wdAlignParagraphLeft
         } elseif { $align eq "right" } {
-            set alignEnum $::Word::wdAlignParagraphRight
+            set alignEnum $Word::wdAlignParagraphRight
         } else {
-            set alignEnum [::Word::GetEnum $align]
+            set alignEnum [Word GetEnum $align]
         }
 
         $rangeId -with { ParagraphFormat } Alignment $alignEnum
@@ -522,7 +610,7 @@ namespace eval ::Word {
         #
         # See also: SetRangeBackgroundColorByEnum
 
-        $rangeId HighlightColorIndex [::Word::GetEnum $colorEnum]
+        $rangeId HighlightColorIndex [Word GetEnum $colorEnum]
     }
 
     proc SetRangeBackgroundColorByEnum { rangeId colorEnum } {
@@ -535,7 +623,7 @@ namespace eval ::Word {
         #
         # See also: SetRangeBackgroundColor SetRangeHighlightColorByEnum
 
-        $rangeId -with { Cells Shading } BackgroundPatternColor [::Word::GetEnum $colorEnum]
+        $rangeId -with { Cells Shading } BackgroundPatternColor [Word GetEnum $colorEnum]
     }
 
     proc SetRangeBackgroundColor { rangeId r g b } {
@@ -566,9 +654,9 @@ namespace eval ::Word {
         #
         # See also: AddParagraph
 
-        $rangeId Collapse $::Word::wdCollapseEnd
-        $rangeId InsertBreak [expr { int ($::Word::wdPageBreak) }]
-        $rangeId Collapse $::Word::wdCollapseEnd
+        $rangeId Collapse $Word::wdCollapseEnd
+        $rangeId InsertBreak [expr { int ($Word::wdPageBreak) }]
+        $rangeId Collapse $Word::wdCollapseEnd
     }
 
     proc AddBookmark { rangeId name } {
@@ -581,7 +669,7 @@ namespace eval ::Word {
         #
         # See also: SetLinkToBookmark GetBookmarkName
 
-        set docId [::Word::GetDocumentId $rangeId]
+        set docId [Word GetDocumentId $rangeId]
         set bookmarks [$docId Bookmarks]
         # Create valid bookmark names.
         set validName [regsub -all { } $name {_}]
@@ -615,7 +703,7 @@ namespace eval ::Word {
         #
         # See also: GetListTemplateId InsertList
 
-        return [$appId -with { ListGalleries } Item [::Word::GetEnum $galleryType]]
+        return [$appId -with { ListGalleries } Item [Word GetEnum $galleryType]]
     }
 
     proc GetListTemplateId { galleryId listType } {
@@ -628,7 +716,7 @@ namespace eval ::Word {
         #
         # See also: GetListGalleryId InsertList
 
-        return [$galleryId -with { ListTemplates } Item [::Word::GetEnum $listType]]
+        return [$galleryId -with { ListTemplates } Item [Word GetEnum $listType]]
     }
 
     proc InsertList { rangeId stringList \
@@ -649,9 +737,9 @@ namespace eval ::Word {
             append listStr "$line\n"
         }
         set appId [::Cawt::GetApplicationId $rangeId]
-        set listRangeId [::Word::AddText $rangeId $listStr]
-        set listGalleryId  [::Word::GetListGalleryId $appId $galleryType]
-        set listTemplateId [::Word::GetListTemplateId $listGalleryId $listType]
+        set listRangeId [Word AddText $rangeId $listStr]
+        set listGalleryId  [Word GetListGalleryId $appId $galleryType]
+        set listTemplateId [Word GetListTemplateId $listGalleryId $listType]
         $listRangeId -with { ListFormat } ApplyListTemplate $listTemplateId
         ::Cawt::Destroy $listTemplateId
         ::Cawt::Destroy $listGalleryId
@@ -710,13 +798,13 @@ namespace eval ::Word {
         # See also: GetVersion GetExtString
 
         if { $version eq "" } {
-            return $::Word::wdCurrent
+            return $Word::wdCurrent
         } else {
             array set map {
-                "11.0" $::Word::wdWord2003
-                "12.0" $::Word::wdWord2007
-                "14.0" $::Word::wdWord2010
-                "15.0" $::Word::wdWord2013
+                "11.0" $Word::wdWord2003
+                "12.0" $Word::wdWord2007
+                "14.0" $Word::wdWord2010
+                "15.0" $Word::wdWord2013
             }
             if { [info exists map($version)] } {
                 return $map($version)
@@ -776,8 +864,8 @@ namespace eval ::Word {
 	variable wordVersion
 
         set appId [::Cawt::GetOrCreateApp $wordAppName false]
-        set wordVersion [::Word::GetVersion $appId]
-        ::Word::Visible $appId $visible
+        set wordVersion [Word GetVersion $appId]
+        Word Visible $appId $visible
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -803,8 +891,8 @@ namespace eval ::Word {
 	variable wordVersion
 
         set appId [::Cawt::GetOrCreateApp $wordAppName true]
-        set wordVersion [::Word::GetVersion $appId]
-        ::Word::Visible $appId $visible
+        set wordVersion [Word GetVersion $appId]
+        Word Visible $appId $visible
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -919,12 +1007,12 @@ namespace eval ::Word {
         ::Cawt::ShowAlerts $appId false
         if { $fmt eq "" } {
             if { $wordVersion >= 14.0 } {
-                $docId SaveAs $fileName [expr $::Word::wdFormatDocumentDefault]
+                $docId SaveAs $fileName [expr $Word::wdFormatDocumentDefault]
             } else {
                 $docId SaveAs $fileName
             }
         } else {
-            $docId SaveAs $fileName [::Word::GetEnum $fmt]
+            $docId SaveAs $fileName [Word GetEnum $fmt]
         }
         ::Cawt::ShowAlerts $appId true
     }
@@ -958,16 +1046,16 @@ namespace eval ::Word {
         ::Cawt::ShowAlerts $appId false
         $docId -callnamedargs ExportAsFixedFormat \
                OutputFileName $fileName \
-               ExportFormat $::Word::wdExportFormatPDF \
+               ExportFormat $Word::wdExportFormatPDF \
                OpenAfterExport [::Cawt::TclBool false] \
-               OptimizeFor $::Word::wdExportOptimizeForPrint \
-               Range $::Word::wdExportAllDocument \
+               OptimizeFor $Word::wdExportOptimizeForPrint \
+               Range $Word::wdExportAllDocument \
                From [expr 1] \
                To [expr 1] \
-               Item $::Word::wdExportDocumentContent \
+               Item $Word::wdExportDocumentContent \
                IncludeDocProps [::Cawt::TclBool true] \
                KeepIRM [::Cawt::TclBool true] \
-               CreateBookmarks $::Word::wdExportCreateHeadingBookmarks \
+               CreateBookmarks $Word::wdExportCreateHeadingBookmarks \
                DocStructureTags [::Cawt::TclBool true] \
                BitmapMissingFonts [::Cawt::TclBool true] \
                UseISO19005_1 [::Cawt::TclBool false]
@@ -990,7 +1078,7 @@ namespace eval ::Word {
         variable wordVersion
 
         if { $wordVersion >= 14.0 } {
-            $docId SetCompatibilityMode [::Word::GetEnum $mode]
+            $docId SetCompatibilityMode [Word GetEnum $mode]
         }
     }
 
@@ -1007,12 +1095,12 @@ namespace eval ::Word {
         # See also: OpenDocument
 
         if { $type eq "" } {
-            set type $::Word::wdNewBlankDocument
+            set type $Word::wdNewBlankDocument
         }
         set docs [$appId Documents]
         # Add([Template], [NewTemplate], [DocumentType], [Visible]) As Document
         set docId [$docs -callnamedargs Add \
-                         DocumentType [::Word::GetEnum $type] \
+                         DocumentType [Word GetEnum $type] \
                          Visible [::Cawt::TclInt $visible]]
         ::Cawt::Destroy $docs
         return $docId
@@ -1074,7 +1162,7 @@ namespace eval ::Word {
         #
         # See also: GetNumDocuments GetDocumentName
 
-        set count [::Word::GetNumDocuments $appId]
+        set count [Word GetNumDocuments $appId]
 
         if { $index < 1 || $index > $count } {
             error "GetDocumentIdByIndex: Invalid index $index given."
@@ -1115,7 +1203,7 @@ namespace eval ::Word {
         #
         # See also: GetEndRange AddParagraph
 
-        set endRange [::Word::GetEndRange $docId]
+        set endRange [Word GetEndRange $docId]
         $endRange InsertParagraphAfter
         if { $spaceAfter >= 0 } {
             $endRange -with { ParagraphFormat } SpaceAfter $spaceAfter
@@ -1155,12 +1243,12 @@ namespace eval ::Word {
         # See also: AddText AppendText AddParagraph SetRangeStyle 
         #           InsertCaption InsertFile InsertImage InsertList
 
-        set newRange [::Word::CreateRange $docId 0 0]
+        set newRange [Word CreateRange $docId 0 0]
         $newRange InsertAfter $text
         if { $addParagraph } {
             $newRange InsertParagraphAfter
         }
-        ::Word::SetRangeStyle $newRange $style
+        Word SetRangeStyle $newRange $style
         return $newRange
     }
 
@@ -1178,12 +1266,12 @@ namespace eval ::Word {
         #
         # See also: GetEndRange AddText InsertText AppendParagraph SetRangeStyle
 
-        set newRange [::Word::GetEndRange $docId]
+        set newRange [Word GetEndRange $docId]
         $newRange InsertAfter $text
         if { $addParagraph } {
             $newRange InsertParagraphAfter
         }
-        ::Word::SetRangeStyle $newRange $style
+        Word SetRangeStyle $newRange $style
         return $newRange
     }
 
@@ -1201,13 +1289,13 @@ namespace eval ::Word {
         # See also: AddText InsertText AppendParagraph SetRangeStyle
 
         set newStartIndex [$rangeId End]
-        set docId [::Word::GetDocumentId $rangeId]
-        set newRange [::Word::CreateRange $docId $newStartIndex $newStartIndex]
+        set docId [Word GetDocumentId $rangeId]
+        set newRange [Word CreateRange $docId $newStartIndex $newStartIndex]
         $newRange InsertAfter $text
         if { $addParagraph } {
             $newRange InsertParagraphAfter
         }
-        ::Word::SetRangeStyle $newRange $style
+        Word SetRangeStyle $newRange $style
         ::Cawt::Destroy $docId
         return $newRange
     }
@@ -1231,7 +1319,7 @@ namespace eval ::Word {
             set textDisplay $link
         }
 
-        set docId [::Word::GetDocumentId $rangeId]
+        set docId [Word GetDocumentId $rangeId]
         set hyperlinks [$docId Hyperlinks]
         # Add(Anchor As Object, [Address], [SubAddress], [ScreenTip],
         # [TextToDisplay], [Target]) As Hyperlink
@@ -1259,7 +1347,7 @@ namespace eval ::Word {
             set textDisplay $subAddress
         }
 
-        set docId [::Word::GetDocumentId $rangeId]
+        set docId [Word GetDocumentId $rangeId]
         set hyperlinks [$docId Hyperlinks]
         # Add(Anchor As Object, [Address], [SubAddress], [ScreenTip],
         # [TextToDisplay], [Target]) As Hyperlink
@@ -1282,12 +1370,12 @@ namespace eval ::Word {
         #
         # See also: AddBookmark GetBookmarkName SetHyperlink SetInternalHyperlink
 
-        set bookmarkName [::Word::GetBookmarkName $bookmarkId]
+        set bookmarkName [Word GetBookmarkName $bookmarkId]
         if { $textDisplay eq "" } {
             set textDisplay $bookmarkName
         }
 
-        set docId [::Word::GetDocumentId $rangeId]
+        set docId [Word GetDocumentId $rangeId]
         set hyperlinks [$docId Hyperlinks]
         # Add(Anchor As Object, [Address], [SubAddress], [ScreenTip],
         # [TextToDisplay], [Target]) As Hyperlink
@@ -1319,21 +1407,21 @@ namespace eval ::Word {
 
         if { $pasteFormat ne "" } {
             set tmpAppId [::Cawt::GetApplicationId $rangeId]
-            set tmpDocId [::Word::OpenDocument $tmpAppId [file nativename $fileName] false]
-            set tmpRangeId [::Word::GetStartRange $tmpDocId]
+            set tmpDocId [Word OpenDocument $tmpAppId [file nativename $fileName] false]
+            set tmpRangeId [Word GetStartRange $tmpDocId]
             $tmpRangeId WholeStory
             $tmpRangeId Copy
 
-            $rangeId PasteAndFormat [::Word::GetEnum $pasteFormat]
+            $rangeId PasteAndFormat [Word GetEnum $pasteFormat]
 
             # Workaround: Select a small portion of text and copy it to clipboard
             # to avoid an alert message regarding lots of data in clipboard.
             # Setting DisplayAlerts to false does not help here.
-            set dummyRange [::Word::CreateRange $tmpDocId 0 1]
+            set dummyRange [Word CreateRange $tmpDocId 0 1]
             $dummyRange Copy
             ::Cawt::Destroy $dummyRange
 
-            ::Word::Close $tmpDocId
+            Word Close $tmpDocId
             ::Cawt::Destroy $tmpRangeId
             ::Cawt::Destroy $tmpDocId
             ::Cawt::Destroy $tmpAppId
@@ -1374,7 +1462,7 @@ namespace eval ::Word {
         return $imgId
     }
 
-   proc CropImage { imgId { cropBottom 0.0 } { cropTop 0.0 } { cropLeft 0.0 } { cropRight 0.0 } } {
+    proc CropImage { imgId { cropBottom 0.0 } { cropTop 0.0 } { cropLeft 0.0 } { cropRight 0.0 } } {
         # Crop an image at the four borders.
         #
         # imgId      - Identifier of the image.
@@ -1410,7 +1498,7 @@ namespace eval ::Word {
         #
         # See also: ConfigureCaption InsertFile InsertImage InsertList InsertText
  
-        $rangeId InsertCaption [::Word::GetEnum $labelId] $text "" [::Word::GetEnum $pos] 0
+        $rangeId InsertCaption [Word GetEnum $labelId] $text "" [Word GetEnum $pos] 0
         return $rangeId
     }
 
@@ -1431,11 +1519,11 @@ namespace eval ::Word {
         #
         # See also: InsertCaption
 
-        set captionItem [$appId -with { CaptionLabels } Item [::Word::GetEnum $labelId]]
+        set captionItem [$appId -with { CaptionLabels } Item [Word GetEnum $labelId]]
         $captionItem ChapterStyleLevel    [expr $chapterStyleLevel]
         $captionItem IncludeChapterNumber [::Cawt::TclBool $includeChapterNumber]
-        $captionItem NumberStyle          [::Word::GetEnum $numberStyle]
-        $captionItem Separator            [::Word::GetEnum $separator]
+        $captionItem NumberStyle          [Word GetEnum $numberStyle]
+        $captionItem Separator            [Word GetEnum $separator]
     }
 
     proc AddTable { rangeId numRows numCols { spaceAfter -1 } } {
@@ -1450,7 +1538,7 @@ namespace eval ::Word {
         #
         # See also: GetNumRows GetNumColumns
 
-        set docId [::Word::GetDocumentId $rangeId]
+        set docId [Word GetDocumentId $rangeId]
         set tableId [$docId -with { Tables } Add $rangeId $numRows $numCols]
         if { $spaceAfter >= 0 } {
             $tableId -with { Range ParagraphFormat } SpaceAfter $spaceAfter
@@ -1480,7 +1568,7 @@ namespace eval ::Word {
         #
         # See also: GetNumTables
 
-        set count [::Word::GetNumTables $docId]
+        set count [Word GetNumTables $docId]
 
         if { $index < 1 || $index > $count } {
             error "GetTableIdByIndex: Invalid index $index given."
@@ -1503,8 +1591,8 @@ namespace eval ::Word {
         # See also: AddTable SetTableBorderLineWidth
 
         set border [$tableId Borders]
-        $border OutsideLineStyle [::Word::GetEnum $outsideLineStyle]
-        $border InsideLineStyle  [::Word::GetEnum $insideLineStyle]
+        $border OutsideLineStyle [Word GetEnum $outsideLineStyle]
+        $border InsideLineStyle  [Word GetEnum $insideLineStyle]
         ::Cawt::Destroy $border
     }
 
@@ -1523,8 +1611,8 @@ namespace eval ::Word {
         # See also: AddTable SetTableBorderLineStyle
 
         set border [$tableId Borders]
-        $border OutsideLineWidth [::Word::GetEnum $outsideLineWidth]
-        $border InsideLineWidth  [::Word::GetEnum $insideLineWidth]
+        $border OutsideLineWidth [Word GetEnum $outsideLineWidth]
+        $border InsideLineWidth  [Word GetEnum $insideLineWidth]
         ::Cawt::Destroy $border
     }
 
@@ -1570,7 +1658,7 @@ namespace eval ::Word {
                 $rowsId Add
             }
         } else {
-            if { $beforeRowNum < 1 || $beforeRowNum > [::Word::GetNumRows $tableId] } {
+            if { $beforeRowNum < 1 || $beforeRowNum > [Word GetNumRows $tableId] } {
                 error "AddRow: Invalid row number $beforeRowNum given."
             }
             set rowId [$tableId -with { Rows } Item $beforeRowNum]
@@ -1647,7 +1735,7 @@ namespace eval ::Word {
         #
         # See also: GetCellValue SetRowValues SetMatrixValues
 
-        set rangeId [::Word::GetCellRange $tableId $row $col]
+        set rangeId [Word GetCellRange $tableId $row $col]
         $rangeId Text $val
         ::Cawt::Destroy $rangeId
     }
@@ -1663,8 +1751,8 @@ namespace eval ::Word {
         #
         # See also: SetCellValue
 
-        set rangeId [::Word::GetCellRange $tableId $row $col]
-        set val [::Word::TrimString [$rangeId Text]]
+        set rangeId [Word GetCellRange $tableId $row $col]
+        set val [Word TrimString [$rangeId Text]]
         ::Cawt::Destroy $rangeId
         return $val
     }
@@ -1711,7 +1799,7 @@ namespace eval ::Word {
         # See also: SetRowValues GetColumnValues GetCellValue
 
         if { $numVals <= 0 } {
-            set len [::Word::GetNumColumns $tableId]
+            set len [Word GetNumColumns $tableId]
         } else {
             set len $numVals
         }
@@ -1719,7 +1807,7 @@ namespace eval ::Word {
         set col $startCol
         set ind 0
         while { $ind < $len } {
-            set val [::Word::GetCellValue $tableId $row $col]
+            set val [Word GetCellValue $tableId $row $col]
             lappend valList $val
             incr ind
             incr col

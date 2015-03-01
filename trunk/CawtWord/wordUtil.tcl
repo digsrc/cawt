@@ -1,7 +1,15 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Word {
+namespace eval Word {
+
+    namespace ensemble create
+
+    namespace export DiffWordFiles
+    namespace export FormatHeaderRow
+    namespace export GetMatrixValues
+    namespace export SetHeaderRow
+    namespace export SetMatrixValues
 
     proc SetHeaderRow { tableId headerList { row 1 } { startCol 1 } } {
         # Insert row values into a Word table and format as a header row.
@@ -16,8 +24,8 @@ namespace eval ::Word {
         # See also: SetRowValues FormatHeaderRow
 
         set len [llength $headerList]
-        ::Word::SetRowValues $tableId $row $headerList $startCol $len
-        ::Word::FormatHeaderRow $tableId $row $startCol [expr {$startCol + $len -1}]
+        Word SetRowValues $tableId $row $headerList $startCol $len
+        Word FormatHeaderRow $tableId $row $startCol [expr {$startCol + $len -1}]
     }
 
     proc FormatHeaderRow { tableId row startCol endCol } {
@@ -35,10 +43,10 @@ namespace eval ::Word {
         #
         # See also: SetHeaderRow
 
-        set header [::Word::GetRowRange $tableId $row]
-        ::Word::SetRangeHorizontalAlignment $header $::Word::wdAlignParagraphCenter
-        ::Word::SetRangeBackgroundColorByEnum $header $::Word::wdColorGray25
-        ::Word::SetRangeFontBold $header
+        set header [Word GetRowRange $tableId $row]
+        Word SetRangeHorizontalAlignment $header $Word::wdAlignParagraphCenter
+        Word SetRangeBackgroundColorByEnum $header $Word::wdColorGray25
+        Word SetRangeFontBold $header
     }
 
     proc SetMatrixValues { tableId matrixList { startRow 1 } { startCol 1 } } {
@@ -61,7 +69,7 @@ namespace eval ::Word {
 
         set curRow $startRow
         foreach rowList $matrixList {
-            ::Word::SetRowValues $tableId $curRow $rowList $startCol
+            Word SetRowValues $tableId $curRow $rowList $startCol
             incr curRow
         }
     }
@@ -79,7 +87,7 @@ namespace eval ::Word {
 
         set numVals [expr {$col2-$col1+1}]
         for { set row $row1 } { $row <= $row2 } { incr row } {
-            lappend matrixList [::Word::GetRowValues $tableId $row $col1 $numVals]
+            lappend matrixList [Word GetRowValues $tableId $row $col1 $numVals]
         }
         return $matrixList
     }
@@ -108,7 +116,7 @@ namespace eval ::Word {
             error "Diff: Base and new file are equal. Cannot compare."
         }
 
-        set appId [::Word::OpenNew true]
+        set appId [Word OpenNew true]
 
         if { $wordVersion >= 12.0 } {
             # From Word 2007 and up, change order of files.
@@ -117,13 +125,13 @@ namespace eval ::Word {
             set wordNewFile $tmpFile
         }
 
-        set newDocId [::Word::OpenDocument $appId [file nativename $wordNewFile] true]
-        $newDocId -with { ActiveWindow View } Type $::Word::wdNormalView
+        set newDocId [Word OpenDocument $appId [file nativename $wordNewFile] true]
+        $newDocId -with { ActiveWindow View } Type $Word::wdNormalView
 
-        $newDocId Compare [file nativename $wordBaseFile] "CawtDiff" $::Word::wdCompareTargetNew true true
+        $newDocId Compare [file nativename $wordBaseFile] "CawtDiff" $Word::wdCompareTargetNew true true
 
         $appId -with { ActiveDocument } Saved [::Cawt::TclBool true]
-        ::Word::Close $newDocId
+        Word Close $newDocId
 
         return $appId
     }

@@ -6,18 +6,18 @@
 source "SetTestPathes.tcl"
 set retVal [catch {package require cawt} pkgVersion]
 
-set appId [::Word::OpenNew false]
+set appId [Word OpenNew false]
 
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
 puts [format "%-25s: %s" "Twapi version" [::Cawt::GetPkgVersion "twapi"]]
 
 puts [format "%-25s: %s (%s)" "Word Version" \
-                             [::Word::GetVersion $appId] \
-                             [::Word::GetVersion $appId true]]
+                             [Word GetVersion $appId] \
+                             [Word GetVersion $appId true]]
 
 puts [format "%-25s: %s" "Word filename extension" \
-                             [::Word::GetExtString $appId]]
+                             [Word GetExtString $appId]]
 
 puts [format "%-25s: %s" "Active Printer" \
                         [::Cawt::GetActivePrinter $appId]]
@@ -36,7 +36,7 @@ puts [format "%-25s: %s" "Installation Pathname" \
 puts [format "%-25s: %s" "User Folder Pathname" \
                          [::Cawt::GetUserPath $appId]]
 
-set docId [::Word::AddDocument $appId]
+set docId [Word AddDocument $appId]
 
 puts [format "%-30s: %s" "Appl. name (from Application)" \
          [::Cawt::GetApplicationName $appId]]
@@ -44,21 +44,21 @@ puts [format "%-30s: %s" "Appl. name (from Document)" \
          [::Cawt::GetApplicationName [::Cawt::GetApplicationId $docId]]]
 
 puts ""
-puts "Word has [llength [::Word::GetEnumTypes]] enumeration types."
-set exampleEnum [lindex [::Word::GetEnumTypes] 0]
-puts "  $exampleEnum names : [::Word::GetEnumNames $exampleEnum]"
+puts "Word has [llength [Word GetEnumTypes]] enumeration types."
+set exampleEnum [lindex [Word GetEnumTypes] 0]
+puts "  $exampleEnum names : [Word GetEnumNames $exampleEnum]"
 puts -nonewline "  $exampleEnum values:"
-foreach name [::Word::GetEnumNames $exampleEnum] {
-    puts -nonewline " [::Word::GetEnumVal $name]"
+foreach name [Word GetEnumNames $exampleEnum] {
+    puts -nonewline " [Word GetEnumVal $name]"
 }
 
 puts ""
-::Word::Close $docId
+Word Close $docId
 
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Word::Quit $appId
+    Word Quit $appId
     ::Cawt::Destroy
     exit 0
 }

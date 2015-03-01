@@ -26,7 +26,7 @@ set retVal [catch {package require cawt} pkgVersion]
 
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
-puts [format "%-25s: %s" "Twapi version" [::Cawt::GetPkgVersion "twapi"]]
+puts [format "%-25s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
 
 if { $option eq "ref" || $option eq "all" } {
     cd $cawtDir
@@ -67,14 +67,14 @@ if { $option eq "user" || $option eq "all" } {
     set outFigureDir [file join $finalDir "CawtFigures"]
     set testDir [file join $cawtDir "TestPrograms"]
 
-    Cawt::CheckComObjects 1 "ComObjs at Start" $printChecks
+    Cawt CheckComObjects 1 "ComObjs at Start" $printChecks
 
     # Generate the figures for the user manual from the PowerPoint file.
     if { $optExportPpt } {
         puts "    Exporting figures from PowerPoint template ..."
-        ::Ppt::ExportPptFile $pptInFile $outFigureDir "Figure-%02d.png" 1 end "PNG" -1 -1 false false
+        Ppt ExportPptFile $pptInFile $outFigureDir "Figure-%02d.png" 1 end "PNG" -1 -1 false false
     }
-    Cawt::CheckComObjects 1 "ComObjs after ExportPptFile" $printChecks
+    Cawt CheckComObjects 1 "ComObjs after ExportPptFile" $printChecks
 
     # Copy the user manual template to new location and name.
     # Open the user manual template and perform the following actions:
@@ -83,12 +83,12 @@ if { $option eq "user" || $option eq "all" } {
     #   Insert the generated figures replacing the placeholder text.
     # Then save the finished user manual in the Final folder.
     file copy -force $wordInFile $userManFile
-    set wordId [::Word::OpenNew]
-    set docId [::Word::OpenDocument $wordId $userManFile false]
-    ::Word::SetCompatibilityMode $docId $::Word::wdWord2003
+    set wordId [Word OpenNew]
+    set docId [Word OpenDocument $wordId $userManFile false]
+    Word SetCompatibilityMode $docId $Word::wdWord2003
 
-    set numTables [::Word::GetNumTables $docId]
-    Cawt::CheckComObjects 3 "ComObjs after OpenDocument" $printChecks
+    set numTables [Word GetNumTables $docId]
+    Cawt CheckComObjects 3 "ComObjs after OpenDocument" $printChecks
 
     if { $optReplaceRefTables } {
         set moduleList [list "Cawt" "Earth" "Excel" "Explorer" "Matlab" "Ocr" "Outlook" "Ppt" "Word"]
@@ -106,16 +106,16 @@ if { $option eq "user" || $option eq "all" } {
         }
 
         for { set n 1 } { $n <= $numTables } {incr n } {
-            set tableId [::Word::GetTableIdByIndex $docId $n]
+            set tableId [Word GetTableIdByIndex $docId $n]
             # Placeholder must be listed in row 2, column 1.
-            set cellCont [::Word::GetCellValue $tableId 2 1]
+            set cellCont [Word GetCellValue $tableId 2 1]
             foreach module $moduleList {
                 if { $cellCont eq "%TABLE ${module}%" } {
                     set numProcs [llength $procFullNameList($module)]
                     puts "    Replacing table \"%TABLE ${module}%\" with $numProcs procedure references ..."
-                    set numRows [::Word::GetNumRows $tableId]
+                    set numRows [Word GetNumRows $tableId]
                     set missingRows [expr {$numProcs - $numRows + 1 }]
-                    ::Word::AddRow $tableId end $missingRows
+                    Word AddRow $tableId end $missingRows
 
                     set row 2
                     foreach procFullName $procFullNameList($module) procShortName $procShortNameList($module) {
@@ -131,19 +131,19 @@ if { $option eq "user" || $option eq "all" } {
                             }
                         }
                         set description [string trim $description]
-                        ::Word::SetCellValue $tableId $row 1 $procShortName
-                        set rangeId [::Word::GetCellRange $tableId $row 1]
+                        Word SetCellValue $tableId $row 1 $procShortName
+                        set rangeId [Word GetCellRange $tableId $row 1]
                         set url [format "%s#%s" $refUrl $procFullName]
-                        ::Word::SetHyperlink $rangeId $url $procShortName
-                        ::Word::SetCellValue $tableId $row 2 $description
-                        ;;Cawt::Destroy $rangeId
+                        Word SetHyperlink $rangeId $url $procShortName
+                        Word SetCellValue $tableId $row 2 $description
+                        Cawt Destroy $rangeId
                         incr row
                     }
                 }
             }
-            ::Cawt::Destroy $tableId
+            Cawt Destroy $tableId
         }
-        Cawt::CheckComObjects 3 "ComObjs after ReplaceRefTables" $printChecks
+        Cawt CheckComObjects 3 "ComObjs after ReplaceRefTables" $printChecks
     }
 
     if { $optReplaceTestPrograms } {
@@ -153,15 +153,15 @@ if { $option eq "user" || $option eq "all" } {
             if { $foundPlaceHolder } {
                 break
             }
-            set tableId [::Word::GetTableIdByIndex $docId $n]
+            set tableId [Word GetTableIdByIndex $docId $n]
             # Placeholder must be listed in row 2, column 1.
-            set cellCont [::Word::GetCellValue $tableId 2 1]
+            set cellCont [Word GetCellValue $tableId 2 1]
             if { $cellCont eq $placeHolder } {
                 puts "    Replacing table \"$placeHolder\" with list of test programs ..."
                 set testFileList [lsort [glob -directory $testDir Earth* Excel* Explorer* Matlab* Outlook* Ocr* Ppt* Word*]]
-                set numRows [::Word::GetNumRows $tableId]
+                set numRows [Word GetNumRows $tableId]
                 set missingRows [expr [llength $testFileList] - $numRows + 1]
-                ::Word::AddRow $tableId end $missingRows
+                Word AddRow $tableId end $missingRows
 
                 set row 2
                 foreach testFile $testFileList {
@@ -174,18 +174,18 @@ if { $option eq "user" || $option eq "all" } {
                     }
                     close $fp
                     set f [file tail $testFile]
-                    ::Word::SetCellValue $tableId $row 1 $f
-                    ::Word::SetCellValue $tableId $row 2 $description
+                    Word SetCellValue $tableId $row 1 $f
+                    Word SetCellValue $tableId $row 2 $description
                     incr row
                 }
                 set foundPlaceHolder true
             }
-            ::Cawt::Destroy $tableId
+            Cawt Destroy $tableId
         }
         if { ! $foundPlaceHolder } {
             puts "Warning: Placeholder \"$placeHolder\" not available in Word template"
         }
-        Cawt::CheckComObjects 3 "ComObjs after ReplaceTestPrograms" $printChecks
+        Cawt CheckComObjects 3 "ComObjs after ReplaceTestPrograms" $printChecks
     }
 
     if { $optReplaceFigures } {
@@ -202,61 +202,61 @@ if { $option eq "user" || $option eq "all" } {
             set figImg  [file tail $fig]
             set figName [file rootname $figImg]
             set placeHolder "%FIGURE $figName%"
-            set myRange [::Word::GetStartRange $docId]
-            if { ! [::Word::FindString $myRange $placeHolder] } {
+            set myRange [Word GetStartRange $docId]
+            if { ! [Word FindString $myRange $placeHolder] } {
                 puts "Warning: Figure $figName not available in Word template"
                 continue
             } else {
                 puts "    Replacing keyword $placeHolder with figure $figImg ..."
             }
-            set imgId [::Word::InsertImage $myRange $fig]
-            ::Word::ReplaceString $myRange $placeHolder ""
+            set imgId [Word InsertImage $myRange $fig]
+            Word ReplaceString $myRange $placeHolder ""
             if { [info exists cropValues($figName)] } {
-                set crop [::Cawt::CentiMetersToPoints $cropValues($figName)]
+                set crop [Cawt CentiMetersToPoints $cropValues($figName)]
             } else {
                 puts "Warning: No crop value specified for figure $figName"
                 set crop 0.0
             }
-            ::Word::CropImage $imgId $crop
-            ::Cawt::Destroy $imgId
-            ::Cawt::Destroy $myRange
+            Word CropImage $imgId $crop
+            Cawt Destroy $imgId
+            Cawt Destroy $myRange
         }
-        Cawt::CheckComObjects 3 "ComObjs after ReplaceFigures" $printChecks
+        Cawt CheckComObjects 3 "ComObjs after ReplaceFigures" $printChecks
     }
 
     if { $optReplaceKeywords } {
-        if { ! [::Word::FindString $docId "%VERSION%"] } {
+        if { ! [Word FindString $docId "%VERSION%"] } {
             puts "Warning: %VERSION% not available in Word template"
         }
-        ::Word::ReplaceString $docId "%VERSION%" $pkgVersion "all"
+        Word ReplaceString $docId "%VERSION%" $pkgVersion "all"
 
-        if { ! [::Word::FindString $docId "%YEAR%"] } {
+        if { ! [Word FindString $docId "%YEAR%"] } {
             puts "Warning: %YEAR% not available in Word template"
         }
         set year [clock format [clock seconds] -format "%Y"]
-        ::Word::ReplaceString $docId "%YEAR%" $year "all"
+        Word ReplaceString $docId "%YEAR%" $year "all"
 
-        if { ! [::Word::FindString $docId "%DATE%"] } {
+        if { ! [Word FindString $docId "%DATE%"] } {
             puts "Warning: %DATE% not available in Word template"
         }
         set date [clock format [clock seconds] -format "%Y-%m-%d"]
-        ::Word::ReplaceString $docId "%DATE%" $date "all"
+        Word ReplaceString $docId "%DATE%" $date "all"
 
-        Cawt::CheckComObjects 3 "ComObjs after ReplaceKeywords" $printChecks
+        Cawt CheckComObjects 3 "ComObjs after ReplaceKeywords" $printChecks
     }
 
-    ::Word::UpdateFields $docId
+    Word UpdateFields $docId
 
-    Cawt::CheckComObjects 3 "ComObjs after UpdateFields" $printChecks
+    Cawt CheckComObjects 3 "ComObjs after UpdateFields" $printChecks
 
-    ::Word::SaveAs $docId $userManFile
-    set retVal [catch {::Word::SaveAsPdf $docId $pdfManFile} errMsg]
+    Word SaveAs $docId $userManFile
+    set retVal [catch {Word SaveAsPdf $docId $pdfManFile} errMsg]
     if { $retVal } {
         puts "Warning: $errMsg"
     }
-    ::Word::Close $docId
-    ::Word::Quit $wordId
-    ::Cawt::Destroy
+    Word Close $docId
+    Word Quit $wordId
+    Cawt Destroy
 }
 puts "Done."
 exit 0

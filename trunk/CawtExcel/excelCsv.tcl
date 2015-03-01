@@ -1,12 +1,23 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export CsvRowToList
+    namespace export CsvStringToMatrix
+    namespace export GetCsvSeparatorChar
+    namespace export ListToCsvRow
+    namespace export MatrixToCsvString
+    namespace export ReadCsvFile
+    namespace export SetCsvSeparatorChar
+    namespace export WriteCsvFile
 
     variable sSepChar
 
     proc _InitCsv {} {
-        ::Excel::SetCsvSeparatorChar
+        Excel SetCsvSeparatorChar
     }
 
     proc GetCsvSeparatorChar {} {
@@ -41,7 +52,7 @@ namespace eval ::Excel {
         set combine 0
 
         set wordList [split $rowStr $sSepChar]
-        set floatSep [::Excel::GetFloatSeparator]
+        set floatSep [Excel GetFloatSeparator]
 
         foreach word $wordList {
             # TODO: Check conversion between different floating-point separators.
@@ -116,7 +127,7 @@ namespace eval ::Excel {
         set rowStr ""
         set len1 [expr [llength $rowList] -1]
         set curVal 0
-        set floatSep [::Excel::GetFloatSeparator]
+        set floatSep [Excel GetFloatSeparator]
         foreach val $rowList {
             set tmp [string map {\n\r \ } $val]
             if { [string first $sSepChar $tmp] >= 0 || \
@@ -147,7 +158,7 @@ namespace eval ::Excel {
         # See also: CsvStringToMatrix ListToCsvRow
 
         foreach rowList $matrixList {
-            append str [::Excel::ListToCsvRow $rowList]
+            append str [Excel ListToCsvRow $rowList]
             append str "\n"
         }
         return [string range $str 0 end-1]
@@ -163,7 +174,7 @@ namespace eval ::Excel {
         set trimString [string trim $csvString '\0''\n']
         foreach row [lrange [split $trimString "\n"] 0 end] {
             set row [string trim $row "\r"]
-            lappend matrixList [::Excel::CsvRowToList $row]
+            lappend matrixList [Excel CsvRowToList $row]
         }
         return $matrixList
     }
@@ -198,7 +209,7 @@ namespace eval ::Excel {
                 continue
             }
 
-            set tmpList [::Excel::CsvRowToList $row]
+            set tmpList [Excel CsvRowToList $row]
             lappend matrixList $tmpList
             incr rowCount
         }
@@ -226,11 +237,11 @@ namespace eval ::Excel {
         fconfigure $fp -translation binary
 
         foreach row $matrixList {
-            puts -nonewline $fp [::Excel::ListToCsvRow $row]
+            puts -nonewline $fp [Excel ListToCsvRow $row]
             puts -nonewline $fp "\r\n"
         }
         close $fp
     }
 }
 
-::Excel::_InitCsv
+Excel::_InitCsv

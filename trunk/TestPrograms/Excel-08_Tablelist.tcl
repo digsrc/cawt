@@ -42,8 +42,8 @@ tablelist::tablelist .frOut2.tl -width 100
 pack .frOut2.tl -side top -fill both -expand 1
 
 puts "Filling source tablelist with data"
-::Excel::SetTablelistHeader .frIn.tl $headerList
-::Cawt::CheckList $headerList [::Excel::GetTablelistHeader .frIn.tl] "GetTablelistHeader"
+Excel SetTablelistHeader .frIn.tl $headerList
+::Cawt::CheckList $headerList [Excel GetTablelistHeader .frIn.tl] "GetTablelistHeader"
 set matrixList [list]
 
 for { set row 1 } { $row <= $numRows } { incr row } {
@@ -53,62 +53,62 @@ for { set row 1 } { $row <= $numRows } { incr row } {
     }
     lappend matrixList $rowList
 }
-::Excel::SetTablelistValues .frIn.tl $matrixList
-::Cawt::CheckMatrix $matrixList [::Excel::GetTablelistValues .frIn.tl] "GetTablelistValues"
+Excel SetTablelistValues .frIn.tl $matrixList
+::Cawt::CheckMatrix $matrixList [Excel GetTablelistValues .frIn.tl] "GetTablelistValues"
 update
 
 # Open new instance of Excel and add a workbook.
-set appId [::Excel::OpenNew]
-set workbookId [::Excel::AddWorkbook $appId]
+set appId [Excel OpenNew]
+set workbookId [Excel AddWorkbook $appId]
 
 # Delete Excel file from previous test run.
 file mkdir testOut
 set xlsFile [file join [pwd] "testOut" "Excel-08_Tablelist"]
-append xlsFile [::Excel::GetExtString $appId]
+append xlsFile [Excel GetExtString $appId]
 file delete -force $xlsFile
 
 # Transfer tablelist data with header information into Excel and vice versa.
 set useHeader true
 
-set worksheetId [::Excel::AddWorksheet $workbookId "WithHeader"]
+set worksheetId [Excel AddWorksheet $workbookId "WithHeader"]
 
 set t1 [clock clicks -milliseconds]
-::Excel::TablelistToWorksheet .frIn.tl $worksheetId $useHeader
+Excel TablelistToWorksheet .frIn.tl $worksheetId $useHeader
 set t2 [clock clicks -milliseconds]
 puts "TablelistToWorksheet: [expr $t2 - $t1] ms (using header: $useHeader)."
 
 set t1 [clock clicks -milliseconds]
-::Excel::WorksheetToTablelist $worksheetId .frOut1.tl $useHeader
+Excel WorksheetToTablelist $worksheetId .frOut1.tl $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WorksheetToTablelist: [expr $t2 - $t1] ms (using header: $useHeader)."
-::Cawt::CheckMatrix $matrixList [::Excel::GetTablelistValues .frOut1.tl] "GetTablelistValues"
+::Cawt::CheckMatrix $matrixList [Excel GetTablelistValues .frOut1.tl] "GetTablelistValues"
 update
 
 
 # Transfer tablelist without header information into Excel and vice versa.
 set useHeader false
 
-set worksheetId [::Excel::AddWorksheet $workbookId "NoHeader"]
+set worksheetId [Excel AddWorksheet $workbookId "NoHeader"]
 
 set t1 [clock clicks -milliseconds]
-::Excel::TablelistToWorksheet .frIn.tl $worksheetId $useHeader
+Excel TablelistToWorksheet .frIn.tl $worksheetId $useHeader
 set t2 [clock clicks -milliseconds]
 puts "TablelistToWorksheet: [expr $t2 - $t1] ms (using header: $useHeader)."
 
 set t1 [clock clicks -milliseconds]
-::Excel::WorksheetToTablelist $worksheetId .frOut2.tl $useHeader
+Excel WorksheetToTablelist $worksheetId .frOut2.tl $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WorksheetToTablelist: [expr $t2 - $t1] ms (using header: $useHeader)."
-::Cawt::CheckMatrix $matrixList [::Excel::GetTablelistValues .frOut2.tl] "GetTablelistValues"
+::Cawt::CheckMatrix $matrixList [Excel GetTablelistValues .frOut2.tl] "GetTablelistValues"
 update
 
 puts "Saving as Excel file: $xlsFile"
-::Excel::SaveAs $workbookId $xlsFile
+Excel SaveAs $workbookId $xlsFile
 
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Excel::Quit $appId
+    Excel Quit $appId
     ::Cawt::Destroy
     exit 0
 }

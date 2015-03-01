@@ -30,9 +30,9 @@ set outFileMultiCsv   [file join $outPath Excel-07_Csv_MultiCsv.csv]
 file mkdir testOut
 
 # Add a workbook, add a worksheet and save it in CSV format.
-set appId [::Excel::Open]
-set workbookId  [::Excel::AddWorkbook $appId]
-set worksheetId [::Excel::AddWorksheet $workbookId "CsvSep"]
+set appId [Excel Open]
+set workbookId  [Excel AddWorkbook $appId]
+set worksheetId [Excel AddWorksheet $workbookId "CsvSep"]
 
 # Insert some matrix data.
 set testList {
@@ -42,66 +42,66 @@ set testList {
     { 3|1 4|2 5|3 }
     { "Hello; world" "What's" "next" }
 }
-::Excel::SetMatrixValues $worksheetId $testList
-::Excel::SetMatrixValues $worksheetId $testList [expr [llength $testList] + 2]
-set cmpMatrix [::Excel::GetWorksheetAsMatrix $worksheetId]
+Excel SetMatrixValues $worksheetId $testList
+Excel SetMatrixValues $worksheetId $testList [expr [llength $testList] + 2]
+set cmpMatrix [Excel GetWorksheetAsMatrix $worksheetId]
 
 puts "Saving CSV file $outFileExcel with Excel"
-::Excel::SaveAsCsv $workbookId $worksheetId $outFileExcel
-::Excel::Close $workbookId
-::Excel::Quit $appId false
+Excel SaveAsCsv $workbookId $worksheetId $outFileExcel
+Excel Close $workbookId
+Excel Quit $appId false
 
 # Read the generated CSV file with the Cawt procedures and write it to a new CSV file.
-::Excel::SetCsvSeparatorChar ","
-::Cawt::CheckString "," [::Excel::GetCsvSeparatorChar] "::Excel::GetCsvSeparatorChar"
+Excel SetCsvSeparatorChar ","
+::Cawt::CheckString "," [Excel GetCsvSeparatorChar] "Excel GetCsvSeparatorChar"
 puts "Reading CSV file $outFileExcel"
-set csvMatrix [::Excel::ReadCsvFile $outFileExcel]
+set csvMatrix [Excel ReadCsvFile $outFileExcel]
 puts "Writing CSV file $outFileCsv"
-::Excel::WriteCsvFile $csvMatrix $outFileCsv
+Excel WriteCsvFile $csvMatrix $outFileCsv
 
 ::Cawt::CheckMatrix $cmpMatrix $csvMatrix "Worksheet vs. ReadCsvFile"
 
 # Use the matrix generated above and write it to a new MediaWiki file.
 puts "Writing MediaWiki file $outFileMediaWiki1"
-::Excel::WriteMediaWikiFile $csvMatrix $outFileMediaWiki1
+Excel WriteMediaWikiFile $csvMatrix $outFileMediaWiki1
 
 # Read the MediaWiki test file (including potential column headers)
 # and write it out again.
 puts "Reading MediaWiki file $inFileMediaWiki"
-set mediaWikiList [::Excel::ReadMediaWikiFile $inFileMediaWiki]
+set mediaWikiList [Excel ReadMediaWikiFile $inFileMediaWiki]
 puts "Writing MediaWiki file $outFileMediaWiki2"
-::Excel::WriteMediaWikiFile $mediaWikiList $outFileMediaWiki2
+Excel WriteMediaWikiFile $mediaWikiList $outFileMediaWiki2
 
 # Use the matrix generated above and write it to a new Wikit file.
 puts "Writing Wikit file $outFileWikit1"
-::Excel::WriteWikitFile $csvMatrix $outFileWikit1
+Excel WriteWikitFile $csvMatrix $outFileWikit1
 
 # Read the Wikit test file (including potential column headers)
 # and write it out again.
 puts "Reading Wikit file $inFileWikit"
-set wikitList [::Excel::ReadWikitFile $inFileWikit]
+set wikitList [Excel ReadWikitFile $inFileWikit]
 puts "Writing Wikit file $outFileWikit2"
-::Excel::WriteWikitFile $wikitList $outFileWikit2
+Excel WriteWikitFile $wikitList $outFileWikit2
 
 ::Cawt::CheckMatrix $mediaWikiList $wikitList "MediaWiki vs. Wikit"
 
-set appId [::Excel::OpenNew]
-set workbookId [::Excel::OpenWorkbook $appId $xlsMultiFile]
-set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId 1]
+set appId [Excel OpenNew]
+set workbookId [Excel OpenWorkbook $appId $xlsMultiFile]
+set worksheetId [Excel GetWorksheetIdByIndex $workbookId 1]
 
 puts "Saving CSV file $outFileMultiExcel with Excel"
-::Excel::SaveAsCsv $workbookId $worksheetId $outFileMultiExcel
+Excel SaveAsCsv $workbookId $worksheetId $outFileMultiExcel
 
-set excelMatrix [::Excel::GetMatrixValues $worksheetId 1 1 2 3]
+set excelMatrix [Excel GetMatrixValues $worksheetId 1 1 2 3]
 ::Cawt::CheckNumber 2 [llength $excelMatrix] "Number of rows of matrix"
 ::Cawt::CheckNumber 3 [llength [lindex $excelMatrix 0]] "Number of columns of matrix"
-::Excel::Close $workbookId
-::Excel::Quit $appId false
+Excel Close $workbookId
+Excel Quit $appId false
 
 puts "Writing CSV file $outFileMultiCsv"
-::Excel::WriteCsvFile $excelMatrix $outFileMultiCsv
+Excel WriteCsvFile $excelMatrix $outFileMultiCsv
 puts "Reading CSV file $outFileMultiCsv"
-set csvMatrix [::Excel::ReadCsvFile $outFileMultiCsv]
+set csvMatrix [Excel ReadCsvFile $outFileMultiCsv]
 ::Cawt::CheckMatrix $excelMatrix $csvMatrix "ExcelMatrixMulti vs. CsvMatrixMulti"
 
 ::Cawt::PrintNumComObjects

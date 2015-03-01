@@ -1,7 +1,16 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export ExcelFileToMediaWikiFile
+    namespace export MediaWikiFileToExcelFile
+    namespace export MediaWikiFileToWorksheet
+    namespace export ReadMediaWikiFile
+    namespace export WorksheetToMediaWikiFile
+    namespace export WriteMediaWikiFile
 
     proc _MediaWikiList2RowString { lineList sep } {
         if { $sep eq "||" } {
@@ -37,12 +46,12 @@ namespace eval ::Excel {
         while { [string first $sep $range] >= 0 } {
             set begRange 0
             set endRange [expr {[string first $sep $range] - 1}]
-            lappend tmpList [::Excel::_MediaWikiSubstHtml [string range $range $begRange $endRange]]
+            lappend tmpList [Excel::_MediaWikiSubstHtml [string range $range $begRange $endRange]]
             # Set new range to start after the separator. We add 3, because the endRange
             # index points to the character before the separator.
             set range [string range $range [expr {$endRange+3}] end]
         }
-        lappend tmpList [::Excel::_MediaWikiSubstHtml [string range $range 0 end]]
+        lappend tmpList [Excel::_MediaWikiSubstHtml [string range $range 0 end]]
         return $tmpList
     }
 
@@ -69,7 +78,7 @@ namespace eval ::Excel {
 
         while { [gets $fp line] >= 0 } {
             if { [string index $line 0] eq "!" && $useHeader } {
-                set tmpList [::Excel::_MediaWikiRowString2List $line "!!"]
+                set tmpList [Excel::_MediaWikiRowString2List $line "!!"]
             } elseif { [string range $line 0 1] eq "|-" || \
                        [string range $line 0 1] eq "|\}" } {
                 if { $firstRow } {
@@ -80,9 +89,9 @@ namespace eval ::Excel {
                 set tmpList {}
             } elseif { [string index $line 0] eq "|" } {
                 if { [string first "||" $line] >= 0 } {
-                    set tmpList [::Excel::_MediaWikiRowString2List $line "||"]
+                    set tmpList [Excel::_MediaWikiRowString2List $line "||"]
                 } else {
-                    lappend tmpList [::Excel::_MediaWikiSubstHtml [string range $line 1 end]]
+                    lappend tmpList [Excel::_MediaWikiSubstHtml [string range $line 1 end]]
                 }
             }
         }
@@ -95,12 +104,12 @@ namespace eval ::Excel {
         if { $tableName ne "" } {
             puts $fp "|+ $tableName"
         }
-        puts $fp [::Excel::_MediaWikiList2RowString $headerList "!!"]
+        puts $fp [Excel::_MediaWikiList2RowString $headerList "!!"]
     }
 
     proc _WriteMediaWikiData { fp matrixList } {
         foreach row $matrixList {
-            puts $fp [::Excel::_MediaWikiList2RowString $row "||"]
+            puts $fp [Excel::_MediaWikiList2RowString $row "||"]
         }
         puts $fp "|\}"
     }
@@ -133,9 +142,9 @@ namespace eval ::Excel {
         set curLine 1
         foreach line $matrixList {
             if { $useHeader && $curLine == 1 } {
-                puts $fp [::Excel::_MediaWikiList2RowString $line "!!"]
+                puts $fp [Excel::_MediaWikiList2RowString $line "!!"]
             } else {
-                puts $fp [::Excel::_MediaWikiList2RowString $line "||"]
+                puts $fp [Excel::_MediaWikiList2RowString $line "||"]
             }
             incr curLine
         }
@@ -173,12 +182,12 @@ namespace eval ::Excel {
         while { [gets $fp line] >= 0 } {
             if { [string index $line 0] eq "!" && $useHeader } {
                 # Found a header line. Currently only headers with "!!" separators are supported.
-                set headerList [::Excel::_MediaWikiRowString2List $line "!!"]
-                ::Excel::SetHeaderRow $worksheetId $headerList
+                set headerList [Excel::_MediaWikiRowString2List $line "!!"]
+                Excel SetHeaderRow $worksheetId $headerList
                 incr row
             } elseif { [string range $line 0 1] eq "|+" } {
                 set worksheetName [string trim [string range $line 2 end]]
-                Excel::SetWorksheetName $worksheetId $worksheetName
+                Excel SetWorksheetName $worksheetId $worksheetName
             } elseif { [string range $line 0 1] eq "|-" || \
                        [string range $line 0 1] eq "|\}" } {
                 if { $firstRow } {
@@ -186,15 +195,15 @@ namespace eval ::Excel {
                     continue
                 }
                 if { [llength $rowList] != 0 } {
-                    ::Excel::SetRowValues $worksheetId $row $rowList
+                    Excel SetRowValues $worksheetId $row $rowList
                     incr row
                 }
                 set rowList {}
             } elseif { [string index $line 0] eq "|" } {
                 if { [string first "||" $line] >= 0 } {
-                    set rowList [::Excel::_MediaWikiRowString2List $line "||"]
+                    set rowList [Excel::_MediaWikiRowString2List $line "||"]
                 } else {
-                    lappend rowList [::Excel::_MediaWikiSubstHtml [string range $line 1 end]]
+                    lappend rowList [Excel::_MediaWikiSubstHtml [string range $line 1 end]]
                 }
             }
         }
@@ -217,21 +226,21 @@ namespace eval ::Excel {
         # WorksheetToWikitFile WorksheetToWordTable WorksheetToMatlabFile
         # WorksheetToRawImageFile WorksheetToTablelist
 
-        set numRows [::Excel::GetLastUsedRow $worksheetId]
-        set numCols [::Excel::GetLastUsedColumn $worksheetId]
+        set numRows [Excel GetLastUsedRow $worksheetId]
+        set numCols [Excel GetLastUsedColumn $worksheetId]
         set startRow 1
         set catchVal [catch {open $wikiFileName w} fp]
         if { $catchVal != 0 } {
             error "Could not open file \"$wikiFileName\" for writing."
         }
         if { $useHeader } {
-            set headerList [::Excel::GetMatrixValues $worksheetId $startRow 1 $startRow $numCols]
-            set worksheetName [::Excel::GetWorksheetName $worksheetId]
-            ::Excel::_WriteMediaWikiHeader $fp [lindex $headerList 0] $worksheetName
+            set headerList [Excel GetMatrixValues $worksheetId $startRow 1 $startRow $numCols]
+            set worksheetName [Excel GetWorksheetName $worksheetId]
+            Excel::_WriteMediaWikiHeader $fp [lindex $headerList 0] $worksheetName
             incr startRow
         }
-        set matrixList [::Excel::GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
-        ::Excel::_WriteMediaWikiData $fp $matrixList
+        set matrixList [Excel GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
+        Excel::_WriteMediaWikiData $fp $matrixList
         close $fp
     }
 
@@ -255,13 +264,13 @@ namespace eval ::Excel {
         # See also: MediaWikiFileToWorksheet ExcelFileToMediaWikiFile
         # ReadMediaWikiFile WriteMediaWikiFile WikitFileToExcelFile
 
-        set appId [::Excel::OpenNew true]
-        set workbookId [::Excel::AddWorkbook $appId]
-        set worksheetId [::Excel::AddWorksheet $workbookId "MediaWiki"]
-        ::Excel::MediaWikiFileToWorksheet $wikiFileName $worksheetId $useHeader
-        ::Excel::SaveAs $workbookId $excelFileName
+        set appId [Excel OpenNew true]
+        set workbookId [Excel AddWorkbook $appId]
+        set worksheetId [Excel AddWorksheet $workbookId "MediaWiki"]
+        Excel MediaWikiFileToWorksheet $wikiFileName $worksheetId $useHeader
+        Excel SaveAs $workbookId $excelFileName
         if { $quitExcel } {
-            ::Excel::Quit $appId
+            Excel Quit $appId
         } else {
             return $appId
         }
@@ -289,16 +298,16 @@ namespace eval ::Excel {
         # See also: MediaWikiFileToWorksheet MediaWikiFileToExcelFile
         # ReadMediaWikiFile WriteMediaWikiFile WikitFileToExcelFile
 
-        set appId [::Excel::OpenNew true]
-        set workbookId [::Excel::OpenWorkbook $appId $excelFileName true]
+        set appId [Excel OpenNew true]
+        set workbookId [Excel OpenWorkbook $appId $excelFileName true]
         if { [string is integer $worksheetNameOrIndex] } {
-            set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId [expr int($worksheetNameOrIndex)]]
+            set worksheetId [Excel GetWorksheetIdByIndex $workbookId [expr int($worksheetNameOrIndex)]]
         } else {
-            set worksheetId [::Excel::GetWorksheetIdByName $workbookId $worksheetNameOrIndex]
+            set worksheetId [Excel GetWorksheetIdByName $workbookId $worksheetNameOrIndex]
         }
-        ::Excel::WorksheetToMediaWikiFile $worksheetId $wikiFileName $useHeader
+        Excel WorksheetToMediaWikiFile $worksheetId $wikiFileName $useHeader
         if { $quitExcel } {
-            ::Excel::Quit $appId
+            Excel Quit $appId
         } else {
             return $appId
         }

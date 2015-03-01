@@ -23,16 +23,16 @@ if { $retVal == 0 } {
 }
 
 # Open new instance of Excel and add a workbook.
-set excelAppId1 [::Excel::OpenNew]
-set workbookId  [::Excel::AddWorkbook $excelAppId1]
+set excelAppId1 [Excel OpenNew]
+set workbookId  [Excel AddWorkbook $excelAppId1]
 
 # Delete Excel and RAW image files from previous test run.
 file mkdir testOut
 set xlsOutFile1 [file join [pwd] "testOut" "Excel-11_RawImage1"]
-append xlsOutFile1 [::Excel::GetExtString $excelAppId1]
+append xlsOutFile1 [Excel GetExtString $excelAppId1]
 file delete -force $xlsOutFile1
 set xlsOutFile2 [file join [pwd] "testOut" "Excel-11_RawImage2"]
-append xlsOutFile2 [::Excel::GetExtString $excelAppId1]
+append xlsOutFile2 [Excel GetExtString $excelAppId1]
 file delete -force $xlsOutFile2
 set rawOutFile1 [file join [pwd] "testOut" "Excel-11_RawImage1.raw"]
 file delete -force $rawOutFile1
@@ -44,30 +44,30 @@ file delete -force $rawOutFile3
 # Transfer image data with header information into Excel and vice versa.
 set useHeader true
 
-set worksheetId [::Excel::AddWorksheet $workbookId "WithHeader"]
+set worksheetId [Excel AddWorksheet $workbookId "WithHeader"]
 
 set t1 [clock clicks -milliseconds]
-::Excel::RawImageFileToWorksheet $rawFile $worksheetId $useHeader
+Excel RawImageFileToWorksheet $rawFile $worksheetId $useHeader
 set t2 [clock clicks -milliseconds]
 puts "RawImageFileToWorksheet: [expr $t2 - $t1] ms (using header: $useHeader)."
 
 set t1 [clock clicks -milliseconds]
-::Excel::WorksheetToRawImageFile $worksheetId $rawOutFile1 $useHeader
+Excel WorksheetToRawImageFile $worksheetId $rawOutFile1 $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WorksheetToRawImageFile: [expr $t2 - $t1] ms (using header: $useHeader)."
 
 # Transfer image data without header information into Excel and vice versa.
 set useHeader false
 
-set worksheetId [::Excel::AddWorksheet $workbookId "NoHeader"]
+set worksheetId [Excel AddWorksheet $workbookId "NoHeader"]
 
 set t1 [clock clicks -milliseconds]
-::Excel::RawImageFileToWorksheet $rawFile $worksheetId $useHeader
+Excel RawImageFileToWorksheet $rawFile $worksheetId $useHeader
 set t2 [clock clicks -milliseconds]
 puts "RawImageFileToWorksheet: [expr $t2 - $t1] ms (using header: $useHeader)."
 
 set t1 [clock clicks -milliseconds]
-::Excel::WorksheetToRawImageFile $worksheetId $rawOutFile2 $useHeader
+Excel WorksheetToRawImageFile $worksheetId $rawOutFile2 $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WorksheetToRawImageFile: [expr $t2 - $t1] ms (using header: $useHeader)."
 
@@ -83,19 +83,19 @@ if { $retVal == 0 } {
 }
 
 puts "Saving as Excel file: $xlsOutFile1"
-::Excel::SaveAs $workbookId $xlsOutFile1
+Excel SaveAs $workbookId $xlsOutFile1
 
 puts "Convert raw image file $rawFile to Excel file."
-set excelAppId2 [::Excel::RawImageFileToExcelFile $rawFile $xlsOutFile2 true false]
+set excelAppId2 [Excel RawImageFileToExcelFile $rawFile $xlsOutFile2 true false]
 
 puts "Convert Excel file $xlsOutFile2 to raw image file."
-::Excel::ExcelFileToRawImageFile $xlsOutFile2 $rawOutFile3 1 true true
+Excel ExcelFileToRawImageFile $xlsOutFile2 $rawOutFile3 1 true true
 
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Excel::Quit $excelAppId1
-    ::Excel::Quit $excelAppId2
+    Excel Quit $excelAppId1
+    Excel Quit $excelAppId2
     ::Cawt::Destroy
     exit 0
 }

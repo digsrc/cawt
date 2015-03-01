@@ -1,7 +1,28 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export AddColumnChartSimple
+    namespace export AddLineChart
+    namespace export AddLineChartSimple
+    namespace export AddPointChartSimple
+    namespace export AddRadarChartSimple
+    namespace export ChartObjToClipboard
+    namespace export ChartToClipboard
+    namespace export CreateChart
+    namespace export PlaceChart
+    namespace export ResizeChartObj
+    namespace export SaveChartAsImage
+    namespace export SaveChartObjAsImage
+    namespace export SetChartMaxScale
+    namespace export SetChartMinScale
+    namespace export SetChartObjPosition
+    namespace export SetChartObjSize
+    namespace export SetChartScale
+    namespace export SetChartSize
 
     proc ChartToClipboard { chartId } {
         # Obsolete: Replaced with ChartObjToClipboard in version 1.0.1
@@ -29,8 +50,7 @@ namespace eval ::Excel {
             $chartArea Copy
             ::Cawt::Destroy $chartArea
         } else {
-            $chartObjId CopyPicture $::Excel::xlScreen $::Excel::xlBitmap \
-                                    $::Excel::xlScreen
+            $chartObjId CopyPicture $Excel::xlScreen $Excel::xlBitmap $Excel::xlScreen
         }
     }
 
@@ -134,9 +154,9 @@ namespace eval ::Excel {
         # See also: SetChartMaxScale SetChartScale SetChartObjSize
 
         if { $axisName eq "x" || $axisName eq "X" } {
-            set axis [$chartId -with { Axes } Item $::Excel::xlPrimary]
+            set axis [$chartId -with { Axes } Item $Excel::xlPrimary]
         } else {
-            set axis [$chartId -with { Axes } Item $::Excel::xlSecondary]
+            set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         }
         $axis MinimumScale [expr $value]
         ::Cawt::Destroy $axis
@@ -154,9 +174,9 @@ namespace eval ::Excel {
         # See also: SetChartMinScale SetChartScale SetChartObjSize
 
         if { $axisName eq "x" || $axisName eq "X" } {
-            set axis [$chartId -with { Axes } Item $::Excel::xlPrimary]
+            set axis [$chartId -with { Axes } Item $Excel::xlPrimary]
         } else {
-            set axis [$chartId -with { Axes } Item $::Excel::xlSecondary]
+            set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         }
         $axis MaximumScale [expr $value]
         ::Cawt::Destroy $axis
@@ -175,10 +195,10 @@ namespace eval ::Excel {
         #
         # See also: SetChartMinScale SetChartMaxScale SetChartObjSize
 
-        ::Excel::SetChartMinScale $chartId "x" $xmin
-        ::Excel::SetChartMaxScale $chartId "x" $xmax
-        ::Excel::SetChartMinScale $chartId "y" $ymin
-        ::Excel::SetChartMaxScale $chartId "y" $ymax
+        Excel SetChartMinScale $chartId "x" $xmin
+        Excel SetChartMaxScale $chartId "x" $xmax
+        Excel SetChartMinScale $chartId "y" $ymin
+        Excel SetChartMaxScale $chartId "y" $ymax
     }
 
     proc PlaceChart { chartId worksheetId } {
@@ -191,8 +211,8 @@ namespace eval ::Excel {
         #
         # See also: CreateChart SetChartObjSize SetChartObjPosition
 
-        set newChartId [$chartId Location $::Excel::xlLocationAsObject \
-                        [::Excel::GetWorksheetName $worksheetId]]
+        set newChartId [$chartId Location $Excel::xlLocationAsObject \
+                        [Excel GetWorksheetName $worksheetId]]
         return $newChartId
     }
 
@@ -206,12 +226,12 @@ namespace eval ::Excel {
         #
         # See also: PlaceChart AddLineChart AddLineChartSimple AddPointChartSimple AddRadarChartSimple
 
-        set cellsId [::Excel::GetCellsId $worksheetId]
+        set cellsId [Excel GetCellsId $worksheetId]
         set appId [::Cawt::GetApplicationId $cellsId]
 
-        switch [::Excel::GetVersion $appId] {
+        switch [Excel GetVersion $appId] {
             "12.0" {
-                set chartId [[[$worksheetId Shapes] AddChart [::Excel::GetEnum $chartType]] Chart]
+                set chartId [[[$worksheetId Shapes] AddChart [Excel GetEnum $chartType]] Chart]
             }
             default {
                 set chartId [$appId -with { Charts } Add]
@@ -245,12 +265,12 @@ namespace eval ::Excel {
         #
         # See also: CreateChart AddLineChartSimple AddPointChartSimple AddRadarChartSimple
 
-        set chartId [::Excel::CreateChart $worksheetId $::Excel::xlLineMarkers]
+        set chartId [Excel CreateChart $worksheetId $Excel::xlLineMarkers]
 
         # Select the range of data.
         set rangeId [SelectRangeByIndex $worksheetId $startRow $startCol \
                      [expr $startRow+$numRows-1] [expr $startCol+$numCols-1]]
-        $chartId SetSourceData $rangeId $::Excel::xlColumns
+        $chartId SetSourceData $rangeId $Excel::xlColumns
         ::Cawt::Destroy $rangeId
 
         # Select the column containing the data for the x-axis.
@@ -267,13 +287,13 @@ namespace eval ::Excel {
         ::Cawt::Destroy $xrangeId
 
         # Set the names for the x-axis and the y-axis.
-        set axis [$chartId -with { Axes } Item $::Excel::xlPrimary]
+        set axis [$chartId -with { Axes } Item $Excel::xlPrimary]
         $axis HasTitle True
         $axis -with { AxisTitle Characters } Text \
               [GetCellValue $worksheetId $headerRow $xaxisCol]
         ::Cawt::Destroy $axis
 
-        set axis [$chartId -with { Axes } Item $::Excel::xlSecondary]
+        set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         $axis HasTitle True
         $axis -with { AxisTitle Characters } Text $yaxisName
         ::Cawt::Destroy $axis
@@ -287,7 +307,7 @@ namespace eval ::Excel {
         }
 
         # Do not fill the chart interior area. Better for printing.
-        $chartId -with { PlotArea Interior } ColorIndex [expr $::Excel::xlColorIndexNone]
+        $chartId -with { PlotArea Interior } ColorIndex [expr $Excel::xlColorIndexNone]
 
         return $chartId
     }
@@ -334,12 +354,12 @@ namespace eval ::Excel {
         #
         # See also: CreateChart AddLineChart AddLineChartSimple AddRadarChartSimple
 
-        set chartId [::Excel::CreateChart $worksheetId $::Excel::xlXYScatter]
+        set chartId [Excel CreateChart $worksheetId $Excel::xlXYScatter]
 
         # Select the range of cells to be used as data.
         # Data of col1 is the X axis. Data of col2 is the Y axis.
         set rangeId [SelectRangeByIndex $worksheetId 2 $col2 [expr $numRows+1] $col2]
-        $chartId SetSourceData $rangeId $::Excel::xlColumns
+        $chartId SetSourceData $rangeId $Excel::xlColumns
         ::Cawt::Destroy $rangeId
 
         set xrangeId [SelectRangeByIndex $worksheetId 2 $col1 [expr $numRows+1] $col1]
@@ -361,11 +381,11 @@ namespace eval ::Excel {
         }
 
         # Do not fill the chart interior area. Better for printing.
-        $chartId -with { PlotArea Interior } ColorIndex [expr $::Excel::xlColorIndexNone]
+        $chartId -with { PlotArea Interior } ColorIndex [expr $Excel::xlColorIndexNone]
 
         # Set axis specific properties.
         # Set the X axis description to cell col1 in row 1.
-        set axis [$chartId -with { Axes } Item $::Excel::xlPrimary]
+        set axis [$chartId -with { Axes } Item $Excel::xlPrimary]
         $axis HasTitle True
         $axis -with { AxisTitle Characters } Text [GetCellValue $worksheetId 1 $col1]
         # Set the display of major and minor gridlines.
@@ -374,7 +394,7 @@ namespace eval ::Excel {
         ::Cawt::Destroy $axis
 
         # Set the Y axis description to cell col2 in row 1.
-        set axis [$chartId -with { Axes } Item $::Excel::xlSecondary]
+        set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         $axis HasTitle True
         $axis -with { AxisTitle Characters } Text [GetCellValue $worksheetId 1 $col2]
         # Set the display of major and minor gridlines.
@@ -385,7 +405,7 @@ namespace eval ::Excel {
         return $chartId
     }
 
-        proc AddColumnChartSimple { worksheetId numRows numCols { title "" } } {
+    proc AddColumnChartSimple { worksheetId numRows numCols { title "" } } {
         # Add a clustered column chart to a worksheet. Simple case.
         #
         # worksheetId - Identifier of the worksheet.
@@ -402,12 +422,12 @@ namespace eval ::Excel {
         #
         # See also: CreateChart AddLineChart AddLineChartSimple AddPointChartSimple
 
-        set chartId [::Excel::CreateChart $worksheetId $::Excel::xlColumnClustered]
+        set chartId [Excel CreateChart $worksheetId $Excel::xlColumnClustered]
 
         # Select the range of cells to be used as data.
         set rangeId [SelectRangeByIndex $worksheetId 2 2 \
                      [expr $numRows+1] [expr $numCols+1]]
-        $chartId SetSourceData $rangeId $::Excel::xlColumns
+        $chartId SetSourceData $rangeId $Excel::xlColumns
         ::Cawt::Destroy $rangeId
 
         set xrangeId [SelectRangeByIndex $worksheetId 2 1 [expr $numRows+1] 1]
@@ -430,16 +450,16 @@ namespace eval ::Excel {
         }
 
         # Do not fill the chart interior area. Better for printing.
-        $chartId -with { PlotArea Interior } ColorIndex [expr $::Excel::xlColorIndexNone]
+        $chartId -with { PlotArea Interior } ColorIndex [expr $Excel::xlColorIndexNone]
 
         # Set axis specific properties.
-        set axis [$chartId -with { Axes } Item $::Excel::xlPrimary]
+        set axis [$chartId -with { Axes } Item $Excel::xlPrimary]
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines False
         $axis HasMinorGridlines False
         ::Cawt::Destroy $axis
 
-        set axis [$chartId -with { Axes } Item $::Excel::xlSecondary]
+        set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines True
         $axis HasMinorGridlines False
@@ -465,12 +485,12 @@ namespace eval ::Excel {
         #
         # See also: CreateChart AddLineChart AddLineChartSimple AddPointChartSimple
 
-        set chartId [::Excel::CreateChart $worksheetId $::Excel::xlRadarFilled]
+        set chartId [Excel CreateChart $worksheetId $Excel::xlRadarFilled]
 
         # Select the range of cells to be used as data.
         set rangeId [SelectRangeByIndex $worksheetId 2 2 \
                      [expr $numRows+1] [expr $numCols+1]]
-        $chartId SetSourceData $rangeId $::Excel::xlColumns
+        $chartId SetSourceData $rangeId $Excel::xlColumns
         ::Cawt::Destroy $rangeId
 
         set xrangeId [SelectRangeByIndex $worksheetId 2 1 [expr $numRows+1] 1]
@@ -493,16 +513,16 @@ namespace eval ::Excel {
         }
 
         # Do not fill the chart interior area. Better for printing.
-        $chartId -with { PlotArea Interior } ColorIndex [expr $::Excel::xlColorIndexNone]
+        $chartId -with { PlotArea Interior } ColorIndex [expr $Excel::xlColorIndexNone]
 
         # Set axis specific properties.
-        set axis [$chartId -with { Axes } Item $::Excel::xlPrimary]
+        set axis [$chartId -with { Axes } Item $Excel::xlPrimary]
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines False
         $axis HasMinorGridlines False
         ::Cawt::Destroy $axis
 
-        set axis [$chartId -with { Axes } Item $::Excel::xlSecondary]
+        set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines True
         $axis HasMinorGridlines False

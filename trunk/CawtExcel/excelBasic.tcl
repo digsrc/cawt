@@ -1,7 +1,108 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export AddWorkbook
+    namespace export AddWorksheet
+    namespace export ArrangeWindows
+    namespace export Close
+    namespace export ColumnCharToInt
+    namespace export ColumnIntToChar
+    namespace export CopyWorksheet
+    namespace export CopyWorksheetAfter
+    namespace export CopyWorksheetBefore
+    namespace export DeleteWorksheet
+    namespace export DeleteWorksheetByIndex
+    namespace export FreezePanes
+    namespace export GetActiveWorkbook
+    namespace export GetCellIdByIndex
+    namespace export GetCellRange
+    namespace export GetCellValue
+    namespace export GetCellsId
+    namespace export GetColumnRange
+    namespace export GetColumnValues
+    namespace export GetExtString
+    namespace export GetFirstUsedColumn
+    namespace export GetFirstUsedRow
+    namespace export GetFloatSeparator
+    namespace export GetLangNumberFormat
+    namespace export GetLastUsedColumn
+    namespace export GetLastUsedRow
+    namespace export GetMatrixValues
+    namespace export GetMaxColumns
+    namespace export GetMaxRows
+    namespace export GetNumColumns
+    namespace export GetNumRows
+    namespace export GetNumUsedColumns
+    namespace export GetNumUsedRows
+    namespace export GetNumWorksheets
+    namespace export GetRangeCharacters
+    namespace export GetRangeFillColor
+    namespace export GetRowValues
+    namespace export GetVersion
+    namespace export GetWorkbookName
+    namespace export GetWorksheetAsMatrix
+    namespace export GetWorksheetIdByIndex
+    namespace export GetWorksheetIdByName
+    namespace export GetWorksheetIndexByName
+    namespace export GetWorksheetName
+    namespace export InsertImage
+    namespace export IsWorkbookProtected
+    namespace export IsWorksheetProtected
+    namespace export IsWorksheetVisible
+    namespace export Open
+    namespace export OpenNew
+    namespace export OpenWorkbook
+    namespace export Quit
+    namespace export SaveAs
+    namespace export SaveAsCsv
+    namespace export ScaleImage
+    namespace export ScreenUpdate
+    namespace export SelectAll
+    namespace export SelectCellByIndex
+    namespace export SelectRangeByIndex
+    namespace export SelectRangeByString
+    namespace export SetCellValue
+    namespace export SetColumnValues
+    namespace export SetColumnWidth
+    namespace export SetColumnsWidth
+    namespace export SetCommentDisplayMode
+    namespace export SetCommentSize
+    namespace export SetHyperlink
+    namespace export SetHyperlinkToCell
+    namespace export SetHyperlinkToFile
+    namespace export SetLinkToCell
+    namespace export SetMatrixValues
+    namespace export SetRangeBorder
+    namespace export SetRangeBorders
+    namespace export SetRangeComment
+    namespace export SetRangeFillColor
+    namespace export SetRangeFontBold
+    namespace export SetRangeFontItalic
+    namespace export SetRangeFontSubscript
+    namespace export SetRangeFontSuperscript
+    namespace export SetRangeFormat
+    namespace export SetRangeHorizontalAlignment
+    namespace export SetRangeMergeCells
+    namespace export SetRangeTextColor
+    namespace export SetRangeTooltip
+    namespace export SetRangeVerticalAlignment
+    namespace export SetRowHeight
+    namespace export SetRowValues
+    namespace export SetRowsHeight
+    namespace export SetWindowState
+    namespace export SetWorksheetFitToPages
+    namespace export SetWorksheetName
+    namespace export SetWorksheetOrientation
+    namespace export SetWorksheetTabColor
+    namespace export SetWorksheetZoom
+    namespace export ShowCellByIndex
+    namespace export ToggleAutoFilter
+    namespace export UnhideWorksheet
+    namespace export Visible
 
     variable excelVersion     "0.0"
     variable excelAppName     "Excel.Application"
@@ -54,7 +155,7 @@ namespace eval ::Excel {
         #
         # See also: SetRangeFormat
 
-        set floatSep [::Excel::GetFloatSeparator]
+        set floatSep [Excel GetFloatSeparator]
         return [format "%s%s%s" $pre $floatSep $post]
     }
 
@@ -63,8 +164,8 @@ namespace eval ::Excel {
         #
         # colChar - Column string.
         #
-        # Example: [::Excel::ColumnCharToInt A] returns 1.
-        #          [::Excel::ColumnCharToInt Z] returns 26.
+        # Example: [Excel ColumnCharToInt A] returns 1.
+        #          [Excel ColumnCharToInt Z] returns 26.
         #
         # See also: ColumnIntToChar
 
@@ -81,8 +182,8 @@ namespace eval ::Excel {
         #
         # col - Column number.
         #
-        # Example: [::Excel::ColumnIntToChar 1]  returns "A".
-        #          [::Excel::ColumnIntToChar 26] returns "Z".
+        # Example: [Excel ColumnIntToChar 1]  returns "A".
+        #          [Excel ColumnIntToChar 26] returns "Z".
         #
         # See also: ColumnCharToInt
 
@@ -193,8 +294,8 @@ namespace eval ::Excel {
         #
         # See also: GetNumRows GetNumUsedRows GetFirstUsedRow GetNumUsedColumns
 
-        return [expr { [::Excel::GetFirstUsedRow $worksheetId] + \
-                       [::Excel::GetNumUsedRows $worksheetId] - 1 }]
+        return [expr { [Excel GetFirstUsedRow $worksheetId] + \
+                       [Excel GetNumUsedRows $worksheetId] - 1 }]
     }
 
     proc GetMaxColumns { appId } {
@@ -259,8 +360,8 @@ namespace eval ::Excel {
         #
         # See also: GetNumColumns GetNumUsedColumns GetFirstUsedColumn GetNumUsedRows
 
-        return [expr { [::Excel::GetFirstUsedColumn $worksheetId] + \
-                       [::Excel::GetNumUsedColumns $worksheetId] - 1 }]
+        return [expr { [Excel GetFirstUsedColumn $worksheetId] + \
+                       [Excel GetNumUsedColumns $worksheetId] - 1 }]
     }
 
     proc SelectRangeByString { worksheetId rangeStr { visSel false } } {
@@ -275,7 +376,7 @@ namespace eval ::Excel {
         #
         # See also: SelectRangeByIndex GetCellRange
 
-        set cellsId [::Excel::GetCellsId $worksheetId]
+        set cellsId [Excel GetCellsId $worksheetId]
         set rangeId [$cellsId Range $rangeStr]
         if { $visSel } {
             $rangeId Select
@@ -299,8 +400,8 @@ namespace eval ::Excel {
         #
         # See also: SelectCellByIndex GetCellRange
 
-        set rangeStr [::Excel::GetCellRange $row1 $col1 $row2 $col2]
-        return [::Excel::SelectRangeByString $worksheetId $rangeStr $visSel]
+        set rangeStr [Excel GetCellRange $row1 $col1 $row2 $col2]
+        return [Excel SelectRangeByString $worksheetId $rangeStr $visSel]
     }
 
     proc SelectAll { worksheetId } {
@@ -418,7 +519,7 @@ namespace eval ::Excel {
         #
         # See also: SetRangeVerticalAlignment SelectRangeByIndex SelectRangeByString
 
-        $rangeId HorizontalAlignment [::Excel::GetEnum $align]
+        $rangeId HorizontalAlignment [Excel GetEnum $align]
     }
 
     proc SetRangeVerticalAlignment { rangeId align } {
@@ -431,7 +532,7 @@ namespace eval ::Excel {
         #
         # See also: SetRangeHorizontalAlignment SelectRangeByIndex SelectRangeByString
 
-        $rangeId VerticalAlignment [::Excel::GetEnum $align]
+        $rangeId VerticalAlignment [Excel GetEnum $align]
     }
 
     proc ToggleAutoFilter { rangeId } {
@@ -479,7 +580,7 @@ namespace eval ::Excel {
 
         set color [::Cawt::RgbToColor $r $g $b]
         $rangeId -with { Interior } Color $color
-        $rangeId -with { Interior } Pattern $::Excel::xlSolid
+        $rangeId -with { Interior } Pattern $Excel::xlSolid
     }
 
     proc SetRangeTextColor { rangeId r g b } {
@@ -527,10 +628,10 @@ namespace eval ::Excel {
 
         set color [::Cawt::RgbToColor $r $g $b]
         set borders [$rangeId Borders]
-        set sideInt [::Excel::GetEnum $side]
+        set sideInt [Excel GetEnum $side]
         set border [$borders Item $sideInt]
-        $border Weight    [::Excel::GetEnum $weight]
-        $border LineStyle [::Excel::GetEnum $lineStyle]
+        $border Weight    [Excel GetEnum $weight]
+        $border LineStyle [Excel GetEnum $lineStyle]
         $border Color     $color
         ::Cawt::Destroy $border
         ::Cawt::Destroy $borders
@@ -558,10 +659,10 @@ namespace eval ::Excel {
         #
         # See also: SetRangeBorder SelectRangeByIndex SelectRangeByString
 
-        ::Excel::SetRangeBorder $rangeId xlEdgeLeft   $weight $lineStyle $r $g $b
-        ::Excel::SetRangeBorder $rangeId xlEdgeRight  $weight $lineStyle $r $g $b
-        ::Excel::SetRangeBorder $rangeId xlEdgeBottom $weight $lineStyle $r $g $b
-        ::Excel::SetRangeBorder $rangeId xlEdgeTop    $weight $lineStyle $r $g $b
+        Excel SetRangeBorder $rangeId xlEdgeLeft   $weight $lineStyle $r $g $b
+        Excel SetRangeBorder $rangeId xlEdgeRight  $weight $lineStyle $r $g $b
+        Excel SetRangeBorder $rangeId xlEdgeBottom $weight $lineStyle $r $g $b
+        Excel SetRangeBorder $rangeId xlEdgeTop    $weight $lineStyle $r $g $b
     }
 
     proc SetRangeFormat { rangeId fmt { subFmt "" } } {
@@ -584,7 +685,7 @@ namespace eval ::Excel {
             $rangeId NumberFormat "0"
         } elseif { $fmt eq "real" } {
             if { $subFmt eq "" } {
-                set subFmt [::Excel::GetLangNumberFormat "0" "00"]
+                set subFmt [Excel GetLangNumberFormat "0" "00"]
             }
             $rangeId NumberFormat $subFmt
         } else {
@@ -606,11 +707,11 @@ namespace eval ::Excel {
         # See also: SetRangeComment
 
         if { $showComment && $showIndicator } {
-            $appId DisplayCommentIndicator $::Excel::xlCommentAndIndicator
+            $appId DisplayCommentIndicator $Excel::xlCommentAndIndicator
         } elseif { $showIndicator } {
-            $appId DisplayCommentIndicator $::Excel::xlCommentIndicatorOnly
+            $appId DisplayCommentIndicator $Excel::xlCommentIndicatorOnly
         } else {
-            $appId DisplayCommentIndicator $::Excel::xlNoIndicator
+            $appId DisplayCommentIndicator $Excel::xlNoIndicator
         }
     }
 
@@ -689,7 +790,7 @@ namespace eval ::Excel {
         # See also: SelectRangeByIndex SelectRangeByString SetRangeComment
 
         set validationId [$rangeId Validation]
-        $validationId Add $::Excel::xlValidateInputOnly
+        $validationId Add $Excel::xlValidateInputOnly
         $validationId InputMessage $tooltipMessage
         if { $tooltipTitle ne "" } {
             $validationId InputTitle $tooltipTitle
@@ -768,9 +869,9 @@ namespace eval ::Excel {
         variable excelVersion
 
         set appId [::Cawt::GetOrCreateApp $excelAppName false]
-        set excelVersion [::Excel::GetVersion $appId]
-        ::Excel::_setFloatSeparator $appId
-        ::Excel::Visible $appId $visible
+        set excelVersion [Excel GetVersion $appId]
+        Excel::_setFloatSeparator $appId
+        Excel Visible $appId $visible
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -796,9 +897,9 @@ namespace eval ::Excel {
         variable excelVersion
 
         set appId [::Cawt::GetOrCreateApp $excelAppName true]
-        set excelVersion [::Excel::GetVersion $appId]
-        ::Excel::_setFloatSeparator $appId
-        ::Excel::Visible $appId $visible
+        set excelVersion [Excel GetVersion $appId]
+        Excel::_setFloatSeparator $appId
+        Excel Visible $appId $visible
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -864,7 +965,7 @@ namespace eval ::Excel {
         #
         # See also: Open Visible ArrangeWindows
 
-        $appId -with { Application } WindowState [::Excel::GetEnum $windowState]
+        $appId -with { Application } WindowState [Excel GetEnum $windowState]
     }
 
     proc ArrangeWindows { appId { arrangeStyle xlArrangeStyleVertical } } {
@@ -879,7 +980,7 @@ namespace eval ::Excel {
         #
         # See also: Open Visible SetWindowState
 
-        $appId -with { Windows } Arrange [::Excel::GetEnum $arrangeStyle]
+        $appId -with { Windows } Arrange [Excel GetEnum $arrangeStyle]
     }
 
     proc Close { workbookId } {
@@ -924,7 +1025,7 @@ namespace eval ::Excel {
             # [TextVisualLayout], [Local])
             $workbookId -callnamedargs SaveAs \
                         FileName $fileName \
-                        FileFormat [::Excel::GetEnum $fmt] \
+                        FileFormat [Excel GetEnum $fmt] \
                         CreateBackup [::Cawt::TclInt $backup]
         }
         ::Cawt::ShowAlerts $appId true
@@ -950,7 +1051,7 @@ namespace eval ::Excel {
         # [AddToMru], [TextCodepage], [TextVisualLayout], [Local])
         $worksheetId -callnamedargs SaveAs \
                      Filename $fileName \
-                     FileFormat $::Excel::xlCSV
+                     FileFormat $Excel::xlCSV
         ::Cawt::ShowAlerts $appId true
         ::Cawt::Destroy $appId
     }
@@ -967,7 +1068,7 @@ namespace eval ::Excel {
         #
         # See also: OpenWorkbook Close SaveAs
 
-        return [$appId -with { Workbooks } Add [::Excel::GetEnum $type]]
+        return [$appId -with { Workbooks } Add [Excel GetEnum $type]]
     }
 
     proc OpenWorkbook { appId fileName { readOnly false } } {
@@ -1056,7 +1157,7 @@ namespace eval ::Excel {
         set lastWorksheet [$worksheets Item [$worksheets Count]]
         set worksheetId [$worksheets Add]
         $worksheetId Name $name
-        $worksheetId Visible [::Excel::GetEnum $visibleType]
+        $worksheetId Visible [Excel GetEnum $visibleType]
         ::Cawt::Destroy $lastWorksheet
         ::Cawt::Destroy $worksheets
         return $worksheetId
@@ -1104,7 +1205,7 @@ namespace eval ::Excel {
         #
         # See also: GetNumWorksheets GetWorksheetIdByIndex AddWorksheet
 
-        set count [::Excel::GetNumWorksheets $workbookId]
+        set count [Excel GetNumWorksheets $workbookId]
 
         if { $count == 1 } {
             error "DeleteWorksheetByIndex: Cannot delete last worksheet."
@@ -1138,7 +1239,7 @@ namespace eval ::Excel {
         # See also: SelectAll CopyWorksheetBefore CopyWorksheetAfter AddWorksheet
 
         $fromWorksheetId Activate
-        set rangeId [::Excel::SelectAll $fromWorksheetId]
+        set rangeId [Excel SelectAll $fromWorksheetId]
         $rangeId Copy
 
         $toWorksheetId Activate
@@ -1171,21 +1272,21 @@ namespace eval ::Excel {
         set beforeWorkbookId [$beforeWorksheetId Parent]
 
         if { $beforeWorksheetId eq "end" } {
-            set beforeWorksheetId [::Excel::GetWorksheetIdByIndex $fromWorkbookId "end"]
+            set beforeWorksheetId [Excel GetWorksheetIdByIndex $fromWorkbookId "end"]
         } elseif { [string is integer $beforeWorksheetId] } {
             set index [expr int($beforeWorksheetId)]
-            set beforeWorksheetId [::Excel::GetWorksheetIdByIndex $fromWorkbookId ]
+            set beforeWorksheetId [Excel GetWorksheetIdByIndex $fromWorkbookId ]
         }
 
         $fromWorksheetId -callnamedargs Copy Before $beforeWorksheetId
 
-        set beforeName [::Excel::GetWorksheetName $beforeWorksheetId]
-        set beforeWorksheetIndex [::Excel::GetWorksheetIndexByName $beforeWorkbookId $beforeName]
+        set beforeName [Excel GetWorksheetName $beforeWorksheetId]
+        set beforeWorksheetIndex [Excel GetWorksheetIndexByName $beforeWorkbookId $beforeName]
         set newWorksheetIndex [expr { $beforeWorksheetIndex - 1 }]
-        set newWorksheetId [::Excel::GetWorksheetIdByIndex $beforeWorkbookId $newWorksheetIndex]
+        set newWorksheetId [Excel GetWorksheetIdByIndex $beforeWorkbookId $newWorksheetIndex]
 
         if { $worksheetName ne "" } {
-            ::Excel::SetWorksheetName $newWorksheetId $worksheetName
+            Excel SetWorksheetName $newWorksheetId $worksheetName
         }
         $newWorksheetId Activate
 
@@ -1218,21 +1319,21 @@ namespace eval ::Excel {
         set afterWorkbookId [$afterWorksheetId Parent]
 
         if { $afterWorksheetId eq "end" } {
-            set afterWorksheetId [::Excel::GetWorksheetIdByIndex $fromWorkbookId "end"]
+            set afterWorksheetId [Excel GetWorksheetIdByIndex $fromWorkbookId "end"]
         } elseif { [string is integer $afterWorksheetId] } {
             set index [expr int($afterWorksheetId)]
-            set afterWorksheetId [::Excel::GetWorksheetIdByIndex $fromWorkbookId ]
+            set afterWorksheetId [Excel GetWorksheetIdByIndex $fromWorkbookId ]
         }
 
         $fromWorksheetId -callnamedargs Copy After $afterWorksheetId
 
-        set afterName [::Excel::GetWorksheetName $afterWorksheetId]
-        set afterWorksheetIndex [::Excel::GetWorksheetIndexByName $afterWorkbookId $afterName]
+        set afterName [Excel GetWorksheetName $afterWorksheetId]
+        set afterWorksheetIndex [Excel GetWorksheetIndexByName $afterWorkbookId $afterName]
         set newWorksheetIndex [expr { $afterWorksheetIndex + 1 }]
-        set newWorksheetId [::Excel::GetWorksheetIdByIndex $afterWorkbookId $newWorksheetIndex]
+        set newWorksheetId [Excel GetWorksheetIdByIndex $afterWorkbookId $newWorksheetIndex]
 
         if { $worksheetName ne "" } {
-            ::Excel::SetWorksheetName $newWorksheetId $worksheetName
+            Excel SetWorksheetName $newWorksheetId $worksheetName
         }
         $newWorksheetId Activate
 
@@ -1257,7 +1358,7 @@ namespace eval ::Excel {
         #
         # See also: GetNumWorksheets GetWorksheetIdByName AddWorksheet
 
-        set count [::Excel::GetNumWorksheets $workbookId]
+        set count [Excel GetNumWorksheets $workbookId]
         if { $index eq "end" } {
             set index $count
         } else {
@@ -1381,7 +1482,7 @@ namespace eval ::Excel {
         #
         # See also: AddWorksheet
 
-        if { [$worksheetId Visible] == $::Excel::xlSheetVisible } {
+        if { [$worksheetId Visible] == $Excel::xlSheetVisible } {
             return true
         } else {
             return false
@@ -1409,7 +1510,7 @@ namespace eval ::Excel {
         #
         # See also: AddWorksheet
 
-        $worksheetId -with { PageSetup } Orientation [::Excel::GetEnum $orientation]
+        $worksheetId -with { PageSetup } Orientation [Excel GetEnum $orientation]
     }
 
     proc SetWorksheetFitToPages { worksheetId { wide 1 } { tall 1 } } {
@@ -1485,12 +1586,12 @@ namespace eval ::Excel {
         #
         # See also: SetWorksheetTabColor IsWorksheetVisible ::Cawt::RgbToColor
 
-        if { ! [::Excel::IsWorksheetVisible $worksheetId] } {
+        if { ! [Excel IsWorksheetVisible $worksheetId] } {
             if { [$worksheetId -with { Parent } ProtectStructure] } {
                 error "Unable to unhide because the Workbook's structure is protected."
             } else {
-                $worksheetId Visible $::Excel::xlSheetVisible
-                ::Excel::SetWorksheetTabColor $worksheetId $r $g $b
+                $worksheetId Visible $Excel::xlSheetVisible
+                Excel SetWorksheetTabColor $worksheetId $r $g $b
             }
         }
     }
@@ -1518,7 +1619,7 @@ namespace eval ::Excel {
         #
         # See also: SelectCellByIndex AddWorksheet
 
-        set cellsId [::Excel::GetCellsId $worksheetId]
+        set cellsId [Excel GetCellsId $worksheetId]
         set cell [$cellsId Item [expr {int($row)}] [expr {int($col)}]]
         ::Cawt::Destroy $cellsId
         return $cell
@@ -1537,7 +1638,7 @@ namespace eval ::Excel {
         #
         # See also: SelectRangeByIndex AddWorksheet
 
-        return [::Excel::SelectRangeByIndex $worksheetId $row $col $row $col $visSel]
+        return [Excel SelectRangeByIndex $worksheetId $row $col $row $col $visSel]
     }
 
     proc ShowCellByIndex { worksheetId row col } {
@@ -1690,7 +1791,7 @@ namespace eval ::Excel {
         set hyperId [$destWorksheetId Hyperlinks]
 
         set subAddress [format "%s!%s%d" \
-                           [Excel::GetWorksheetName $srcWorksheetId] \
+                           [Excel GetWorksheetName $srcWorksheetId] \
                            [ColumnIntToChar $srcCol] $srcRow]
 
         if { $textDisplay eq "" } {
@@ -1800,8 +1901,8 @@ namespace eval ::Excel {
         #
         # See also: GetCellValue SetRowValues SetMatrixValues
 
-        set cellsId [::Excel::GetCellsId $worksheetId]
-        set cellId [::Excel::GetCellIdByIndex $worksheetId $row $col]
+        set cellsId [Excel GetCellsId $worksheetId]
+        set cellId [Excel GetCellIdByIndex $worksheetId $row $col]
         SetRangeFormat $cellId $fmt $subFmt
         if { $fmt eq "text" } {
             $cellsId Item [expr {int($row)}] [expr {int($col)}] [format "%s" $val]
@@ -1830,7 +1931,7 @@ namespace eval ::Excel {
         #
         # See also: SetCellValue ColumnCharToInt
 
-        set cellsId [::Excel::GetCellsId $worksheetId]
+        set cellsId [Excel GetCellsId $worksheetId]
         set cell [$cellsId Item [expr {int($row)}] [expr {int($col)}]]
         set retVal [catch {$cell Value} val]
         if { $retVal != 0 } {
@@ -1871,7 +1972,7 @@ namespace eval ::Excel {
             }
         }
 
-        set cellId [::Excel::SelectRangeByIndex $worksheetId \
+        set cellId [Excel SelectRangeByIndex $worksheetId \
                     $row $startCol $row [expr {$startCol + $len -1}]]
         $cellId Value2 $valList
         ::Cawt::Destroy $cellId
@@ -1898,16 +1999,16 @@ namespace eval ::Excel {
         # See also: SetRowValues GetColumnValues GetCellValue ColumnCharToInt GetFirstUsedColumn
 
         if { $startCol <= 0 } {
-            set startCol [::Excel::GetFirstUsedColumn $worksheetId]
+            set startCol [Excel GetFirstUsedColumn $worksheetId]
         }
         if { $numVals <= 0 } {
-            set numVals [expr { $startCol + [::Excel::GetLastUsedColumn $worksheetId] - 1 }]
+            set numVals [expr { $startCol + [Excel GetLastUsedColumn $worksheetId] - 1 }]
         }
         set valList [list]
         set col $startCol
         set ind 0
         while { $ind < $numVals } {
-            lappend valList [::Excel::GetCellValue $worksheetId $row $col]
+            lappend valList [Excel GetCellValue $worksheetId $row $col]
             incr ind
             incr col
         }
@@ -1959,7 +2060,7 @@ namespace eval ::Excel {
         # See also: SetRowHeight SetColumnsWidth ColumnCharToInt
 
         for { set r $startRow } { $r <= $endRow } { incr r } {
-            ::Excel::SetRowHeight $worksheetId $r $height
+            Excel SetRowHeight $worksheetId $r $height
         }
     }
 
@@ -2002,7 +2103,7 @@ namespace eval ::Excel {
         # See also: SetColumnWidth ColumnCharToInt
 
         for { set c $startCol } { $c <= $endCol } { incr c } {
-            ::Excel::SetColumnWidth $worksheetId $c $width
+            Excel SetColumnWidth $worksheetId $c $width
         }
     }
 
@@ -2031,7 +2132,7 @@ namespace eval ::Excel {
         for { set i 0 } { $i < $len } { incr i } {
             lappend valListList [list [lindex $valList $i]]
         }
-        set cellId [::Excel::SelectRangeByIndex $worksheetId \
+        set cellId [Excel SelectRangeByIndex $worksheetId \
                     $startRow $col [expr {$startRow + $len - 1}] $col]
         $cellId Value2 $valListList
         ::Cawt::Destroy $cellId
@@ -2058,10 +2159,10 @@ namespace eval ::Excel {
         # See also: SetColumnValues GetRowValues GetCellValue ColumnCharToInt GetFirstUsedRow
 
         if { $startRow <= 0 } {
-            set startRow [::Excel::GetFirstUsedRow $worksheetId]
+            set startRow [Excel GetFirstUsedRow $worksheetId]
         }
         if { $numVals <= 0 } {
-            set numVals [expr { $startRow + [::Excel::GetLastUsedRow $worksheetId] - 1 }]
+            set numVals [expr { $startRow + [Excel GetLastUsedRow $worksheetId] - 1 }]
         }
         set valList [list]
         set row $startRow
@@ -2101,7 +2202,7 @@ namespace eval ::Excel {
         set numCols [llength [lindex $matrixList 0]]
         set numRows [llength $matrixList]
 
-        set cellId [::Excel::SelectRangeByIndex $worksheetId \
+        set cellId [Excel SelectRangeByIndex $worksheetId \
                     $startRow $startCol \
                     [expr {$startRow + $numRows -1}] [expr {$startCol + $numCols -1}]]
         $cellId Value2 $matrixList
@@ -2119,7 +2220,7 @@ namespace eval ::Excel {
         #
         # See also: SetMatrixValues GetRowValues GetColumnValues
 
-        set cellId [::Excel::SelectRangeByIndex $worksheetId \
+        set cellId [Excel SelectRangeByIndex $worksheetId \
                     $row1 $col1 $row2 $col2 true]
         set matrixList [$cellId Value2]
 
@@ -2137,10 +2238,10 @@ namespace eval ::Excel {
         #
         # See also: SetMatrixValues GetMatrixValues GetFirstUsedRow GetLastUsedRow
 
-        return [::Excel::GetMatrixValues $worksheetId \
-                   [::Excel::GetFirstUsedRow $worksheetId] \
-                   [::Excel::GetFirstUsedColumn $worksheetId] \
-                   [::Excel::GetLastUsedRow $worksheetId] \
-                   [::Excel::GetLastUsedColumn $worksheetId]]
+        return [Excel GetMatrixValues $worksheetId \
+                   [Excel GetFirstUsedRow $worksheetId] \
+                   [Excel GetFirstUsedColumn $worksheetId] \
+                   [Excel GetLastUsedRow $worksheetId] \
+                   [Excel GetLastUsedColumn $worksheetId]]
     }
 }

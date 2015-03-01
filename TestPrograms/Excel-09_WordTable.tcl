@@ -72,7 +72,7 @@ set t1 [clock clicks -milliseconds]
 Excel WordTableToWorksheet $tableIn $worksheetId $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WordTableToWorksheet: [expr $t2 - $t1] ms (using header: $useHeader)."
-::Cawt::CheckMatrix $matrixList \
+Cawt CheckMatrix $matrixList \
     [Excel GetMatrixValues $worksheetId 2 1 [expr $numRows+1] $numCols] \
     "GetMatrixValues"
 
@@ -91,7 +91,7 @@ set t1 [clock clicks -milliseconds]
 Excel WordTableToWorksheet $tableIn $worksheetId $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WordTableToWorksheet: [expr $t2 - $t1] ms (using header: $useHeader)."
-::Cawt::CheckMatrix $matrixList \
+Cawt CheckMatrix $matrixList \
     [Excel GetMatrixValues $worksheetId 1 1 $numRows $numCols] \
     "GetMatrixValues"
 
@@ -106,12 +106,12 @@ Excel SaveAs $workbookId $xlsFile
 puts "Saving as Word file : $docFile"
 Word SaveAs $docId $docFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $excelAppId
     Word  Quit $wordAppId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

@@ -65,12 +65,12 @@ set appId3 [Excel MediaWikiFileToExcelFile $outFileWiki1 $xlsOutFile2 true false
 puts "Copy Excel file $xlsOutFile2 to MediaWiki file"
 Excel ExcelFileToMediaWikiFile $xlsOutFile2 $outFileWiki2 1 true true
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId2
     Excel Quit $appId3
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

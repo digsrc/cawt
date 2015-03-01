@@ -1,7 +1,12 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Cawt {
+namespace eval Cawt {
+
+    namespace ensemble create
+
+    namespace export ClipboardToImg
+    namespace export ImgToClipboard
 
     # sizeof(BITMAPFILEHEADER)
     variable sBmpHeaderSize 14

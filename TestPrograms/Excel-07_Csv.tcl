@@ -53,13 +53,13 @@ Excel Quit $appId false
 
 # Read the generated CSV file with the Cawt procedures and write it to a new CSV file.
 Excel SetCsvSeparatorChar ","
-::Cawt::CheckString "," [Excel GetCsvSeparatorChar] "Excel GetCsvSeparatorChar"
+Cawt CheckString "," [Excel GetCsvSeparatorChar] "Excel GetCsvSeparatorChar"
 puts "Reading CSV file $outFileExcel"
 set csvMatrix [Excel ReadCsvFile $outFileExcel]
 puts "Writing CSV file $outFileCsv"
 Excel WriteCsvFile $csvMatrix $outFileCsv
 
-::Cawt::CheckMatrix $cmpMatrix $csvMatrix "Worksheet vs. ReadCsvFile"
+Cawt CheckMatrix $cmpMatrix $csvMatrix "Worksheet vs. ReadCsvFile"
 
 # Use the matrix generated above and write it to a new MediaWiki file.
 puts "Writing MediaWiki file $outFileMediaWiki1"
@@ -83,7 +83,7 @@ set wikitList [Excel ReadWikitFile $inFileWikit]
 puts "Writing Wikit file $outFileWikit2"
 Excel WriteWikitFile $wikitList $outFileWikit2
 
-::Cawt::CheckMatrix $mediaWikiList $wikitList "MediaWiki vs. Wikit"
+Cawt CheckMatrix $mediaWikiList $wikitList "MediaWiki vs. Wikit"
 
 set appId [Excel OpenNew]
 set workbookId [Excel OpenWorkbook $appId $xlsMultiFile]
@@ -93,8 +93,8 @@ puts "Saving CSV file $outFileMultiExcel with Excel"
 Excel SaveAsCsv $workbookId $worksheetId $outFileMultiExcel
 
 set excelMatrix [Excel GetMatrixValues $worksheetId 1 1 2 3]
-::Cawt::CheckNumber 2 [llength $excelMatrix] "Number of rows of matrix"
-::Cawt::CheckNumber 3 [llength [lindex $excelMatrix 0]] "Number of columns of matrix"
+Cawt CheckNumber 2 [llength $excelMatrix] "Number of rows of matrix"
+Cawt CheckNumber 3 [llength [lindex $excelMatrix 0]] "Number of columns of matrix"
 Excel Close $workbookId
 Excel Quit $appId false
 
@@ -102,11 +102,11 @@ puts "Writing CSV file $outFileMultiCsv"
 Excel WriteCsvFile $excelMatrix $outFileMultiCsv
 puts "Reading CSV file $outFileMultiCsv"
 set csvMatrix [Excel ReadCsvFile $outFileMultiCsv]
-::Cawt::CheckMatrix $excelMatrix $csvMatrix "ExcelMatrixMulti vs. CsvMatrixMulti"
+Cawt CheckMatrix $excelMatrix $csvMatrix "ExcelMatrixMulti vs. CsvMatrixMulti"
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
-::Cawt::Destroy
+Cawt Destroy
 if { [lindex $argv 0] eq "auto" } {
     exit 0
 }

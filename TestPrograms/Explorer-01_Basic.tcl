@@ -10,31 +10,31 @@ set appId [Explorer OpenNew false]
 
 puts [format "%-30s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-30s: %s" "Cawt version" $pkgVersion]
-puts [format "%-30s: %s" "Twapi version" [::Cawt::GetPkgVersion "twapi"]]
+puts [format "%-30s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
 
 puts [format "%-30s: %s" "Active Printer" \
-                        [::Cawt::GetActivePrinter $appId]]
+                        [Cawt GetActivePrinter $appId]]
 
 puts [format "%-30s: %s" "User Name" \
-                        [::Cawt::GetUserName $appId]]
+                        [Cawt GetUserName $appId]]
 
 puts [format "%-30s: %s" "Startup Pathname" \
-                         [::Cawt::GetStartupPath $appId]]
+                         [Cawt GetStartupPath $appId]]
 puts [format "%-30s: %s" "Templates Pathname" \
-                         [::Cawt::GetTemplatesPath $appId]]
+                         [Cawt GetTemplatesPath $appId]]
 puts [format "%-30s: %s" "Add-ins Pathname" \
-                         [::Cawt::GetUserLibraryPath $appId]]
+                         [Cawt GetUserLibraryPath $appId]]
 puts [format "%-30s: %s" "Installation Pathname" \
-                         [::Cawt::GetInstallationPath $appId]]
+                         [Cawt GetInstallationPath $appId]]
 puts [format "%-30s: %s" "User Folder Pathname" \
-                         [::Cawt::GetUserPath $appId]]
+                         [Cawt GetUserPath $appId]]
 
 puts [format "%-30s: %s" "Appl. name (from Application)" \
-         [::Cawt::GetApplicationName $appId]]
+         [Cawt GetApplicationName $appId]]
 
 if { [lindex $argv 0] eq "auto" } {
     Explorer Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

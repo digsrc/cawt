@@ -21,7 +21,7 @@ Outlook SendMail $mailId
 
 if { [lindex $argv 0] eq "auto" } {
     Outlook Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

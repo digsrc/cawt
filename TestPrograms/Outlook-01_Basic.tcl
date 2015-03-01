@@ -10,31 +10,31 @@ set appId [Outlook OpenNew]
 
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
-puts [format "%-25s: %s" "Twapi version" [::Cawt::GetPkgVersion "twapi"]]
+puts [format "%-25s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
 
 puts [format "%-25s: %s (%s)" "Outlook Version" \
                              [Outlook GetVersion $appId] \
                              [Outlook GetVersion $appId true]]
 
 puts [format "%-25s: %s" "Active Printer" \
-                        [::Cawt::GetActivePrinter $appId]]
+                        [Cawt GetActivePrinter $appId]]
 
 puts [format "%-25s: %s" "User Name" \
-                        [::Cawt::GetUserName $appId]]
+                        [Cawt GetUserName $appId]]
 
 puts [format "%-25s: %s" "Startup Pathname" \
-                         [::Cawt::GetStartupPath $appId]]
+                         [Cawt GetStartupPath $appId]]
 puts [format "%-25s: %s" "Templates Pathname" \
-                         [::Cawt::GetTemplatesPath $appId]]
+                         [Cawt GetTemplatesPath $appId]]
 puts [format "%-25s: %s" "Add-ins Pathname" \
-                         [::Cawt::GetUserLibraryPath $appId]]
+                         [Cawt GetUserLibraryPath $appId]]
 puts [format "%-25s: %s" "Installation Pathname" \
-                         [::Cawt::GetInstallationPath $appId]]
+                         [Cawt GetInstallationPath $appId]]
 puts [format "%-25s: %s" "User Folder Pathname" \
-                         [::Cawt::GetUserPath $appId]]
+                         [Cawt GetUserPath $appId]]
 
 puts [format "%-30s: %s" "Appl. name (from Application)" \
-         [::Cawt::GetApplicationName $appId]]
+         [Cawt GetApplicationName $appId]]
 
 puts ""
 puts "Outlook has [llength [Outlook GetEnumTypes]] enumeration types."
@@ -49,7 +49,7 @@ puts ""
 
 if { [lindex $argv 0] eq "auto" } {
     Outlook Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

@@ -74,7 +74,7 @@ for { set s 1 } { $s <= $numTestSuites } { incr s } {
 
         # Add the image related to current test case via the clipboard.
         set phImg [image create photo -file $testImg]
-        ::Cawt::ImgToClipboard $phImg
+        Cawt ImgToClipboard $phImg
         after 200
         [Word GetEndRange $docId] Paste
         image delete $phImg
@@ -107,8 +107,8 @@ set sumRange [Word AddParagraph $sumRange]
 
 Word SelectRange $sumRange
 set checkRange [Word GetSelectionRange $docId]
-::Cawt::CheckNumber [Word GetRangeStartIndex $sumRange] [Word GetRangeStartIndex $checkRange] "Start index of selected range"
-::Cawt::CheckNumber [Word GetRangeEndIndex $sumRange] [Word GetRangeEndIndex $checkRange] "End index of selected range"
+Cawt CheckNumber [Word GetRangeStartIndex $sumRange] [Word GetRangeStartIndex $checkRange] "Start index of selected range"
+Cawt CheckNumber [Word GetRangeEndIndex $sumRange] [Word GetRangeEndIndex $checkRange] "End index of selected range"
 
 set tableRange [Word CreateRangeAfter $sumRange]
 set tableId [Word AddTable $tableRange [expr [array size bookmarkIds] + 1] 2]
@@ -121,7 +121,7 @@ foreach key [lsort [array names bookmarkIds]] {
     Word SetCellValue $tableId $row 2 [Word GetBookmarkName $bookmarkIds($key)]
     set cellRange [Word GetCellRange $tableId $row 2]
     Word SetLinkToBookmark $cellRange $bookmarkIds($key) "Link to test case $key"
-    ::Cawt::Destroy $cellRange
+    Cawt Destroy $cellRange
     incr row
     incr req
 }
@@ -132,11 +132,11 @@ Word UpdateFields $docId
 puts "Saving as Word file: $wordFile"
 Word SaveAs $docId $wordFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Word Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

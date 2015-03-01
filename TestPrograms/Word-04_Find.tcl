@@ -34,7 +34,7 @@ if { ! [Word FindString $range "italic"] } {
 
 set endIndex [Word GetRangeEndIndex $range]
 set range [Word ExtendRange $range 0 500]
-::Cawt::CheckNumber [expr $endIndex + 500] [Word GetRangeEndIndex $range] "End index of extended range"
+Cawt CheckNumber [expr $endIndex + 500] [Word GetRangeEndIndex $range] "End index of extended range"
 Word PrintRange $range "Extended range:"
 Word ReplaceString $range "italic" "yellow" "one"
 
@@ -60,22 +60,22 @@ Word SaveAs $inDocId $wordFile
 
 # Get number of open documents.
 set numDocs [Word GetNumDocuments $appId]
-::Cawt::CheckNumber 1 $numDocs "Number of open documents"
+Cawt CheckNumber 1 $numDocs "Number of open documents"
 
 set newDocId [Word OpenDocument $appId $inFile]
 set numDocs [Word GetNumDocuments $appId]
-::Cawt::CheckNumber 2 $numDocs "Number of open documents"
+Cawt CheckNumber 2 $numDocs "Number of open documents"
 for { set i 1 } { $i <= $numDocs } { incr i } {
     set docId [Word GetDocumentIdByIndex $appId $i]
     puts "File-$i: [Word GetDocumentName $docId]"
 }
 Word Close $newDocId
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Word Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

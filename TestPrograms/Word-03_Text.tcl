@@ -26,7 +26,7 @@ for { set i 0 } { $i < 20 } { incr i } {
 set docId [Word AddDocument $appId]
 
 # Emtpy document has 1 paragraph character.
-::Cawt::CheckNumber 1 [Word GetNumCharacters $docId] "Number of characters in empty document"
+Cawt CheckNumber 1 [Word GetNumCharacters $docId] "Number of characters in empty document"
 
 # Insert a short piece of text as one paragraph.
 set range1 [Word AppendText $docId $msg1]
@@ -37,7 +37,7 @@ Word SetRangeHighlightColorByEnum $range1 wdYellow
 
 # 1 paragraph character + string
 set expectedChars [expr 1 + [string length $msg1]]
-::Cawt::CheckNumber $expectedChars [Word GetNumCharacters $docId] "Number of characters after adding text"
+Cawt CheckNumber $expectedChars [Word GetNumCharacters $docId] "Number of characters after adding text"
 
 # Insert other short pieces of text with different underlinings.
 set range2 [Word AppendText $docId "This is text with default underlining color.\n"]
@@ -63,7 +63,7 @@ set listRange [Word InsertList $listRange \
 
 # Insert lines of text. When we get to 7 inches from top of the
 # document, insert a hard page break.
-set pos [::Cawt::InchesToPoints 7]
+set pos [Cawt InchesToPoints 7]
 while { true } {
     Word AppendText $docId "More lines of text." true
     set endRange [Word GetEndRange $docId]
@@ -96,11 +96,11 @@ if { $catchVal } {
     puts "Error: $retVal"
 }
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Word Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

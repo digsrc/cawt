@@ -24,7 +24,7 @@ for { set i 1 } { $i <= $numCols } { incr i } {
 for { set s 1 } { $s <= $numSheets } { incr s } {
     set appId [Excel Open]
     set workbookId [Excel GetActiveWorkbook $appId]
-    if { ! [::Cawt::IsValidId $workbookId] } {
+    if { ! [Cawt IsValidId $workbookId] } {
         set workbookId [Excel AddWorkbook $appId]
     }
 
@@ -33,9 +33,9 @@ for { set s 1 } { $s <= $numSheets } { incr s } {
         Excel SetRowValues $worksheetIds($s) $i $rowList
     }
 }
-::Cawt::CheckNumber 20 [Excel GetNumUsedRows $worksheetIds(2)] \
+Cawt CheckNumber 20 [Excel GetNumUsedRows $worksheetIds(2)] \
                        "Number of used rows in Sheet-2"
-::Cawt::CheckNumber 10 [Excel GetNumUsedColumns $worksheetIds(2)] \
+Cawt CheckNumber 10 [Excel GetNumUsedColumns $worksheetIds(2)] \
                        "Number of used columns in Sheet-2"
 
 # Add another worksheet and fill it with header lines.
@@ -46,37 +46,37 @@ for { set i 1 } { $i <= $numRows } { incr i } {
     incr startColumn
 }
 set wsName [Excel GetWorksheetName $worksheetId]
-::Cawt::CheckNumber 20 [Excel GetNumUsedRows $worksheetId] \
+Cawt CheckNumber 20 [Excel GetNumUsedRows $worksheetId] \
                        "Number of used rows in $wsName"
-::Cawt::CheckNumber 29 [Excel GetNumUsedColumns $worksheetId] \
+Cawt CheckNumber 29 [Excel GetNumUsedColumns $worksheetId] \
                        "Number of used columns in $wsName"
 
 # Test retrieving parts of a row or column.
 set rowValuesList [Excel GetRowValues $worksheetId 1 5]
-::Cawt::CheckList [lrange $rowList 4 end] $rowValuesList "Values of row 1 (starting at column 5)"
-::Cawt::CheckNumber 6 [llength $rowValuesList] "Number of retrieved row elements in $wsName"
+Cawt CheckList [lrange $rowList 4 end] $rowValuesList "Values of row 1 (starting at column 5)"
+Cawt CheckNumber 6 [llength $rowValuesList] "Number of retrieved row elements in $wsName"
 
 set colValuesList [Excel GetColumnValues $worksheetId 7 2]
 set colList [list E-6 E-5 E-4 E-3 E-2 E-1]
-::Cawt::CheckList $colList $colValuesList "Values of column 7 (starting at row 2)"
-::Cawt::CheckNumber 6 [llength $colValuesList] "Number of retrieved column elements in $wsName"
+Cawt CheckList $colList $colValuesList "Values of column 7 (starting at row 2)"
+Cawt CheckNumber 6 [llength $colValuesList] "Number of retrieved column elements in $wsName"
 
 # Test different ways to delete a worksheet.
 set num [Excel GetNumWorksheets $workbookId]
-::Cawt::CheckNumber 5 $num "Number of worksheets before deletion of Sheet-1"
+Cawt CheckNumber 5 $num "Number of worksheets before deletion of Sheet-1"
 after 500
 
 set sheetId [Excel GetWorksheetIdByName $workbookId "Sheet-1"]
 Excel DeleteWorksheet $workbookId $sheetId
 
 set num [Excel GetNumWorksheets $workbookId]
-::Cawt::CheckNumber 4 $num "Number of worksheets before deletion of last sheet"
+Cawt CheckNumber 4 $num "Number of worksheets before deletion of last sheet"
 after 500
 
 Excel DeleteWorksheetByIndex $workbookId $num
 
 set num [Excel GetNumWorksheets $workbookId]
-::Cawt::CheckNumber 3 $num "Number of worksheets finally"
+Cawt CheckNumber 3 $num "Number of worksheets finally"
 
 # Append the default Excel filename extension.
 append xlsFile [Excel GetExtString $appId]
@@ -92,12 +92,12 @@ Excel SaveAs $workbookId $xlsFile
 set appId2 [Excel OpenNew]
 set workbookId [Excel OpenWorkbook $appId2 $xlsFile]
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
     Excel Quit $appId2
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

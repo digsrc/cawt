@@ -47,11 +47,11 @@ Word Quit $appId
 puts "Comparing base and new file ..."
 set diffAppId [Word DiffWordFiles $wordBaseFile $wordNewFile]
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Word Quit $diffAppId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

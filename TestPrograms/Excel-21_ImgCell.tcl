@@ -86,8 +86,8 @@ set hp [image height $phImgPainted]
 .f2.t configure -text  "Painted image (Size: $wp x $hp)"
 update
 
-::Cawt::CheckNumber $w $wp "Width of images"
-::Cawt::CheckNumber $h $hp "Height of images"
+Cawt CheckNumber $w $wp "Width of images"
+Cawt CheckNumber $h $hp "Height of images"
 
 set imgFile [file join [pwd] "testOut" "Excel-21_ImgCell.gif"]
 puts "Saving painted images: $imgFile"
@@ -96,11 +96,11 @@ $phImgPainted write $imgFile -format "GIF"
 puts "Saving as Excel file: $xlsFile"
 Excel SaveAs $workbookId $xlsFile "" false
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

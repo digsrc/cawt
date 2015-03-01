@@ -61,11 +61,11 @@ Word InsertFile $endRange $inFile wdFormatOriginalFormatting
 puts "Saving as Word file: $wordFile"
 Word SaveAs $docId $wordFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Word Quit $appId false
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

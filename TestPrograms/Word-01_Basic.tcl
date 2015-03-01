@@ -10,7 +10,7 @@ set appId [Word OpenNew false]
 
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
-puts [format "%-25s: %s" "Twapi version" [::Cawt::GetPkgVersion "twapi"]]
+puts [format "%-25s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
 
 puts [format "%-25s: %s (%s)" "Word Version" \
                              [Word GetVersion $appId] \
@@ -20,28 +20,28 @@ puts [format "%-25s: %s" "Word filename extension" \
                              [Word GetExtString $appId]]
 
 puts [format "%-25s: %s" "Active Printer" \
-                        [::Cawt::GetActivePrinter $appId]]
+                        [Cawt GetActivePrinter $appId]]
 
 puts [format "%-25s: %s" "User Name" \
-                        [::Cawt::GetUserName $appId]]
+                        [Cawt GetUserName $appId]]
 
 puts [format "%-25s: %s" "Startup Pathname" \
-                         [::Cawt::GetStartupPath $appId]]
+                         [Cawt GetStartupPath $appId]]
 puts [format "%-25s: %s" "Templates Pathname" \
-                         [::Cawt::GetTemplatesPath $appId]]
+                         [Cawt GetTemplatesPath $appId]]
 puts [format "%-25s: %s" "Add-ins Pathname" \
-                         [::Cawt::GetUserLibraryPath $appId]]
+                         [Cawt GetUserLibraryPath $appId]]
 puts [format "%-25s: %s" "Installation Pathname" \
-                         [::Cawt::GetInstallationPath $appId]]
+                         [Cawt GetInstallationPath $appId]]
 puts [format "%-25s: %s" "User Folder Pathname" \
-                         [::Cawt::GetUserPath $appId]]
+                         [Cawt GetUserPath $appId]]
 
 set docId [Word AddDocument $appId]
 
 puts [format "%-30s: %s" "Appl. name (from Application)" \
-         [::Cawt::GetApplicationName $appId]]
+         [Cawt GetApplicationName $appId]]
 puts [format "%-30s: %s" "Appl. name (from Document)" \
-         [::Cawt::GetApplicationName [::Cawt::GetApplicationId $docId]]]
+         [Cawt GetApplicationName [Cawt GetApplicationId $docId]]]
 
 puts ""
 puts "Word has [llength [Word GetEnumTypes]] enumeration types."
@@ -55,11 +55,11 @@ foreach name [Word GetEnumNames $exampleEnum] {
 puts ""
 Word Close $docId
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Word Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

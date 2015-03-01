@@ -41,18 +41,18 @@ set rangeId [Excel SelectCellByIndex $worksheetId 2 1 true]
 Excel SetRangeFillColor $rangeId 255 0 0
 Excel SetRangeTextColor $rangeId 0 255 0
 Excel SetRangeBorders $rangeId
-::Cawt::CheckList [list 255 0 0] [Excel GetRangeFillColor $rangeId] "Fill color of cell 2,1"
+Cawt CheckList [list 255 0 0] [Excel GetRangeFillColor $rangeId] "Fill color of cell 2,1"
 
 set rangeId [Excel SelectCellByIndex $worksheetId 3 1 true]
 Excel SetRangeFillColor $rangeId 0 255 0
 Excel SetRangeTextColor $rangeId 0 0 255
-::Cawt::CheckList [list 0 255 0] [Excel GetRangeFillColor $rangeId] "Fill color of cell 3,1"
+Cawt CheckList [list 0 255 0] [Excel GetRangeFillColor $rangeId] "Fill color of cell 3,1"
 
 set rangeId [Excel SelectCellByIndex $worksheetId 4 1 true]
 Excel SetRangeFillColor $rangeId 0 0 255
 Excel SetRangeTextColor $rangeId 255 0 0
 Excel SetRangeBorders $rangeId xlThick
-::Cawt::CheckList [list 0 0 255] [Excel GetRangeFillColor $rangeId] "Fill color of cell 4,1"
+Cawt CheckList [list 0 0 255] [Excel GetRangeFillColor $rangeId] "Fill color of cell 4,1"
 
 set rangeId [Excel SelectRangeByIndex $worksheetId 5 1 5 1 true]
 Excel SetRangeFillColor $rangeId 255 0 0
@@ -71,7 +71,7 @@ Excel SetRangeFormat $rangeId "real" [Excel GetLangNumberFormat "0" "000"]
 # Test setting a formula.
 set cell [Excel SelectCellByIndex $worksheetId 1 [expr $numCols + 2] true]
 $cell Formula "=TODAY()"
-::Cawt::CheckString "=TODAY()" [$cell Formula] "cellId Formula"
+Cawt CheckString "=TODAY()" [$cell Formula] "cellId Formula"
 puts "  FormulaLocal: [$cell FormulaLocal]"
 
 # Test the font capabilities.
@@ -112,26 +112,26 @@ Excel SetRangeBorders $rangeId xlThick
 # Search only first 20 rows and columns for an existing string.
 set str "Hallo"
 set cell [Excel Search $worksheetId $str 1 1 20 20]
-::Cawt::CheckNumber 2 [llength $cell] "Search $str"
+Cawt CheckNumber 2 [llength $cell] "Search $str"
 if { [llength $cell] == 2 } {
     set rowNum [lindex $cell 0]
     set colNum [lindex $cell 1]
-    ::Cawt::CheckString "E3" "[Excel ColumnIntToChar $colNum]$rowNum" "Search $str"
+    Cawt CheckString "E3" "[Excel ColumnIntToChar $colNum]$rowNum" "Search $str"
 }
 
 # Search only first 20 rows and columns for a non-existing string.
 set str "HalliHallo"
 set cell [Excel Search $worksheetId $str 1 1 20 20]
-::Cawt::CheckNumber 0 [llength $cell] "Search $str"
+Cawt CheckNumber 0 [llength $cell] "Search $str"
 
 # Search whole worksheet for an existing string.
 set str "Holla"
 set cell [Excel Search $worksheetId $str]
-::Cawt::CheckNumber 2 [llength $cell] "Search $str"
+Cawt CheckNumber 2 [llength $cell] "Search $str"
 if { [llength $cell] == 2 } {
     set rowNum [lindex $cell 0]
     set colNum [lindex $cell 1]
-    ::Cawt::CheckString "E4" "[Excel ColumnIntToChar $colNum]$rowNum" "Search $str"
+    Cawt CheckString "E4" "[Excel ColumnIntToChar $colNum]$rowNum" "Search $str"
 }
 
 # Test different ways of setting column width.
@@ -158,11 +158,11 @@ Excel SetWorksheetFitToPages $copyWorksheetId
 puts "Saving as Excel file: $xlsFile"
 Excel SaveAs $workbookId $xlsFile "" false
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

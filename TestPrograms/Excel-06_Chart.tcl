@@ -55,7 +55,7 @@ proc InsertTestData { worksheetId timeHeader timeList valsHeaderList valsList } 
         Excel SetCellValue $worksheetId $r 1 $labelStr
         set cellId [Excel GetCellIdByIndex $worksheetId $r 1]
         Excel SetRangeFontBold $cellId true
-        ::Cawt::Destroy $cellId
+        Cawt Destroy $cellId
         incr r
     }
 
@@ -66,7 +66,7 @@ proc InsertTestData { worksheetId timeHeader timeList valsHeaderList valsList } 
             set cellId [Excel SelectRangeByIndex $worksheetId $r $c $r $c]
             set formula [format "=%s(%s)" $func $dataRange]
             $cellId Formula $formula
-            ::Cawt::Destroy $cellId
+            Cawt Destroy $cellId
             incr r
         }
     }
@@ -247,8 +247,8 @@ puts "Number of columns in worksheet: [Excel GetNumColumns $worksheetId]"
 
 set rangeId [Excel SelectRangeByIndex $worksheetId 2 1 \
                                          [expr $numRows+1] 3 true]
-::Cawt::CheckNumber 10 [Excel GetNumRows    $rangeId] "Number of rows in range"
-::Cawt::CheckNumber  3 [Excel GetNumColumns $rangeId] "Number of columns in range"
+Cawt CheckNumber 10 [Excel GetNumRows    $rangeId] "Number of rows in range"
+Cawt CheckNumber  3 [Excel GetNumColumns $rangeId] "Number of columns in range"
 
 # Enable the auto filter menus.
 Excel ToggleAutoFilter $rangeId
@@ -257,7 +257,7 @@ Excel ToggleAutoFilter $rangeId
 # from the clipboard and create a Tk label to display it.
 # Then resize the photo, copy the scaled image to the clipboard and paste it
 # into a new worksheet into a specified cell.
-set retVal [catch {::Cawt::ClipboardToImg} phImg]
+set retVal [catch {Cawt ClipboardToImg} phImg]
 if { $retVal == 0 } {
     label .l1
     label .l2
@@ -275,7 +275,7 @@ if { $retVal == 0 } {
     .l1 configure -image $phImg
     .l2 configure -image $phImgHalf
 
-    set retVal [catch {::Cawt::ImgToClipboard $phImgHalf}]
+    set retVal [catch {Cawt ImgToClipboard $phImgHalf}]
     if { $retVal == 0 } {
         set pasteWorksheetId [Excel AddWorksheet $workbookId "ImagePaste"]
         set row 5
@@ -292,11 +292,11 @@ if { $retVal == 0 } {
 puts "Saving as Excel file: $xlsFile"
 Excel SaveAs $workbookId $xlsFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

@@ -53,11 +53,11 @@ Excel Quit $appId
 
 set diffAppId [Excel DiffExcelFiles $xlsOutFile1 $xlsOutFile2 0 255 0]
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $diffAppId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

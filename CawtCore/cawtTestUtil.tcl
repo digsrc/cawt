@@ -1,7 +1,15 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Cawt {
+namespace eval Cawt {
+
+    namespace ensemble create
+
+    namespace export CheckComObjects
+    namespace export CheckList
+    namespace export CheckMatrix
+    namespace export CheckNumber
+    namespace export CheckString
 
     proc CheckComObjects { expected msg { printCheck true } } {
         # Check, if the number of COM objects fits expected value.
@@ -15,7 +23,7 @@ namespace eval ::Cawt {
         # message supplied in "msg" is printed to standard output.
         # If the check fails, return false and print message prepended with "Error:".
 
-        set value [Cawt::GetNumComObjects]
+        set value [Cawt GetNumComObjects]
         if { $expected != $value } {
             puts "Error: $msg (Expected: $expected Have: $value)"
             return false

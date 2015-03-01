@@ -1,7 +1,18 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Explorer {
+namespace eval Explorer {
+
+    namespace ensemble create
+
+    namespace export FullScreen
+    namespace export Go
+    namespace export IsBusy
+    namespace export Navigate
+    namespace export Open
+    namespace export OpenNew
+    namespace export Quit
+    namespace export Visible
 
     variable explorerAppName "InternetExplorer.Application"
     variable _ruffdoc
@@ -34,7 +45,7 @@ namespace eval ::Explorer {
         variable explorerAppName
 
         set appId [::Cawt::GetOrCreateApp $explorerAppName false]
-        ::Explorer::Visible $appId $visible
+        Explorer Visible $appId $visible
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -60,7 +71,7 @@ namespace eval ::Explorer {
         variable explorerAppName
 
         set appId [::Cawt::GetOrCreateApp $explorerAppName true]
-        ::Explorer::Visible $appId $visible
+        Explorer Visible $appId $visible
         if { $width >= 0 } {
             $appId Width [expr $width]
         }

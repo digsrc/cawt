@@ -6,21 +6,21 @@
 source "SetTestPathes.tcl"
 package require cawt
 
-set appId [::Outlook::OpenNew]
+set appId [Outlook OpenNew]
 
 set toList [list  \
-    "paul.obermeier@mbda-systems.de" \
+    "info@poSoft.de" \
 ]
 
 set attachmentList [list \
     [file nativename [file join [pwd] Outlook-02_Mail.tcl]] \
 ]
 
-set mailId [::Outlook::CreateMail $appId $toList "Subject" "Body text line 1.\nBody text line 2." $attachmentList]
-::Outlook::SendMail $mailId
+set mailId [Outlook CreateMail $appId $toList "Subject" "Body text line 1.\nBody text line 2." $attachmentList]
+Outlook SendMail $mailId
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Outlook::Quit $appId
+    Outlook Quit $appId
     ::Cawt::Destroy
     exit 0
 }

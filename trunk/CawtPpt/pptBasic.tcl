@@ -133,9 +133,9 @@ namespace eval Ppt {
 	variable pptAppName
 	variable pptVersion
 
-        set appId [::Cawt::GetOrCreateApp $pptAppName false]
-        set pptVersion [Ppt::GetVersion $appId]
-        Ppt::Visible $appId true
+        set appId [Cawt GetOrCreateApp $pptAppName false]
+        set pptVersion [Ppt GetVersion $appId]
+        Ppt Visible $appId true
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -158,9 +158,9 @@ namespace eval Ppt {
 	variable pptAppName
 	variable pptVersion
 
-        set appId [::Cawt::GetOrCreateApp $pptAppName true]
-        set pptVersion [Ppt::GetVersion $appId]
-        Ppt::Visible $appId true
+        set appId [Cawt GetOrCreateApp $pptAppName true]
+        set pptVersion [Ppt GetVersion $appId]
+        Ppt Visible $appId true
         if { $width >= 0 } {
             $appId Width [expr $width]
         }
@@ -182,7 +182,7 @@ namespace eval Ppt {
         # See also: Open
 
         if { ! $showAlert } {
-            ::Cawt::ShowAlerts $appId false
+            Cawt ShowAlerts $appId false
         }
         $appId Quit
     }
@@ -198,7 +198,7 @@ namespace eval Ppt {
         #
         # See also: Open OpenNew
 
-        $appId Visible [::Cawt::TclInt $visible]
+        $appId Visible [Cawt TclInt $visible]
     }
 
 
@@ -256,18 +256,18 @@ namespace eval Ppt {
         # See also: ExportSlides ExportSlide
 
         set fileName [file nativename $fileName]
-        set appId [::Cawt::GetApplicationId $presId]
-        ::Cawt::ShowAlerts $appId false
+        set appId [Cawt GetApplicationId $presId]
+        Cawt ShowAlerts $appId false
         if { $fmt eq "" } {
             $presId SaveAs $fileName
         } else {
             $presId -callnamedargs SaveAs \
                      FileName $fileName \
-                     FileFormat [Ppt::GetEnum $fmt] \
-                     EmbedTrueTypeFonts [::Cawt::TclInt $embedFonts]
+                     FileFormat [Ppt GetEnum $fmt] \
+                     EmbedTrueTypeFonts [Cawt TclInt $embedFonts]
         }
-        ::Cawt::ShowAlerts $appId true
-        ::Cawt::Destroy $appId
+        Cawt ShowAlerts $appId true
+        Cawt Destroy $appId
     }
 
     proc AddPres { appId { templateFile "" }  } {
@@ -308,9 +308,9 @@ namespace eval Ppt {
             puts "$nativeName already open"
             set presId [$presentations Item [file tail $fileName]]
         } else {
-            set presId [$presentations Open $nativeName [::Cawt::TclInt $readOnly]]
+            set presId [$presentations Open $nativeName [Cawt TclInt $readOnly]]
         }
-        ::Cawt::Destroy $presentations
+        Cawt Destroy $presentations
         return $presId
     }
 
@@ -336,11 +336,11 @@ namespace eval Ppt {
         #
         # See also: GetViewType
 
-        set appId [::Cawt::GetApplicationId $presId]
+        set appId [Cawt GetApplicationId $presId]
         set actWin [$appId ActiveWindow]
-        $actWin ViewType [Ppt::GetEnum $viewType]
-        ::Cawt::Destroy $actWin
-        ::Cawt::Destroy $appId
+        $actWin ViewType [Ppt GetEnum $viewType]
+        Cawt Destroy $actWin
+        Cawt Destroy $appId
     }
 
     proc GetViewType { presId } {
@@ -350,11 +350,11 @@ namespace eval Ppt {
         #
         # See also: SetViewType
 
-        set appId [::Cawt::GetApplicationId $presId]
+        set appId [Cawt GetApplicationId $presId]
         set actWin [$appId ActiveWindow]
         set viewType [$actWin ViewType]
-        ::Cawt::Destroy $actWin
-        ::Cawt::Destroy $appId
+        Cawt Destroy $actWin
+        Cawt Destroy $appId
         return $viewType
     }
 
@@ -377,27 +377,27 @@ namespace eval Ppt {
 
         variable pptVersion
 
-        set typeInt [Ppt::GetEnum $type]
+        set typeInt [Ppt GetEnum $type]
         #set retVal [catch { expr int($type) } typeInt]
         if { $typeInt eq "" } {
             # type seems to be a CustomLayout object.
             if { $pptVersion < 12.0 } {
-                set appId [::Cawt::GetApplicationId $presId]
-                set versionStr [Ppt::GetVersion $appId true]
+                set appId [Cawt GetApplicationId $presId]
+                set versionStr [Ppt GetVersion $appId true]
                 error "CustomLayout not supported with PowerPoint $versionStr"
             }
         }
         
         if { $slideIndex eq "" || $slideIndex < 0 } {
-            set slideIndex [expr [Ppt::GetNumSlides $presId] +1]
+            set slideIndex [expr [Ppt GetNumSlides $presId] +1]
         }
         if { $typeInt eq "" } {
             set newSlide [$presId -with { Slides } AddSlide $slideIndex $type]
         } else {
             set newSlide [$presId -with { Slides } Add $slideIndex $typeInt]
         }
-        set newSlideIndex [Ppt::GetSlideIndex $newSlide]
-        Ppt::ShowSlide $presId $newSlideIndex
+        set newSlideIndex [Ppt GetSlideIndex $newSlide]
+        Ppt ShowSlide $presId $newSlideIndex
         return $newSlide
     }
 
@@ -423,22 +423,22 @@ namespace eval Ppt {
             set toPresId $presId
         }
         if { $toSlideIndex eq "end" || $toSlideIndex < 0 } {
-            set toSlideIndex [expr [Ppt::GetNumSlides $toPresId] +1]
+            set toSlideIndex [expr [Ppt GetNumSlides $toPresId] +1]
         }
         if { $fromSlideIndex eq "end" || $fromSlideIndex < 0 } {
-            set fromSlideIndex [expr [Ppt::GetNumSlides $presId] +1]
+            set fromSlideIndex [expr [Ppt GetNumSlides $presId] +1]
         }
 
-        set fromSlideId [Ppt::GetSlideId $presId $fromSlideIndex]
+        set fromSlideId [Ppt GetSlideId $presId $fromSlideIndex]
         $fromSlideId Copy
 
         $toPresId -with { Slides } Paste
         set toSlideId [GetSlideId $toPresId end]
-        Ppt::MoveSlide $toSlideId $toSlideIndex
+        Ppt MoveSlide $toSlideId $toSlideIndex
 
-        Ppt::ShowSlide $toPresId $toSlideIndex
+        Ppt ShowSlide $toPresId $toSlideIndex
 
-        ::Cawt::Destroy $fromSlideId
+        Cawt Destroy $fromSlideId
 
         return $toSlideId
     }
@@ -493,7 +493,7 @@ namespace eval Ppt {
         #
         # See also: ExportPptFile ExportSlide
 
-        set numSlides [Ppt::GetNumSlides $presId]
+        set numSlides [Ppt GetNumSlides $presId]
         if { $startIndex < 1 || $startIndex > $numSlides } {
             error "startIndex ($startIndex) not in slide range."
         }
@@ -510,10 +510,10 @@ namespace eval Ppt {
         set nativeName [file nativename $outputDir]
 
         for { set i $startIndex } { $i <= $endIndex } { incr i } {
-            set slideId [Ppt::GetSlideId $presId $i]
+            set slideId [Ppt GetSlideId $presId $i]
             set outputFile [format [file join $outputDir $outputFileFmt] $i]
-            Ppt::ExportSlide $slideId $outputFile $imgType $width $height
-            ::Cawt::Destroy $slideId
+            Ppt ExportSlide $slideId $outputFile $imgType $width $height
+            Cawt Destroy $slideId
         }
     }
 
@@ -531,7 +531,7 @@ namespace eval Ppt {
         }
         set slideId [$presId -with { Slides } Item $slideIndex]
         $slideId Select
-        ::Cawt::Destroy $slideId
+        Cawt Destroy $slideId
     }
 
     proc GetNumSlides { presId } {
@@ -591,9 +591,9 @@ namespace eval Ppt {
         # See also: GetNumSlides ExitSlideShow SlideShowNext
 
         $presId -with { SlideShowSettings } Run
-        set appId [::Cawt::GetApplicationId $presId]
+        set appId [Cawt GetApplicationId $presId]
         set slideShow [$appId -with { SlideShowWindows } Item $slideShowIndex]
-        ::Cawt::Destroy $appId
+        Cawt Destroy $appId
         return $slideShow
     }
 
@@ -687,7 +687,7 @@ namespace eval Ppt {
 
 	set fileName [file nativename $imgFileName]
         set imgId [$slideId -with { Shapes } AddPicture $fileName \
-                   [::Cawt::TclInt 0] [::Cawt::TclInt 1] \
+                   [Cawt TclInt 0] [Cawt TclInt 1] \
                    $left $top $width $height]
         return $imgId
     }
@@ -726,7 +726,7 @@ namespace eval Ppt {
         #
         # See also: GetNumCustomLayouts AddPres
 
-        set count [Ppt::GetNumCustomLayouts $presId]
+        set count [Ppt GetNumCustomLayouts $presId]
         if { [string is integer $indexOrName] || $indexOrName eq "end" } {
             if { $indexOrName eq "end" } {
                 set indexOrName $count
@@ -742,10 +742,10 @@ namespace eval Ppt {
                 set customLayouts [$presId -with { SlideMaster } CustomLayouts] 
                 set customLayoutId [$customLayouts Item [expr $i]]
                 if { $indexOrName eq [$customLayoutId Name] } {
-                    ::Cawt::Destroy $customLayouts
+                    Cawt Destroy $customLayouts
                     return $customLayoutId
                 }
-                ::Cawt::Destroy $customLayoutId
+                Cawt Destroy $customLayoutId
             }
             error "GetCustomLayoutId: No custom layout with name $indexOrName"
         }

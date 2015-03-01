@@ -48,7 +48,7 @@ namespace eval Excel {
         if { $excelVersion >= 12.0 } {
             set chartArea [$chartObjId ChartArea]
             $chartArea Copy
-            ::Cawt::Destroy $chartArea
+            Cawt Destroy $chartArea
         } else {
             $chartObjId CopyPicture $Excel::xlScreen $Excel::xlBitmap $Excel::xlScreen
         }
@@ -89,7 +89,7 @@ namespace eval Excel {
         set chart [$chartObjId Parent]
         $chart Left $left
         $chart Top  $top
-        ::Cawt::Destroy $chart
+        Cawt Destroy $chart
     }
 
     proc SetChartSize { worksheetId chartId width height } {
@@ -119,7 +119,7 @@ namespace eval Excel {
         set chart [$chartObjId Parent]
         $chart Width  [expr $width  * 0.75]
         $chart Height [expr $height * 0.75]
-        ::Cawt::Destroy $chart
+        Cawt Destroy $chart
     }
 
     proc ResizeChartObj { chartObjId rangeId } {
@@ -139,7 +139,7 @@ namespace eval Excel {
         $chart Height [$rangeId Height]
         $chart Left   [$rangeId Left]
         $chart Top    [$rangeId Top]
-        ::Cawt::Destroy $chart
+        Cawt Destroy $chart
     }
 
     proc SetChartMinScale { chartId axisName value } {
@@ -159,7 +159,7 @@ namespace eval Excel {
             set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         }
         $axis MinimumScale [expr $value]
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
     }
 
     proc SetChartMaxScale { chartId axisName value } {
@@ -179,7 +179,7 @@ namespace eval Excel {
             set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         }
         $axis MaximumScale [expr $value]
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
     }
 
     proc SetChartScale { chartId xmin xmax ymin ymax } {
@@ -227,7 +227,7 @@ namespace eval Excel {
         # See also: PlaceChart AddLineChart AddLineChartSimple AddPointChartSimple AddRadarChartSimple
 
         set cellsId [Excel GetCellsId $worksheetId]
-        set appId [::Cawt::GetApplicationId $cellsId]
+        set appId [Cawt GetApplicationId $cellsId]
 
         switch [Excel GetVersion $appId] {
             "12.0" {
@@ -238,8 +238,8 @@ namespace eval Excel {
                 $chartId ChartType $chartType
             }
         }
-        ::Cawt::Destroy $cellsId
-        ::Cawt::Destroy $appId
+        Cawt Destroy $cellsId
+        Cawt Destroy $appId
         return $chartId
     }
 
@@ -271,7 +271,7 @@ namespace eval Excel {
         set rangeId [SelectRangeByIndex $worksheetId $startRow $startCol \
                      [expr $startRow+$numRows-1] [expr $startCol+$numCols-1]]
         $chartId SetSourceData $rangeId $Excel::xlColumns
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $rangeId
 
         # Select the column containing the data for the x-axis.
         set xrangeId [SelectRangeByIndex $worksheetId $startRow $xaxisCol \
@@ -284,19 +284,19 @@ namespace eval Excel {
             $chartId -with [list SeriesCollection [list Item $i]] Name $name
             $chartId -with [list SeriesCollection [list Item $i]] MarkerSize $markerSize
         }
-        ::Cawt::Destroy $xrangeId
+        Cawt Destroy $xrangeId
 
         # Set the names for the x-axis and the y-axis.
         set axis [$chartId -with { Axes } Item $Excel::xlPrimary]
         $axis HasTitle True
         $axis -with { AxisTitle Characters } Text \
               [GetCellValue $worksheetId $headerRow $xaxisCol]
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
 
         set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         $axis HasTitle True
         $axis -with { AxisTitle Characters } Text $yaxisName
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
 
         # Set the chart title.
         if { $title ne "" } {
@@ -360,11 +360,11 @@ namespace eval Excel {
         # Data of col1 is the X axis. Data of col2 is the Y axis.
         set rangeId [SelectRangeByIndex $worksheetId 2 $col2 [expr $numRows+1] $col2]
         $chartId SetSourceData $rangeId $Excel::xlColumns
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $rangeId
 
         set xrangeId [SelectRangeByIndex $worksheetId 2 $col1 [expr $numRows+1] $col1]
         $chartId -with [list SeriesCollection [list Item 1]] XValues $xrangeId
-        ::Cawt::Destroy $xrangeId
+        Cawt Destroy $xrangeId
 
         $chartId -with [list SeriesCollection [list Item 1]] MarkerSize $markerSize
 
@@ -391,7 +391,7 @@ namespace eval Excel {
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines True
         $axis HasMinorGridlines False
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
 
         # Set the Y axis description to cell col2 in row 1.
         set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
@@ -400,7 +400,7 @@ namespace eval Excel {
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines True
         $axis HasMinorGridlines False
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
 
         return $chartId
     }
@@ -428,7 +428,7 @@ namespace eval Excel {
         set rangeId [SelectRangeByIndex $worksheetId 2 2 \
                      [expr $numRows+1] [expr $numCols+1]]
         $chartId SetSourceData $rangeId $Excel::xlColumns
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $rangeId
 
         set xrangeId [SelectRangeByIndex $worksheetId 2 1 [expr $numRows+1] 1]
         for { set i 1 } { $i <= $numCols } { incr i } {
@@ -457,13 +457,13 @@ namespace eval Excel {
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines False
         $axis HasMinorGridlines False
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
 
         set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines True
         $axis HasMinorGridlines False
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
 
         return $chartId
     }
@@ -491,7 +491,7 @@ namespace eval Excel {
         set rangeId [SelectRangeByIndex $worksheetId 2 2 \
                      [expr $numRows+1] [expr $numCols+1]]
         $chartId SetSourceData $rangeId $Excel::xlColumns
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $rangeId
 
         set xrangeId [SelectRangeByIndex $worksheetId 2 1 [expr $numRows+1] 1]
         for { set i 1 } { $i <= $numCols } { incr i } {
@@ -520,13 +520,13 @@ namespace eval Excel {
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines False
         $axis HasMinorGridlines False
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
 
         set axis [$chartId -with { Axes } Item $Excel::xlSecondary]
         # Set the display of major and minor gridlines.
         $axis HasMajorGridlines True
         $axis HasMinorGridlines False
-        ::Cawt::Destroy $axis
+        Cawt Destroy $axis
 
         return $chartId
     }

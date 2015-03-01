@@ -130,7 +130,7 @@ namespace eval Word {
 
         $newDocId Compare [file nativename $wordBaseFile] "CawtDiff" $Word::wdCompareTargetNew true true
 
-        $appId -with { ActiveDocument } Saved [::Cawt::TclBool true]
+        $appId -with { ActiveDocument } Saved [Cawt TclBool true]
         Word Close $newDocId
 
         return $appId

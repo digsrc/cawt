@@ -135,7 +135,7 @@ namespace eval Word {
         if { $mode eq "find" } {
             set retVal [$myFind -callnamedargs Execute \
                                 FindText $searchStr \
-                                MatchCase [::Cawt::TclBool $matchCase] \
+                                MatchCase [Cawt TclBool $matchCase] \
                                 Wrap $Word::wdFindStop \
                                 Forward True]
         } else {
@@ -148,10 +148,10 @@ namespace eval Word {
                                 ReplaceWith $replaceStr \
                                 Replace $howMuchEnum \
                                 Wrap $Word::wdFindStop \
-                                MatchCase [::Cawt::TclBool $matchCase] \
+                                MatchCase [Cawt TclBool $matchCase] \
                                 Forward True]
         }
-        ::Cawt::Destroy $myFind
+        Cawt Destroy $myFind
         return $retVal
     }
 
@@ -175,7 +175,7 @@ namespace eval Word {
                 set retVal [Word::_FindOrReplace $story "find" $str $matchCase]
                 incr numFound
                 set nextStory [$story NextStoryRange]
-                while { [::Cawt::IsValidId $nextStory] } {
+                while { [Cawt IsValidId $nextStory] } {
                     lappend storyList $nextStory
                     set retVal [Word::_FindOrReplace $nextStory "find" $str $matchCase]
                     incr numFound
@@ -183,9 +183,9 @@ namespace eval Word {
                 }
             }
             foreach story $storyList {
-                ::Cawt::Destroy $story
+                Cawt Destroy $story
             }
-            ::Cawt::Destroy $stories
+            Cawt Destroy $stories
             return $numFound
         } else {
             return [Word::_FindOrReplace $rangeOrDocId "find" $str $matchCase]
@@ -215,7 +215,7 @@ namespace eval Word {
                 set retVal [Word::_FindOrReplace $story "replace" $searchStr $matchCase $replaceStr $howMuch]
                 incr numReplaced
                 set nextStory [$story NextStoryRange]
-                while { [::Cawt::IsValidId $nextStory] } {
+                while { [Cawt IsValidId $nextStory] } {
                     lappend storyList $nextStory
                     set retVal [Word::_FindOrReplace $nextStory "replace" $searchStr $matchCase $replaceStr $howMuch]
                     incr numReplaced
@@ -223,9 +223,9 @@ namespace eval Word {
                 }
             }
             foreach story $storyList {
-                ::Cawt::Destroy $story
+                Cawt Destroy $story
             }
-            ::Cawt::Destroy $stories
+            Cawt Destroy $stories
             return $numReplaced
         } else {
             return [Word::_FindOrReplace $rangeOrDocId "replace" $searchStr $matchCase $replaceStr $howMuch]
@@ -266,7 +266,7 @@ namespace eval Word {
             eval $func $rangeId $args
             incr count
         }
-        ::Cawt::Destroy $myFind
+        Cawt Destroy $myFind
     }
 
     proc GetNumCharacters { docId } {
@@ -305,7 +305,7 @@ namespace eval Word {
         set docId [Word GetDocumentId $rangeId]
         set index [Word GetRangeEndIndex $rangeId]
         set rangeId [Word CreateRange $docId $index $index]
-        ::Cawt::Destroy $docId
+        Cawt Destroy $docId
         return $rangeId
     }
 
@@ -355,10 +355,10 @@ namespace eval Word {
         set bookMarks [$docId Bookmarks]
         set endOfDoc  [$bookMarks Item "\\endofdoc"]
         set endRange  [$endOfDoc Range]
-        ::Cawt::Destroy $endOfDoc
-        ::Cawt::Destroy $bookMarks
+        Cawt Destroy $endOfDoc
+        Cawt Destroy $bookMarks
         set endIndex [Word GetRangeEndIndex $endRange]
-        ::Cawt::Destroy $endRange
+        Cawt Destroy $endRange
         return [Word CreateRange $docId $endIndex $endIndex]
     }
 
@@ -446,7 +446,7 @@ namespace eval Word {
         if { $index eq "end" } {
             set docId [Word GetDocumentId $rangeId]
             set index [$docId End]
-            ::Cawt::Destroy $docId
+            Cawt Destroy $docId
         }
         $rangeId End $index
     }
@@ -478,8 +478,8 @@ namespace eval Word {
             set docId [Word GetDocumentId $rangeId]
             set endRange [GetEndRange $docId]
             set endIndex [$endRange End]
-            ::Cawt::Destroy $endRange
-            ::Cawt::Destroy $docId
+            Cawt Destroy $endRange
+            Cawt Destroy $docId
         }
         $rangeId Start $startIndex
         $rangeId End $endIndex
@@ -500,8 +500,8 @@ namespace eval Word {
         set docId [Word GetDocumentId $rangeId]
         set styleId [$docId -with { Styles } Item [Word GetEnum $style]]
         $rangeId Style $styleId
-        ::Cawt::Destroy $styleId
-        ::Cawt::Destroy $docId
+        Cawt Destroy $styleId
+        Cawt Destroy $docId
     }
 
     proc SetRangeFontName { rangeId fontName } {
@@ -541,7 +541,7 @@ namespace eval Word {
         #
         # See also: SetRangeFontName SetRangeFontSize SetRangeFontItalic SetRangeFontUnderline
 
-        $rangeId -with { Font } Bold [::Cawt::TclInt $onOff]
+        $rangeId -with { Font } Bold [Cawt TclInt $onOff]
     }
 
     proc SetRangeFontItalic { rangeId { onOff true } } {
@@ -555,7 +555,7 @@ namespace eval Word {
         #
         # See also: SetRangeFontName SetRangeFontSize SetRangeFontBold SetRangeFontUnderline
 
-        $rangeId -with { Font } Italic [::Cawt::TclInt $onOff]
+        $rangeId -with { Font } Italic [Cawt TclInt $onOff]
     }
 
     proc SetRangeFontUnderline { rangeId { onOff true } { color wdColorAutomatic } } {
@@ -570,7 +570,7 @@ namespace eval Word {
         #
         # See also: SetRangeFontName SetRangeFontSize SetRangeFontBold SetRangeFontItalic
 
-        $rangeId -with { Font } Underline [::Cawt::TclInt $onOff]
+        $rangeId -with { Font } Underline [Cawt TclInt $onOff]
         if { $onOff } {
             $rangeId -with { Font } UnderlineColor [Word GetEnum $color]
         }
@@ -642,7 +642,7 @@ namespace eval Word {
         # See also: SetRangeBackgroundColorByEnum SetRangeHighlightColorByEnum
 
         $rangeId -with { Cells Shading } BackgroundPatternColor \
-                                   [::Cawt::RgbToColor $r $g $b]
+                                   [Cawt RgbToColor $r $g $b]
     }
 
     proc AddPageBreak { rangeId } {
@@ -676,8 +676,8 @@ namespace eval Word {
         set validName [regsub -all -- {-} $validName {_}]
         set bookmarkId [$bookmarks Add $validName $rangeId]
 
-        ::Cawt::Destroy $bookmarks
-        ::Cawt::Destroy $docId
+        Cawt Destroy $bookmarks
+        Cawt Destroy $docId
         return $bookmarkId
     }
 
@@ -736,14 +736,14 @@ namespace eval Word {
         foreach line $stringList {
             append listStr "$line\n"
         }
-        set appId [::Cawt::GetApplicationId $rangeId]
+        set appId [Cawt GetApplicationId $rangeId]
         set listRangeId [Word AddText $rangeId $listStr]
         set listGalleryId  [Word GetListGalleryId $appId $galleryType]
         set listTemplateId [Word GetListTemplateId $listGalleryId $listType]
         $listRangeId -with { ListFormat } ApplyListTemplate $listTemplateId
-        ::Cawt::Destroy $listTemplateId
-        ::Cawt::Destroy $listGalleryId
-        ::Cawt::Destroy $appId
+        Cawt Destroy $listTemplateId
+        Cawt Destroy $listGalleryId
+        Cawt Destroy $appId
         return $listRangeId
     }
 
@@ -844,8 +844,8 @@ namespace eval Word {
         #
         # See also: 
 
-        $appId -with { ActiveDocument } ShowGrammaticalErrors [::Cawt::TclBool $onOff]
-        $appId -with { ActiveDocument } ShowSpellingErrors    [::Cawt::TclBool $onOff]
+        $appId -with { ActiveDocument } ShowGrammaticalErrors [Cawt TclBool $onOff]
+        $appId -with { ActiveDocument } ShowSpellingErrors    [Cawt TclBool $onOff]
     }
 
     proc OpenNew { { visible true } { width -1 } { height -1 } } {
@@ -863,7 +863,7 @@ namespace eval Word {
         variable wordAppName
 	variable wordVersion
 
-        set appId [::Cawt::GetOrCreateApp $wordAppName false]
+        set appId [Cawt GetOrCreateApp $wordAppName false]
         set wordVersion [Word GetVersion $appId]
         Word Visible $appId $visible
         if { $width >= 0 } {
@@ -890,7 +890,7 @@ namespace eval Word {
         variable wordAppName
 	variable wordVersion
 
-        set appId [::Cawt::GetOrCreateApp $wordAppName true]
+        set appId [Cawt GetOrCreateApp $wordAppName true]
         set wordVersion [Word GetVersion $appId]
         Word Visible $appId $visible
         if { $width >= 0 } {
@@ -914,7 +914,7 @@ namespace eval Word {
         # See also: Open OpenNew
 
         if { ! $showAlert } {
-            ::Cawt::ShowAlerts $appId false
+            Cawt ShowAlerts $appId false
         }
         $appId Quit
     }
@@ -930,7 +930,7 @@ namespace eval Word {
         #
         # See also: Open OpenNew
 
-        $appId Visible [::Cawt::TclInt $visible]
+        $appId Visible [Cawt TclInt $visible]
     }
 
     proc Close { docId } {
@@ -944,7 +944,7 @@ namespace eval Word {
         #
         # See also: SaveAs
 
-        $docId Close [::Cawt::TclBool false]
+        $docId Close [Cawt TclBool false]
     }
 
     proc UpdateFields { docId } {
@@ -961,30 +961,30 @@ namespace eval Word {
             lappend storyList $story
             $story -with { Fields } Update
             set nextStory [$story NextStoryRange]
-            while { [::Cawt::IsValidId $nextStory] } {
+            while { [Cawt IsValidId $nextStory] } {
                 lappend storyList $nextStory
                 $nextStory -with { Fields } Update
                 set nextStory [$nextStory NextStoryRange]
             }
         }
         foreach story $storyList {
-            ::Cawt::Destroy $story
+            Cawt Destroy $story
         }
-        ::Cawt::Destroy $stories
+        Cawt Destroy $stories
 
         set tocs [$docId TablesOfContents]
         $tocs -iterate toc {
             $toc Update
-            ::Cawt::Destroy $toc
+            Cawt Destroy $toc
         }
-        ::Cawt::Destroy $tocs
+        Cawt Destroy $tocs
 
         set tofs [$docId TablesOfFigures]
         $tofs -iterate tof {
             $tof Update
-            ::Cawt::Destroy $tof
+            Cawt Destroy $tof
         }
-        ::Cawt::Destroy $tofs
+        Cawt Destroy $tofs
     }
 
     proc SaveAs { docId fileName { fmt "" } } {
@@ -1003,8 +1003,8 @@ namespace eval Word {
         variable wordVersion
 
         set fileName [file nativename $fileName]
-        set appId [::Cawt::GetApplicationId $docId]
-        ::Cawt::ShowAlerts $appId false
+        set appId [Cawt GetApplicationId $docId]
+        Cawt ShowAlerts $appId false
         if { $fmt eq "" } {
             if { $wordVersion >= 14.0 } {
                 $docId SaveAs $fileName [expr $Word::wdFormatDocumentDefault]
@@ -1014,7 +1014,7 @@ namespace eval Word {
         } else {
             $docId SaveAs $fileName [Word GetEnum $fmt]
         }
-        ::Cawt::ShowAlerts $appId true
+        Cawt ShowAlerts $appId true
     }
 
     proc SaveAsPdf { docId fileName } {
@@ -1041,25 +1041,25 @@ namespace eval Word {
         }
 
         set fileName [file nativename $fileName]
-        set appId [::Cawt::GetApplicationId $docId]
+        set appId [Cawt GetApplicationId $docId]
 
-        ::Cawt::ShowAlerts $appId false
+        Cawt ShowAlerts $appId false
         $docId -callnamedargs ExportAsFixedFormat \
                OutputFileName $fileName \
                ExportFormat $Word::wdExportFormatPDF \
-               OpenAfterExport [::Cawt::TclBool false] \
+               OpenAfterExport [Cawt TclBool false] \
                OptimizeFor $Word::wdExportOptimizeForPrint \
                Range $Word::wdExportAllDocument \
                From [expr 1] \
                To [expr 1] \
                Item $Word::wdExportDocumentContent \
-               IncludeDocProps [::Cawt::TclBool true] \
-               KeepIRM [::Cawt::TclBool true] \
+               IncludeDocProps [Cawt TclBool true] \
+               KeepIRM [Cawt TclBool true] \
                CreateBookmarks $Word::wdExportCreateHeadingBookmarks \
-               DocStructureTags [::Cawt::TclBool true] \
-               BitmapMissingFonts [::Cawt::TclBool true] \
-               UseISO19005_1 [::Cawt::TclBool false]
-        ::Cawt::ShowAlerts $appId true
+               DocStructureTags [Cawt TclBool true] \
+               BitmapMissingFonts [Cawt TclBool true] \
+               UseISO19005_1 [Cawt TclBool false]
+        Cawt ShowAlerts $appId true
     }
 
     proc SetCompatibilityMode { docId { mode wdWord2010 } } {
@@ -1101,8 +1101,8 @@ namespace eval Word {
         # Add([Template], [NewTemplate], [DocumentType], [Visible]) As Document
         set docId [$docs -callnamedargs Add \
                          DocumentType [Word GetEnum $type] \
-                         Visible [::Cawt::TclInt $visible]]
-        ::Cawt::Destroy $docs
+                         Visible [Cawt TclInt $visible]]
+        Cawt Destroy $docs
         return $docId
     }
 
@@ -1144,10 +1144,10 @@ namespace eval Word {
             # As Document
             set docId [$docs -callnamedargs Open \
                              FileName $nativeName \
-                             ConfirmConversions [::Cawt::TclBool false] \
-                             ReadOnly [::Cawt::TclInt $readOnly]]
+                             ConfirmConversions [Cawt TclBool false] \
+                             ReadOnly [Cawt TclInt $readOnly]]
         }
-        ::Cawt::Destroy $docs
+        Cawt Destroy $docs
         return $docId
     }
 
@@ -1296,7 +1296,7 @@ namespace eval Word {
             $newRange InsertParagraphAfter
         }
         Word SetRangeStyle $newRange $style
-        ::Cawt::Destroy $docId
+        Cawt Destroy $docId
         return $newRange
     }
 
@@ -1327,9 +1327,9 @@ namespace eval Word {
                  Anchor  $rangeId \
                  Address $link \
                  TextToDisplay $textDisplay]
-        ::Cawt::Destroy $hyperlink
-        ::Cawt::Destroy $hyperlinks
-        ::Cawt::Destroy $docId
+        Cawt Destroy $hyperlink
+        Cawt Destroy $hyperlinks
+        Cawt Destroy $docId
     }
 
     proc SetInternalHyperlink { rangeId subAddress { textDisplay "" } } {
@@ -1355,8 +1355,8 @@ namespace eval Word {
                  Anchor  $rangeId \
                  SubAddress $subAddress \
                  TextToDisplay $textDisplay
-        ::Cawt::Destroy $hyperlinks
-        ::Cawt::Destroy $docId
+        Cawt Destroy $hyperlinks
+        Cawt Destroy $docId
     }
 
     proc SetLinkToBookmark { rangeId bookmarkId { textDisplay "" } } {
@@ -1384,8 +1384,8 @@ namespace eval Word {
                  Address       "" \
                  SubAddress    $bookmarkName \
                  TextToDisplay $textDisplay
-        ::Cawt::Destroy $hyperlinks
-        ::Cawt::Destroy $docId
+        Cawt Destroy $hyperlinks
+        Cawt Destroy $docId
     }
 
     proc InsertFile { rangeId fileName { pasteFormat "" } } {
@@ -1406,7 +1406,7 @@ namespace eval Word {
         # See also: SetHyperlink InsertCaption InsertImage InsertList InsertText
 
         if { $pasteFormat ne "" } {
-            set tmpAppId [::Cawt::GetApplicationId $rangeId]
+            set tmpAppId [Cawt GetApplicationId $rangeId]
             set tmpDocId [Word OpenDocument $tmpAppId [file nativename $fileName] false]
             set tmpRangeId [Word GetStartRange $tmpDocId]
             $tmpRangeId WholeStory
@@ -1419,19 +1419,19 @@ namespace eval Word {
             # Setting DisplayAlerts to false does not help here.
             set dummyRange [Word CreateRange $tmpDocId 0 1]
             $dummyRange Copy
-            ::Cawt::Destroy $dummyRange
+            Cawt Destroy $dummyRange
 
             Word Close $tmpDocId
-            ::Cawt::Destroy $tmpRangeId
-            ::Cawt::Destroy $tmpDocId
-            ::Cawt::Destroy $tmpAppId
+            Cawt Destroy $tmpRangeId
+            Cawt Destroy $tmpDocId
+            Cawt Destroy $tmpAppId
         } else {
             # InsertFile(FileName, Range, ConfirmConversions, Link, Attachment)
             $rangeId InsertFile [file nativename $fileName] \
                                 "" \
-                                [::Cawt::TclBool false] \
-                                [::Cawt::TclBool false] \
-                                [::Cawt::TclBool false]
+                                [Cawt TclBool false] \
+                                [Cawt TclBool false] \
+                                [Cawt TclBool false]
         }
     }
 
@@ -1455,7 +1455,7 @@ namespace eval Word {
         if { 0 } {
             # TODO
             set imgId [$rangeId -with { InlineShapes } AddPicture $fileName \
-                       [::Cawt::TclBool $linkToFile] [::Cawt::TclBool $saveWithDocument]]
+                       [Cawt TclBool $linkToFile] [Cawt TclBool $saveWithDocument]]
         } else {
             set imgId [$rangeId -with { InlineShapes } AddPicture $fileName]
         }
@@ -1521,7 +1521,7 @@ namespace eval Word {
 
         set captionItem [$appId -with { CaptionLabels } Item [Word GetEnum $labelId]]
         $captionItem ChapterStyleLevel    [expr $chapterStyleLevel]
-        $captionItem IncludeChapterNumber [::Cawt::TclBool $includeChapterNumber]
+        $captionItem IncludeChapterNumber [Cawt TclBool $includeChapterNumber]
         $captionItem NumberStyle          [Word GetEnum $numberStyle]
         $captionItem Separator            [Word GetEnum $separator]
     }
@@ -1543,7 +1543,7 @@ namespace eval Word {
         if { $spaceAfter >= 0 } {
             $tableId -with { Range ParagraphFormat } SpaceAfter $spaceAfter
         }
-        ::Cawt::Destroy $docId
+        Cawt Destroy $docId
         return $tableId
     }
 
@@ -1593,7 +1593,7 @@ namespace eval Word {
         set border [$tableId Borders]
         $border OutsideLineStyle [Word GetEnum $outsideLineStyle]
         $border InsideLineStyle  [Word GetEnum $insideLineStyle]
-        ::Cawt::Destroy $border
+        Cawt Destroy $border
     }
 
     proc SetTableBorderLineWidth { tableId \
@@ -1613,7 +1613,7 @@ namespace eval Word {
         set border [$tableId Borders]
         $border OutsideLineWidth [Word GetEnum $outsideLineWidth]
         $border InsideLineWidth  [Word GetEnum $insideLineWidth]
-        ::Cawt::Destroy $border
+        Cawt Destroy $border
     }
 
     proc GetNumRows { tableId } {
@@ -1650,7 +1650,7 @@ namespace eval Word {
         #
         # See also: GetNumRows
 
-        ::Cawt::PushComObjects
+        Cawt PushComObjects
 
         set rowsId [$tableId Rows]
         if { $beforeRowNum eq "end" } {
@@ -1667,7 +1667,7 @@ namespace eval Word {
             }
         }
 
-        ::Cawt::PopComObjects
+        Cawt PopComObjects
     }
 
     proc GetCellRange { tableId row col } {
@@ -1683,7 +1683,7 @@ namespace eval Word {
 
         set cellId  [$tableId Cell $row $col]
         set rangeId [$cellId Range]
-        ::Cawt::Destroy $cellId
+        Cawt Destroy $cellId
         return $rangeId
     }
 
@@ -1699,7 +1699,7 @@ namespace eval Word {
 
         set rowId [$tableId -with { Rows } Item $row]
         set rangeId [$rowId Range]
-        ::Cawt::Destroy $rowId
+        Cawt Destroy $rowId
         return $rangeId
     }
 
@@ -1719,7 +1719,7 @@ namespace eval Word {
         $colId Select
         set selectId [$tableId -with { Application } Selection]
         $selectId SelectColumn
-        ::Cawt::Destroy $colId
+        Cawt Destroy $colId
         return $selectId
     }
 
@@ -1737,7 +1737,7 @@ namespace eval Word {
 
         set rangeId [Word GetCellRange $tableId $row $col]
         $rangeId Text $val
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $rangeId
     }
 
     proc GetCellValue { tableId row col } {
@@ -1753,7 +1753,7 @@ namespace eval Word {
 
         set rangeId [Word GetCellRange $tableId $row $col]
         set val [Word TrimString [$rangeId Text]]
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $rangeId
         return $val
     }
 
@@ -1828,7 +1828,7 @@ namespace eval Word {
 
         set colId [$tableId -with { Columns } Item $col]
         $colId Width $width
-        ::Cawt::Destroy $colId
+        Cawt Destroy $colId
     }
 
     proc SetColumnsWidth { tableId startCol endCol width } {

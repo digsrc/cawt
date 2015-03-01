@@ -381,7 +381,7 @@ namespace eval Excel {
         if { $visSel } {
             $rangeId Select
         }
-        ::Cawt::Destroy $cellsId
+        Cawt Destroy $cellsId
         return $rangeId
     }
 
@@ -413,9 +413,9 @@ namespace eval Excel {
         #
         # See also: CopyWorksheet
 
-        set appId [::Cawt::GetApplicationId $worksheetId]
+        set appId [Cawt GetApplicationId $worksheetId]
         set cellsId [$appId Cells]
-        ::Cawt::Destroy $appId
+        Cawt Destroy $appId
         return $cellsId
     }
 
@@ -450,7 +450,7 @@ namespace eval Excel {
         #
         # See also: SetRangeFontSuperscript SelectRangeByIndex GetRangeCharacters
 
-        $rangeId -with { Font } Subscript [::Cawt::TclBool $onOff]
+        $rangeId -with { Font } Subscript [Cawt TclBool $onOff]
     }
 
     proc SetRangeFontSuperscript { rangeId { onOff true } } {
@@ -464,7 +464,7 @@ namespace eval Excel {
         #
         # See also: SetRangeFontSubscript SelectRangeByIndex GetRangeCharacters
 
-        $rangeId -with { Font } Superscript [::Cawt::TclBool $onOff]
+        $rangeId -with { Font } Superscript [Cawt TclBool $onOff]
     }
 
     proc SetRangeFontBold { rangeId { onOff true } } {
@@ -478,7 +478,7 @@ namespace eval Excel {
         #
         # See also: SetRangeFontItalic SelectRangeByIndex SelectRangeByString
 
-        $rangeId -with { Font } Bold [::Cawt::TclBool $onOff]
+        $rangeId -with { Font } Bold [Cawt TclBool $onOff]
     }
 
     proc SetRangeFontItalic { rangeId { onOff true } } {
@@ -492,7 +492,7 @@ namespace eval Excel {
         #
         # See also: SetRangeFontBold SelectRangeByIndex SelectRangeByString
 
-        $rangeId -with { Font } Italic [::Cawt::TclBool $onOff]
+        $rangeId -with { Font } Italic [Cawt TclBool $onOff]
     }
 
     proc SetRangeMergeCells { rangeId { onOff true } } {
@@ -506,7 +506,7 @@ namespace eval Excel {
         #
         # See also: SetRangeVerticalAlignment SelectRangeByIndex SelectRangeByString
 
-        $rangeId MergeCells [::Cawt::TclBool $onOff]
+        $rangeId MergeCells [Cawt TclBool $onOff]
     }
 
     proc SetRangeHorizontalAlignment { rangeId align } {
@@ -560,7 +560,7 @@ namespace eval Excel {
         # See also: SetRangeFillColor ::Cawt::ColorToRgb SelectRangeByIndex SelectRangeByString
 
         set colorNum [$rangeId -with { Interior } Color]
-        return [::Cawt::ColorToRgb $colorNum]
+        return [Cawt ColorToRgb $colorNum]
     }
 
     proc SetRangeFillColor { rangeId r g b } {
@@ -578,7 +578,7 @@ namespace eval Excel {
         #
         # See also: SetRangeTextColor ::Cawt::RgbToColor SelectRangeByIndex SelectRangeByString
 
-        set color [::Cawt::RgbToColor $r $g $b]
+        set color [Cawt RgbToColor $r $g $b]
         $rangeId -with { Interior } Color $color
         $rangeId -with { Interior } Pattern $Excel::xlSolid
     }
@@ -598,7 +598,7 @@ namespace eval Excel {
         #
         # See also: SetRangeFillColor ::Cawt::RgbToColor SelectRangeByIndex SelectRangeByString
 
-        set color [::Cawt::RgbToColor $r $g $b]
+        set color [Cawt RgbToColor $r $g $b]
         $rangeId -with { Font } Color $color
     }
 
@@ -626,15 +626,15 @@ namespace eval Excel {
         #
         # See also: SetRangeBorders SelectRangeByIndex SelectRangeByString
 
-        set color [::Cawt::RgbToColor $r $g $b]
+        set color [Cawt RgbToColor $r $g $b]
         set borders [$rangeId Borders]
         set sideInt [Excel GetEnum $side]
         set border [$borders Item $sideInt]
         $border Weight    [Excel GetEnum $weight]
         $border LineStyle [Excel GetEnum $lineStyle]
         $border Color     $color
-        ::Cawt::Destroy $border
-        ::Cawt::Destroy $borders
+        Cawt Destroy $border
+        Cawt Destroy $borders
     }
 
     proc SetRangeBorders { rangeId \
@@ -736,12 +736,12 @@ namespace eval Excel {
         # ::Cawt::GetUserName
 
         set commentId [$rangeId Comment]
-        if { ! [::Cawt::IsValidId $commentId] } {
+        if { ! [Cawt IsValidId $commentId] } {
             set commentId [$rangeId AddComment]
         }
-        $commentId Visible [::Cawt::TclBool $visible]
+        $commentId Visible [Cawt TclBool $visible]
         if { $addUserName } {
-            set userName [::Cawt::GetUserName [$commentId Application]]
+            set userName [Cawt GetUserName [$commentId Application]]
             set msg [format "%s:\n%s" $userName $comment]
         } else {
             set msg $comment
@@ -769,7 +769,7 @@ namespace eval Excel {
         #
         # See also: SetRangeComment ::Cawt::CentiMetersToPoints ::Cawt::InchesToPoints
         
-        $commentId -with { Shape } LockAspectRatio [::Cawt::TclInt 0]
+        $commentId -with { Shape } LockAspectRatio [Cawt TclInt 0]
         $commentId -with { Shape } Height [expr double ($width)]
         $commentId -with { Shape } Width  [expr double ($height)]
     }
@@ -795,7 +795,7 @@ namespace eval Excel {
         if { $tooltipTitle ne "" } {
             $validationId InputTitle $tooltipTitle
         }
-        $validationId ShowInput [::Cawt::TclBool true]
+        $validationId ShowInput [Cawt TclBool true]
         return $validationId
     }
 
@@ -868,7 +868,7 @@ namespace eval Excel {
         variable excelAppName
         variable excelVersion
 
-        set appId [::Cawt::GetOrCreateApp $excelAppName false]
+        set appId [Cawt GetOrCreateApp $excelAppName false]
         set excelVersion [Excel GetVersion $appId]
         Excel::_setFloatSeparator $appId
         Excel Visible $appId $visible
@@ -896,7 +896,7 @@ namespace eval Excel {
         variable excelAppName
         variable excelVersion
 
-        set appId [::Cawt::GetOrCreateApp $excelAppName true]
+        set appId [Cawt GetOrCreateApp $excelAppName true]
         set excelVersion [Excel GetVersion $appId]
         Excel::_setFloatSeparator $appId
         Excel Visible $appId $visible
@@ -921,7 +921,7 @@ namespace eval Excel {
         # See also: Open OpenNew
 
         if { ! $showAlert } {
-            ::Cawt::ShowAlerts $appId false
+            Cawt ShowAlerts $appId false
         }
         $appId Quit
     }
@@ -937,7 +937,7 @@ namespace eval Excel {
         #
         # See also: Open OpenNew SetWindowState ArrangeWindows
 
-        $appId Visible [::Cawt::TclInt $visible]
+        $appId Visible [Cawt TclInt $visible]
     }
 
     proc ScreenUpdate { appId onOff } {
@@ -951,7 +951,7 @@ namespace eval Excel {
         #
         # See also: Visible SetWindowState ArrangeWindows
 
-        $appId ScreenUpdating [::Cawt::TclBool $onOff]
+        $appId ScreenUpdating [Cawt TclBool $onOff]
     }
 
     proc SetWindowState { appId { windowState xlNormal } } {
@@ -994,7 +994,7 @@ namespace eval Excel {
         #
         # See also: SaveAs OpenWorkbook
 
-        $workbookId Close [::Cawt::TclBool false]
+        $workbookId Close [Cawt TclBool false]
     }
 
     proc SaveAs { workbookId fileName { fmt "" } { backup false } } {
@@ -1013,8 +1013,8 @@ namespace eval Excel {
         # See also: SaveAsCsv Close OpenWorkbook
 
         set fileName [file nativename $fileName]
-        set appId [::Cawt::GetApplicationId $workbookId]
-        ::Cawt::ShowAlerts $appId false
+        set appId [Cawt GetApplicationId $workbookId]
+        Cawt ShowAlerts $appId false
         if { $fmt eq "" } {
             $workbookId SaveAs $fileName
         } else {
@@ -1026,10 +1026,10 @@ namespace eval Excel {
             $workbookId -callnamedargs SaveAs \
                         FileName $fileName \
                         FileFormat [Excel GetEnum $fmt] \
-                        CreateBackup [::Cawt::TclInt $backup]
+                        CreateBackup [Cawt TclInt $backup]
         }
-        ::Cawt::ShowAlerts $appId true
-        ::Cawt::Destroy $appId
+        Cawt ShowAlerts $appId true
+        Cawt Destroy $appId
     }
 
     proc SaveAsCsv { workbookId worksheetId fileName } {
@@ -1044,16 +1044,16 @@ namespace eval Excel {
         # See also: SaveAs Close OpenWorkbook
 
         set fileName [file nativename $fileName]
-        set appId [::Cawt::GetApplicationId $workbookId]
-        ::Cawt::ShowAlerts $appId false
+        set appId [Cawt GetApplicationId $workbookId]
+        Cawt ShowAlerts $appId false
         # SaveAs(Filename As String, [FileFormat], [Password],
         # [WriteResPassword], [ReadOnlyRecommended], [CreateBackup],
         # [AddToMru], [TextCodepage], [TextVisualLayout], [Local])
         $worksheetId -callnamedargs SaveAs \
                      Filename $fileName \
                      FileFormat $Excel::xlCSV
-        ::Cawt::ShowAlerts $appId true
-        ::Cawt::Destroy $appId
+        Cawt ShowAlerts $appId true
+        Cawt Destroy $appId
     }
 
     proc AddWorkbook { appId { type xlWorksheet } } {
@@ -1097,9 +1097,9 @@ namespace eval Excel {
             # [AddToMru], [Local], [CorruptLoad])
             set workbookId [$workbooks -callnamedargs Open \
                                        Filename $nativeName \
-                                       ReadOnly [::Cawt::TclInt $readOnly]]
+                                       ReadOnly [Cawt TclInt $readOnly]]
         }
-        ::Cawt::Destroy $workbooks
+        Cawt Destroy $workbooks
         return $workbookId
     }
 
@@ -1158,8 +1158,8 @@ namespace eval Excel {
         set worksheetId [$worksheets Add]
         $worksheetId Name $name
         $worksheetId Visible [Excel GetEnum $visibleType]
-        ::Cawt::Destroy $lastWorksheet
-        ::Cawt::Destroy $worksheets
+        Cawt Destroy $lastWorksheet
+        Cawt Destroy $worksheets
         return $worksheetId
     }
 
@@ -1183,12 +1183,12 @@ namespace eval Excel {
         # Delete the specified worksheet.
         # This will cause alert dialogs to be displayed unless
         # they are turned off.
-        set appId [::Cawt::GetApplicationId $workbookId]
-        ::Cawt::ShowAlerts $appId false
+        set appId [Cawt GetApplicationId $workbookId]
+        Cawt ShowAlerts $appId false
         $worksheetId Delete
         # Turn the alerts back on.
-        ::Cawt::ShowAlerts $appId true
-        ::Cawt::Destroy $appId
+        Cawt ShowAlerts $appId true
+        Cawt Destroy $appId
     }
 
     proc DeleteWorksheetByIndex { workbookId index } {
@@ -1216,14 +1216,14 @@ namespace eval Excel {
         # Delete the specified worksheet.
         # This will cause alert dialogs to be displayed unless
         # they are turned off.
-        set appId [::Cawt::GetApplicationId $workbookId]
-        ::Cawt::ShowAlerts $appId false
+        set appId [Cawt GetApplicationId $workbookId]
+        Cawt ShowAlerts $appId false
         set worksheetId [$workbookId -with { Worksheets } Item [expr $index]]
         $worksheetId Delete
         # Turn the alerts back on.
-        ::Cawt::ShowAlerts $appId true
-        ::Cawt::Destroy $worksheetId
-        ::Cawt::Destroy $appId
+        Cawt ShowAlerts $appId true
+        Cawt Destroy $worksheetId
+        Cawt Destroy $appId
     }
 
     proc CopyWorksheet { fromWorksheetId toWorksheetId } {
@@ -1245,7 +1245,7 @@ namespace eval Excel {
         $toWorksheetId Activate
         $toWorksheetId Paste
 
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $rangeId
     }
 
     proc CopyWorksheetBefore { fromWorksheetId beforeWorksheetId { worksheetName "" } } {
@@ -1290,8 +1290,8 @@ namespace eval Excel {
         }
         $newWorksheetId Activate
 
-        ::Cawt::Destroy $beforeWorkbookId
-        ::Cawt::Destroy $fromWorkbookId
+        Cawt Destroy $beforeWorkbookId
+        Cawt Destroy $fromWorkbookId
         return $newWorksheetId
     }
 
@@ -1337,8 +1337,8 @@ namespace eval Excel {
         }
         $newWorksheetId Activate
 
-        ::Cawt::Destroy $afterWorkbookId
-        ::Cawt::Destroy $fromWorkbookId
+        Cawt Destroy $afterWorkbookId
+        Cawt Destroy $fromWorkbookId
         return $newWorksheetId
     }
 
@@ -1392,13 +1392,13 @@ namespace eval Excel {
         for { set i 1 } { $i <= $count } { incr i } {
             set worksheetId [$worksheets Item [expr $i]]
             if { $worksheetName eq [$worksheetId Name] } {
-                ::Cawt::Destroy $worksheets
+                Cawt Destroy $worksheets
                 if { $activate } {
                     $worksheetId Activate
                 }
                 return $worksheetId
             }
-            ::Cawt::Destroy $worksheetId
+            Cawt Destroy $worksheetId
         }
         error "GetWorksheetIdByName: No worksheet with name $worksheetName"
     }
@@ -1423,13 +1423,13 @@ namespace eval Excel {
         for { set i 1 } { $i <= $count } { incr i } {
             set worksheetId [$worksheets Item [expr $i]]
             if { $worksheetName eq [$worksheetId Name] } {
-                ::Cawt::Destroy $worksheets
+                Cawt Destroy $worksheets
                 if { $activate } {
                     $worksheetId Activate
                 }
                 return $i
             }
-            ::Cawt::Destroy $worksheetId
+            Cawt Destroy $worksheetId
         }
         error "GetWorksheetIdByName: No worksheet with name $worksheetName"
     }
@@ -1528,10 +1528,10 @@ namespace eval Excel {
         # See also: AddWorksheet
 
         set pageSetup [$worksheetId PageSetup]
-        $pageSetup Zoom [::Cawt::TclBool false]
+        $pageSetup Zoom [Cawt TclBool false]
         $pageSetup FitToPagesWide $wide
         $pageSetup FitToPagesTall $tall
-        ::Cawt::Destroy $pageSetup
+        Cawt Destroy $pageSetup
     }
 
     proc SetWorksheetZoom { worksheetId { zoom 100 } } {
@@ -1564,7 +1564,7 @@ namespace eval Excel {
         #
         # See also: SetRangeTextColor ::Cawt::RgbToColor GetWorksheetIdByIndex
 
-        set color [::Cawt::RgbToColor $r $g $b]
+        set color [Cawt RgbToColor $r $g $b]
         $worksheetId -with { Tab } Color $color
     }
 
@@ -1621,7 +1621,7 @@ namespace eval Excel {
 
         set cellsId [Excel GetCellsId $worksheetId]
         set cell [$cellsId Item [expr {int($row)}] [expr {int($col)}]]
-        ::Cawt::Destroy $cellsId
+        Cawt Destroy $cellsId
         return $cell
     }
 
@@ -1659,12 +1659,12 @@ namespace eval Excel {
             error "Column number $col is invalid."
         }
         $worksheetId Activate
-        set appId [::Cawt::GetApplicationId $worksheetId]
+        set appId [Cawt GetApplicationId $worksheetId]
         set actWin [$appId ActiveWindow]
         $actWin ScrollColumn $col
         $actWin ScrollRow $row
-        ::Cawt::Destroy $actWin
-        ::Cawt::Destroy $appId
+        Cawt Destroy $actWin
+        Cawt Destroy $appId
     }
 
     proc FreezePanes { worksheetId row col { onOff true } } {
@@ -1683,7 +1683,7 @@ namespace eval Excel {
         # See also: SelectCellByIndex
 
         $worksheetId Activate
-        set appId [::Cawt::GetApplicationId $worksheetId]
+        set appId [Cawt GetApplicationId $worksheetId]
         set actWin [$appId ActiveWindow]
         if { $onOff } {
             if { $col > 0 } {
@@ -1693,9 +1693,9 @@ namespace eval Excel {
                 $actWin SplitRow $row
             }
         }
-        $actWin FreezePanes [::Cawt::TclBool $onOff]
-        ::Cawt::Destroy $actWin
-        ::Cawt::Destroy $appId
+        $actWin FreezePanes [Cawt TclBool $onOff]
+        Cawt Destroy $actWin
+        Cawt Destroy $appId
     }
 
     proc SetHyperlink { worksheetId row col link { textDisplay "" } } {
@@ -1736,8 +1736,8 @@ namespace eval Excel {
                      Address $link \
                      TextToDisplay $textDisplay
         }
-        ::Cawt::Destroy $hyperId
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $hyperId
+        Cawt Destroy $rangeId
     }
 
     proc SetHyperlinkToFile { worksheetId row col fileName { textDisplay "" } } {
@@ -1768,8 +1768,8 @@ namespace eval Excel {
                  Anchor $rangeId \
                  Address $address \
                  TextToDisplay $textDisplay
-        ::Cawt::Destroy $hyperId
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $hyperId
+        Cawt Destroy $rangeId
     }
 
     proc SetHyperlinkToCell { srcWorksheetId srcRow srcCol destWorksheetId destRow destCol { textDisplay "" } } {
@@ -1805,8 +1805,8 @@ namespace eval Excel {
                  Address "" \
                  SubAddress $subAddress \
                  TextToDisplay $textDisplay
-        ::Cawt::Destroy $hyperId
-        ::Cawt::Destroy $rangeId
+        Cawt Destroy $hyperId
+        Cawt Destroy $rangeId
     }
 
     proc SetLinkToCell { srcWorksheetId srcRow srcCol destWorksheetId destRow destCol } {
@@ -1828,10 +1828,10 @@ namespace eval Excel {
 
         $srcRangeId Copy
         $destRangeId Select
-        $destWorksheetId -callnamedargs Paste Link [::Cawt::TclBool true]
+        $destWorksheetId -callnamedargs Paste Link [Cawt TclBool true]
 
-        ::Cawt::Destroy $srcRangeId
-        ::Cawt::Destroy $destRangeId
+        Cawt Destroy $srcRangeId
+        Cawt Destroy $destRangeId
     }
 
     proc InsertImage { worksheetId imgFileName { row 1 } { col 1 } { linkToFile false } { saveWithDoc true } } {
@@ -1861,10 +1861,10 @@ namespace eval Excel {
         set cellId [SelectCellByIndex $worksheetId $row $col true]
         set fileName [file nativename $imgFileName]
         set shapeId [$cellId -with { Parent Shapes } AddPicture $fileName \
-            [::Cawt::TclInt $linkToFile] \
-            [::Cawt::TclInt $saveWithDoc] \
+            [Cawt TclInt $linkToFile] \
+            [Cawt TclInt $saveWithDoc] \
             [$cellId Left] [$cellId Top] -1 -1]
-        ::Cawt::Destroy $cellId
+        Cawt Destroy $cellId
         return $shapeId
     }
 
@@ -1881,9 +1881,9 @@ namespace eval Excel {
         #
         # See also: InsertImage
 
-        $shapeId LockAspectRatio [Cawt::TclInt false]
-        $shapeId ScaleWidth  [expr double($scaleWidth)]  [::Cawt::TclInt true]
-        $shapeId ScaleHeight [expr double($scaleHeight)] [::Cawt::TclInt true]
+        $shapeId LockAspectRatio [Cawt TclInt false]
+        $shapeId ScaleWidth  [expr double($scaleWidth)]  [Cawt TclInt true]
+        $shapeId ScaleHeight [expr double($scaleHeight)] [Cawt TclInt true]
     }
 
     proc SetCellValue { worksheetId row col val { fmt "text" } { subFmt "" } } {
@@ -1913,8 +1913,8 @@ namespace eval Excel {
         } else {
             error "SetCellValue: Unknown format $fmt"
         }
-        ::Cawt::Destroy $cellId
-        ::Cawt::Destroy $cellsId
+        Cawt Destroy $cellId
+        Cawt Destroy $cellsId
     }
 
     proc GetCellValue { worksheetId row col { fmt "text" } } {
@@ -1937,8 +1937,8 @@ namespace eval Excel {
         if { $retVal != 0 } {
             error "GetCellValue: Unable to get value of cell ($row, $col)"
         }
-        ::Cawt::Destroy $cell
-        ::Cawt::Destroy $cellsId
+        Cawt Destroy $cell
+        Cawt Destroy $cellsId
         if { $fmt eq "text" } {
             return $val
         } elseif { $fmt eq "int" } {
@@ -1975,7 +1975,7 @@ namespace eval Excel {
         set cellId [Excel SelectRangeByIndex $worksheetId \
                     $row $startCol $row [expr {$startCol + $len -1}]]
         $cellId Value2 $valList
-        ::Cawt::Destroy $cellId
+        Cawt Destroy $cellId
     }
 
     proc GetRowValues { worksheetId row { startCol 0 } { numVals 0 } } {
@@ -2041,8 +2041,8 @@ namespace eval Excel {
         } else {
             $curRow RowHeight $height
         }
-        ::Cawt::Destroy $curRow
-        ::Cawt::Destroy $cell
+        Cawt Destroy $curRow
+        Cawt Destroy $cell
     }
 
     proc SetRowsHeight { worksheetId startRow endRow { height 0 } } {
@@ -2084,8 +2084,8 @@ namespace eval Excel {
         } else {
             $curCol ColumnWidth $width
         }
-        ::Cawt::Destroy $curCol
-        ::Cawt::Destroy $cell
+        Cawt Destroy $curCol
+        Cawt Destroy $cell
     }
 
     proc SetColumnsWidth { worksheetId startCol endCol { width 0 } } {
@@ -2135,7 +2135,7 @@ namespace eval Excel {
         set cellId [Excel SelectRangeByIndex $worksheetId \
                     $startRow $col [expr {$startRow + $len - 1}] $col]
         $cellId Value2 $valListList
-        ::Cawt::Destroy $cellId
+        Cawt Destroy $cellId
     }
 
     proc GetColumnValues { worksheetId col { startRow 0 } { numVals 0 } } {
@@ -2206,7 +2206,7 @@ namespace eval Excel {
                     $startRow $startCol \
                     [expr {$startRow + $numRows -1}] [expr {$startCol + $numCols -1}]]
         $cellId Value2 $matrixList
-        ::Cawt::Destroy $cellId
+        Cawt Destroy $cellId
     }
 
     proc GetMatrixValues { worksheetId row1 col1 row2 col2 } {
@@ -2224,7 +2224,7 @@ namespace eval Excel {
                     $row1 $col1 $row2 $col2 true]
         set matrixList [$cellId Value2]
 
-        ::Cawt::Destroy $cellId
+        Cawt Destroy $cellId
         return $matrixList
     }
 

@@ -44,7 +44,7 @@ namespace eval Explorer {
 
         variable explorerAppName
 
-        set appId [::Cawt::GetOrCreateApp $explorerAppName false]
+        set appId [Cawt GetOrCreateApp $explorerAppName false]
         Explorer Visible $appId $visible
         if { $width >= 0 } {
             $appId Width [expr $width]
@@ -70,7 +70,7 @@ namespace eval Explorer {
 
         variable explorerAppName
 
-        set appId [::Cawt::GetOrCreateApp $explorerAppName true]
+        set appId [Cawt GetOrCreateApp $explorerAppName true]
         Explorer Visible $appId $visible
         if { $width >= 0 } {
             $appId Width [expr $width]
@@ -104,7 +104,7 @@ namespace eval Explorer {
         #
         # See also: Open OpenNew
 
-        $appId Visible [::Cawt::TclInt $visible]
+        $appId Visible [Cawt TclInt $visible]
     }
 
     proc FullScreen { appId onOff } {
@@ -118,7 +118,7 @@ namespace eval Explorer {
         #
         # See also: Open Visible
 
-        $appId FullScreen [::Cawt::TclBool $onOff]
+        $appId FullScreen [Cawt TclBool $onOff]
     }
 
     proc Navigate { appId urlOrFile { wait true } { targetFrame "_self" } } {

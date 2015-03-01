@@ -312,7 +312,7 @@ namespace eval Cawt {
 
         if { $onOff } {
             if { [Cawt GetApplicationName $appId] eq "Microsoft Word" } {
-                set alertLevel [expr $::Word::wdAlertsAll]
+                set alertLevel [expr $Word::wdAlertsAll]
             } else {
                 set alertLevel [expr 1]
             }

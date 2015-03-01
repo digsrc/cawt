@@ -8,11 +8,11 @@ source "SetTestPathes.tcl"
 package require cawt
 
 # Open Word, so we can get the extension string.
-set appId [::Word::Open true]
+set appId [Word Open true]
 
 set outPath [file join [pwd] "testOut"]
-set wordBaseFile [file join $outPath Word-06_Diff-Base[::Word::GetExtString $appId]]
-set wordNewFile  [file join $outPath Word-06_Diff-New[::Word::GetExtString $appId]]
+set wordBaseFile [file join $outPath Word-06_Diff-Base[Word GetExtString $appId]]
+set wordNewFile  [file join $outPath Word-06_Diff-New[Word GetExtString $appId]]
 
 # Create testOut directory, if it does not yet exist.
 file mkdir testOut
@@ -30,27 +30,27 @@ for { set i 0 } { $i < 20 } { incr i } {
 
 # Create 2 Word files with some test data.
 puts "Generating base file $wordBaseFile ..."
-set docId [::Word::AddDocument $appId]
-::Word::AppendText $docId "Base File" true
-::Word::AppendText $docId $msg1 true
-::Word::SaveAs $docId $wordBaseFile
+set docId [Word AddDocument $appId]
+Word AppendText $docId "Base File" true
+Word AppendText $docId $msg1 true
+Word SaveAs $docId $wordBaseFile
 
 puts "Generating new file $wordNewFile ..."
-set docId [::Word::AddDocument $appId]
-::Word::AppendText $docId "New File" true
-::Word::AppendText $docId $msg2 true
-::Word::SaveAs $docId $wordNewFile
+set docId [Word AddDocument $appId]
+Word AppendText $docId "New File" true
+Word AppendText $docId $msg2 true
+Word SaveAs $docId $wordNewFile
 
-::Word::Close $docId
-::Word::Quit $appId
+Word Close $docId
+Word Quit $appId
 
 puts "Comparing base and new file ..."
-set diffAppId [::Word::DiffWordFiles $wordBaseFile $wordNewFile]
+set diffAppId [Word DiffWordFiles $wordBaseFile $wordNewFile]
 
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Word::Quit $diffAppId
+    Word Quit $diffAppId
     ::Cawt::Destroy
     exit 0
 }

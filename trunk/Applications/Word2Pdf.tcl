@@ -67,23 +67,23 @@ if { ! [file exists $wordFile] } {
 }
 
 # Open new Word instance and show the application window.
-set appId [::Word::OpenNew true]
+set appId [Word OpenNew true]
 
 # Delete PDF file, if existent.
 # file delete -force $pdfFile
 
 # Open the Word document in read-only mode.
-set docId [::Word::OpenDocument $appId $wordFile true]
+set docId [Word OpenDocument $appId $wordFile true]
 
 puts "Saving as PDF file: $pdfFile"
 # # Use in a catch statement, as PDF export is available only in Word 2007 and up.
-set catchVal [ catch { ::Word::SaveAsPdf $docId $pdfFile } retVal]
+set catchVal [ catch { Word SaveAsPdf $docId $pdfFile } retVal]
 if { $catchVal } {
     puts "Error: $retVal"
 }
 
 # Quit Word application without showing possible alerts.
-::Word::Close $docId
-::Word::Quit $appId false
+Word Close $docId
+Word Quit $appId false
 ::Cawt::Destroy
 exit 0

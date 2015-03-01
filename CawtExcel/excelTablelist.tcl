@@ -1,7 +1,16 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export GetTablelistHeader
+    namespace export GetTablelistValues
+    namespace export SetTablelistHeader
+    namespace export SetTablelistValues
+    namespace export TablelistToWorksheet
+    namespace export WorksheetToTablelist
 
     proc GetTablelistHeader { tableId } {
         # Return the header line of a tablelist as a list.
@@ -82,11 +91,11 @@ namespace eval ::Excel {
             for { set col 0 } { $col < $numCols } { incr col } {
                 lappend headerList [$tableId columncget $col -title]
             }
-            ::Excel::SetHeaderRow $worksheetId $headerList $curRow
+            Excel SetHeaderRow $worksheetId $headerList $curRow
             incr curRow
         }
         set matrixList [$tableId get 0 end]
-        ::Excel::SetMatrixValues $worksheetId $matrixList $curRow 1
+        Excel SetMatrixValues $worksheetId $matrixList $curRow 1
     }
 
     proc WorksheetToTablelist { worksheetId tableId { useHeader true } } {
@@ -105,11 +114,11 @@ namespace eval ::Excel {
         # WorksheetToWikitFile WorksheetToMediaWikiFile WorksheetToMatlabFile
         # WorksheetToRawImageFile WorksheetToWordTable
 
-        set numRows [::Excel::GetLastUsedRow $worksheetId]
-        set numCols [::Excel::GetLastUsedColumn $worksheetId]
+        set numRows [Excel GetLastUsedRow $worksheetId]
+        set numCols [Excel GetLastUsedColumn $worksheetId]
         set startRow 1
         if { $useHeader } {
-            set headerList [::Excel::GetRowValues $worksheetId 1 1 $numCols]
+            set headerList [Excel GetRowValues $worksheetId 1 1 $numCols]
             foreach title $headerList {
                 $tableId insertcolumns end 0 $title left
             }
@@ -119,7 +128,7 @@ namespace eval ::Excel {
                 $tableId insertcolumns end 0 "NN" left
             }
         }
-        set excelList [::Excel::GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
+        set excelList [Excel GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
         foreach rowList $excelList {
             $tableId insert end $rowList
         }

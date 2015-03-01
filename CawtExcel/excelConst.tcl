@@ -4,7 +4,9 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
 
     # Enumeration Constants
     variable xl3DBar -4099
@@ -3031,6 +3033,11 @@ namespace eval ::Excel {
         XlXmlLoadOption { xlXmlLoadImportToList 2 xlXmlLoadMapXml 3 xlXmlLoadOpenXml 1 xlXmlLoadPromptUser 0 }
         XlYesNoGuess { xlGuess 0 xlNo 2 xlYes 1 }
     }
+
+    namespace export GetEnum
+    namespace export GetEnumNames
+    namespace export GetEnumTypes
+    namespace export GetEnumVal
 
     proc GetEnumTypes { } {
         # Return a list of available enumeration types.

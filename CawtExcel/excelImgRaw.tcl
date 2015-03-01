@@ -1,7 +1,17 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export ExcelFileToRawImageFile
+    namespace export RawImageFileToExcelFile
+    namespace export RawImageFileToWorksheet
+    namespace export ReadRawImageFile
+    namespace export ReadRawImageHeader
+    namespace export WorksheetToRawImageFile
+    namespace export WriteRawImageFile
 
     proc _GetRawImageHeader { rawFp } {
         if { [gets $rawFp line] >= 0 } {
@@ -80,13 +90,13 @@ namespace eval ::Excel {
     }
 
     proc _PutRawImageHeader { rawFp width height } {
-        ::Excel::_PrintHeaderLine $rawFp [format "Magic=%s" "RAW"]
-        ::Excel::_PrintHeaderLine $rawFp [format "Width=%d"  $width]
-        ::Excel::_PrintHeaderLine $rawFp [format "Height=%d" $height]
-        ::Excel::_PrintHeaderLine $rawFp [format "NumChan=%d" 1]
-        ::Excel::_PrintHeaderLine $rawFp [format "ByteOrder=%s" [::Excel::_GetNativeByteOrder]]
-        ::Excel::_PrintHeaderLine $rawFp [format "ScanOrder=%s" "TopDown"]
-        ::Excel::_PrintHeaderLine $rawFp [format "PixelType=%s" "float"]
+        Excel::_PrintHeaderLine $rawFp [format "Magic=%s" "RAW"]
+        Excel::_PrintHeaderLine $rawFp [format "Width=%d"  $width]
+        Excel::_PrintHeaderLine $rawFp [format "Height=%d" $height]
+        Excel::_PrintHeaderLine $rawFp [format "NumChan=%d" 1]
+        Excel::_PrintHeaderLine $rawFp [format "ByteOrder=%s" [Excel::_GetNativeByteOrder]]
+        Excel::_PrintHeaderLine $rawFp [format "ScanOrder=%s" "TopDown"]
+        Excel::_PrintHeaderLine $rawFp [format "PixelType=%s" "float"]
     }
 
     proc ReadRawImageHeader { rawImgFile } {
@@ -104,7 +114,7 @@ namespace eval ::Excel {
             error "Cannot open file $rawImgFile"
         }
         fconfigure $rawFp -translation binary
-        set headerList [::Excel::_GetRawImageHeader $rawFp]
+        set headerList [Excel::_GetRawImageHeader $rawFp]
         close $rawFp
         return $headerList
     }
@@ -127,13 +137,13 @@ namespace eval ::Excel {
         }
         fconfigure $rawFp -translation binary
 
-        set headerList [::Excel::_GetRawImageHeader $rawFp]
+        set headerList [Excel::_GetRawImageHeader $rawFp]
         lassign $headerList magic width height numChans byteOrder scanOrder pixelType
 
         if { $numChans != 1 && $pixelType ne "float" } {
             error "Only 1-channel floating point images are currently supported."
         }
-        if { $byteOrder eq [::Excel::_GetNativeByteOrder] } {
+        if { $byteOrder eq [Excel::_GetNativeByteOrder] } {
             set scanFmt "f"
         } elseif { $byteOrder eq "Intel" } {
             set scanFmt "r"
@@ -188,7 +198,7 @@ namespace eval ::Excel {
 
         set height [llength $matrixList]
         set width  [llength [lindex $matrixList 0]]
-        ::Excel::_PutRawImageHeader $rawFp $width $height
+        Excel::_PutRawImageHeader $rawFp $width $height
         foreach rowList $matrixList {
             foreach pix $rowList {
                 puts -nonewline $rawFp [binary format f $pix]
@@ -217,13 +227,13 @@ namespace eval ::Excel {
 
         set startRow 1
         if { $useHeader } {
-            set headerList [::Excel::ReadRawImageHeader $rawFileName]
-            ::Excel::SetHeaderRow $worksheetId $headerList
-            ::Excel::FreezePanes $worksheetId 1 0 true
+            set headerList [Excel ReadRawImageHeader $rawFileName]
+            Excel SetHeaderRow $worksheetId $headerList
+            Excel FreezePanes $worksheetId 1 0 true
             incr startRow
         }
-        set matrixList [::Excel::ReadRawImageFile $rawFileName]
-        ::Excel::SetMatrixValues $worksheetId $matrixList $startRow 1
+        set matrixList [Excel ReadRawImageFile $rawFileName]
+        Excel SetMatrixValues $worksheetId $matrixList $startRow 1
     }
 
     proc WorksheetToRawImageFile { worksheetId rawFileName { useHeader true } } {
@@ -245,13 +255,13 @@ namespace eval ::Excel {
         # WorksheetToWikitFile WorksheetToMediaWikiFile WorksheetToMatlabFile
         # WorksheetToTablelist WorksheetToWordTable
 
-        set numRows [::Excel::GetLastUsedRow $worksheetId]
-        set numCols [::Excel::GetLastUsedColumn $worksheetId]
+        set numRows [Excel GetLastUsedRow $worksheetId]
+        set numCols [Excel GetLastUsedColumn $worksheetId]
         set startRow 1
         if { $useHeader } {
             incr startRow
         }
-        set excelList [::Excel::GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
+        set excelList [Excel GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
         WriteRawImageFile $excelList $rawFileName
     }
 
@@ -274,13 +284,13 @@ namespace eval ::Excel {
         #
         # See also: RawImageFileToWorksheet ExcelFileToRawImageFile ReadRawImageFile WriteRawImageFile
 
-        set appId [::Excel::OpenNew true]
-        set workbookId [::Excel::AddWorkbook $appId]
-        set worksheetId [::Excel::AddWorksheet $workbookId "RawImage"]
-        ::Excel::RawImageFileToWorksheet $rawFileName $worksheetId $useHeader
-        ::Excel::SaveAs $workbookId $excelFileName
+        set appId [Excel OpenNew true]
+        set workbookId [Excel AddWorkbook $appId]
+        set worksheetId [Excel AddWorksheet $workbookId "RawImage"]
+        Excel RawImageFileToWorksheet $rawFileName $worksheetId $useHeader
+        Excel SaveAs $workbookId $excelFileName
         if { $quitExcel } {
-            ::Excel::Quit $appId
+            Excel Quit $appId
         } else {
             return $appId
         }
@@ -307,16 +317,16 @@ namespace eval ::Excel {
         #
         # See also: RawImageFileToWorksheet RawImageFileToExcelFile ReadRawImageFile WriteRawImageFile
 
-        set appId [::Excel::OpenNew true]
-        set workbookId [::Excel::OpenWorkbook $appId $excelFileName true]
+        set appId [Excel OpenNew true]
+        set workbookId [Excel OpenWorkbook $appId $excelFileName true]
         if { [string is integer $worksheetNameOrIndex] } {
-            set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId [expr int($worksheetNameOrIndex)]]
+            set worksheetId [Excel GetWorksheetIdByIndex $workbookId [expr int($worksheetNameOrIndex)]]
         } else {
-            set worksheetId [::Excel::GetWorksheetIdByName $workbookId $worksheetNameOrIndex]
+            set worksheetId [Excel GetWorksheetIdByName $workbookId $worksheetNameOrIndex]
         }
-        ::Excel::WorksheetToRawImageFile $worksheetId $rawFileName $useHeader
+        Excel WorksheetToRawImageFile $worksheetId $rawFileName $useHeader
         if { $quitExcel } {
-            ::Excel::Quit $appId
+            Excel Quit $appId
         } else {
             return $appId
         }

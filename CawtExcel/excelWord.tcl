@@ -1,7 +1,12 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export WordTableToWorksheet
+    namespace export WorksheetToWordTable
 
     proc WordTableToWorksheet { tableId worksheetId { useHeader true } } {
         # Insert the values of a Word table into a worksheet.
@@ -17,14 +22,14 @@ namespace eval ::Excel {
         # WikitFileToWorksheet MediaWikiFileToWorksheet MatlabFileToWorksheet
         # RawImageFileToWorksheet TablelistToWorksheet
 
-        set numCols [::Word::GetNumColumns $tableId]
+        set numCols [Word GetNumColumns $tableId]
         if { $useHeader } {
             for { set col 1 } { $col <= $numCols } { incr col } {
-                lappend headerList [::Word::GetCellValue $tableId 1 $col]
+                lappend headerList [Word GetCellValue $tableId 1 $col]
             }
-            ::Excel::SetHeaderRow $worksheetId $headerList
+            Excel SetHeaderRow $worksheetId $headerList
         }
-        set numRows [::Word::GetNumRows $tableId]
+        set numRows [Word GetNumRows $tableId]
         incr numRows -1
         set startWordRow 2
         if { $useHeader } {
@@ -32,9 +37,9 @@ namespace eval ::Excel {
         } else {
             set startExcelRow 1
         }
-        set tableList [::Word::GetMatrixValues $tableId \
+        set tableList [Word GetMatrixValues $tableId \
                       $startWordRow 1 [expr {$startWordRow + $numRows-1}] $numCols]
-        ::Excel::SetMatrixValues $worksheetId $tableList $startExcelRow 1
+        Excel SetMatrixValues $worksheetId $tableList $startExcelRow 1
     }
 
     proc WorksheetToWordTable { worksheetId tableId { useHeader true } } {
@@ -53,18 +58,18 @@ namespace eval ::Excel {
         # WorksheetToWikitFile WorksheetToMediaWikiFile WorksheetToMatlabFile
         # WorksheetToRawImageFile WorksheetToTablelist
 
-        set numRows [::Excel::GetLastUsedRow $worksheetId]
-        set numCols [::Excel::GetLastUsedColumn $worksheetId]
+        set numRows [Excel GetLastUsedRow $worksheetId]
+        set numCols [Excel GetLastUsedColumn $worksheetId]
         set startRow 1
-        set headerList [::Excel::GetRowValues $worksheetId 1 1 $numCols]
+        set headerList [Excel GetRowValues $worksheetId 1 1 $numCols]
         if { [llength $headerList] < $numCols } {
             set numCols [llength $headerList]
         }
         if { $useHeader } {
-            ::Word::SetHeaderRow $tableId $headerList
+            Word SetHeaderRow $tableId $headerList
             incr startRow
         }
-        set excelList [::Excel::GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
-        ::Word::SetMatrixValues $tableId $excelList $startRow 1
+        set excelList [Excel GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
+        Word SetMatrixValues $tableId $excelList $startRow 1
     }
 }

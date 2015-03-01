@@ -22,26 +22,26 @@ proc InsertTestData { worksheetId timeHeader timeList valsHeaderList valsList } 
     # First column contains the time header, next columns of row 1
     # contain the header of the data columns.
 
-    ::Excel::SetCellValue $worksheetId 1 1 $timeHeader
+    Excel SetCellValue $worksheetId 1 1 $timeHeader
 
     set col 2
     foreach head $valsHeaderList {
-        ::Excel::SetCellValue $worksheetId 1 $col $head
+        Excel SetCellValue $worksheetId 1 $col $head
         incr col
     }
     set lastDataCol [expr $col - 1]
 
     # Format the header lines.
-    ::Excel::FormatHeaderRow $worksheetId 1  1 [expr $col-1]
+    Excel FormatHeaderRow $worksheetId 1  1 [expr $col-1]
 
     # Now insert the data row by row.
     set row 2
     foreach t $timeList vals $valsList {
         set col 1
-        ::Excel::SetCellValue $worksheetId $row $col $t "real"
+        Excel SetCellValue $worksheetId $row $col $t "real"
         incr col
         foreach val $vals {
-            ::Excel::SetCellValue $worksheetId $row $col $val "real"
+            Excel SetCellValue $worksheetId $row $col $val "real"
             incr col
         }
         incr row
@@ -52,18 +52,18 @@ proc InsertTestData { worksheetId timeHeader timeList valsHeaderList valsList } 
     set r $row
     set funcList [list "MIN" "MAX" "AVERAGE" "STDEV"]
     foreach labelStr $funcList {
-        ::Excel::SetCellValue $worksheetId $r 1 $labelStr
-        set cellId [::Excel::GetCellIdByIndex $worksheetId $r 1]
-        ::Excel::SetRangeFontBold $cellId true
+        Excel SetCellValue $worksheetId $r 1 $labelStr
+        set cellId [Excel GetCellIdByIndex $worksheetId $r 1]
+        Excel SetRangeFontBold $cellId true
         ::Cawt::Destroy $cellId
         incr r
     }
 
     for { set c 2 } { $c <= $lastDataCol } { incr c } {
-        set dataRange [::Excel::GetCellRange 2 $c $lastDataRow $c]
+        set dataRange [Excel GetCellRange 2 $c $lastDataRow $c]
         set r $row
         foreach func $funcList {
-            set cellId [::Excel::SelectRangeByIndex $worksheetId $r $c $r $c]
+            set cellId [Excel SelectRangeByIndex $worksheetId $r $c $r $c]
             set formula [format "=%s(%s)" $func $dataRange]
             $cellId Formula $formula
             ::Cawt::Destroy $cellId
@@ -126,11 +126,11 @@ for { set i 1 } { $i <= $numRows } { incr i } {
 
 # Test start: Open new Excel instance,
 # show the application window and create a workbook.
-set appId [::Excel::OpenNew]
-set workbookId [::Excel::AddWorkbook $appId]
+set appId [Excel OpenNew]
+set workbookId [Excel AddWorkbook $appId]
 
 # Delete Excel file from previous test run.
-append xlsFile [::Excel::GetExtString $appId]
+append xlsFile [Excel GetExtString $appId]
 file mkdir testOut
 catch { file delete -force $xlsFile }
 
@@ -144,114 +144,114 @@ catch { file delete -force $xlsFile }
 # Mainly because otherwise our charts are not placed on the intended
 # worksheet, but on the first default one. (Bug in Excel 2000, in Excel 2003
 # this works correctly.
-# set worksheetId [::Excel::AddWorksheet $workbookId]
-set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId 1]
-::Excel::SetWorksheetName $worksheetId "LineChart"
+# set worksheetId [Excel AddWorksheet $workbookId]
+set worksheetId [Excel GetWorksheetIdByIndex $workbookId 1]
+Excel SetWorksheetName $worksheetId "LineChart"
 
 # Insert the list data into the Excel worksheet and automatically fit
 # the column width.
 InsertTestData $worksheetId $timeHeader $timeList $valsHeaderList $valsList
 
 # Generate the line chart.
-set lineChartId1 [::Excel::AddLineChartSimple $worksheetId \
+set lineChartId1 [Excel AddLineChartSimple $worksheetId \
                   $numRows $numCols "All flight paths"]
-::Excel::SetChartMinScale $lineChartId1 "y" $minVal
-::Excel::SetChartMaxScale $lineChartId1 "y" $maxVal
-set lineChartObjId1 [::Excel::PlaceChart $lineChartId1 $worksheetId]
-::Excel::SetChartObjPosition $lineChartObjId1 300 20
+Excel SetChartMinScale $lineChartId1 "y" $minVal
+Excel SetChartMaxScale $lineChartId1 "y" $maxVal
+set lineChartObjId1 [Excel PlaceChart $lineChartId1 $worksheetId]
+Excel SetChartObjPosition $lineChartObjId1 300 20
 
 # AddLineChart worksheetId headerRow xaxisCol
 #              startRow numRows startCol numCols
 #              title yaxisName markerSize
-set lineChartId2 [::Excel::AddLineChart $worksheetId \
+set lineChartId2 [Excel AddLineChart $worksheetId \
                   1 1  3 4  3 2  "Some flight paths" "Coordinate"]
-set lineChartObjId2 [::Excel::PlaceChart $lineChartId2 $worksheetId]
-::Excel::SetChartObjPosition $lineChartObjId2 300 220
+set lineChartObjId2 [Excel PlaceChart $lineChartId2 $worksheetId]
+Excel SetChartObjPosition $lineChartObjId2 300 220
 
 # Perform test 2:
 # Interpret the data of columns 2 and 4 as a 2D location (lat, lon).
 # and display the locations as a point chart.
 
 # Create a worksheet and set its name.
-set worksheetId [::Excel::AddWorksheet $workbookId "PointChart"]
+set worksheetId [Excel AddWorksheet $workbookId "PointChart"]
 
 # Insert the list data into the Excel worksheet.
 InsertTestData $worksheetId $timeHeader $timeList $valsHeaderList $valsList
 
-set pointChartId [::Excel::AddPointChartSimple $worksheetId \
+set pointChartId [Excel AddPointChartSimple $worksheetId \
                   $numRows 2 4 "MunitionDetonations"]
-::Excel::SetChartScale $pointChartId $minVal $maxVal $minVal $maxVal
-set pointChartObjId [::Excel::PlaceChart $pointChartId $worksheetId]
-set chartRangeId [::Excel::SelectRangeByString $worksheetId "F2:K16"]
-::Excel::ResizeChartObj $pointChartObjId $chartRangeId
+Excel SetChartScale $pointChartId $minVal $maxVal $minVal $maxVal
+set pointChartObjId [Excel PlaceChart $pointChartId $worksheetId]
+set chartRangeId [Excel SelectRangeByString $worksheetId "F2:K16"]
+Excel ResizeChartObj $pointChartObjId $chartRangeId
 
 # Perform test 3:
 # Load data from entList, hitList and shootList into a worksheet.
 # Display the data as a radar mark chart.
 
 # Create a worksheet and set its name.
-set worksheetId [::Excel::AddWorksheet $workbookId "RadarChart"]
+set worksheetId [Excel AddWorksheet $workbookId "RadarChart"]
 
 # Insert the list data into the Excel worksheet.
-::Excel::SetHeaderRow $worksheetId [list "Entity" "Shots" "Hits"]
+Excel SetHeaderRow $worksheetId [list "Entity" "Shots" "Hits"]
 
-::Excel::SetColumnValues $worksheetId 1 $entList   2
-::Excel::SetColumnValues $worksheetId 2 $shootList 2
-::Excel::SetColumnValues $worksheetId 3 $hitList   2
+Excel SetColumnValues $worksheetId 1 $entList   2
+Excel SetColumnValues $worksheetId 2 $shootList 2
+Excel SetColumnValues $worksheetId 3 $hitList   2
 
 # Fit the column width automatically.
-::Excel::SetColumnsWidth $worksheetId 1 3 0
+Excel SetColumnsWidth $worksheetId 1 3 0
 
-set radarChartId [::Excel::AddRadarChartSimple $worksheetId $numRows 2]
+set radarChartId [Excel AddRadarChartSimple $worksheetId $numRows 2]
 
 # Place the radar chart as an object in the current worksheet.
-set radarChartObjId [::Excel::PlaceChart $radarChartId $worksheetId]
+set radarChartObjId [Excel PlaceChart $radarChartId $worksheetId]
 
 # Set the size of the generated chart.
-::Excel::SetChartObjSize $radarChartObjId 640 480
+Excel SetChartObjSize $radarChartObjId 640 480
 
 # Copy the radar chart to the Windows clipboard.
-::Excel::ChartObjToClipboard $radarChartObjId
+Excel ChartObjToClipboard $radarChartObjId
 
 # Save the radar chart as a GIF file.
-::Excel::SaveChartObjAsImage $radarChartObjId [file join [pwd] "testOut" "Excel-06_Chart.gif"]
+Excel SaveChartObjAsImage $radarChartObjId [file join [pwd] "testOut" "Excel-06_Chart.gif"]
 
 # Perform test 4:
 # Load data from entList, hitList and shootList into a worksheet.
 # Display the data as a clustered column chart.
 
 # Create a worksheet and set its name.
-set worksheetId [::Excel::AddWorksheet $workbookId "ColumnChart"]
+set worksheetId [Excel AddWorksheet $workbookId "ColumnChart"]
 
 # Insert the list data into the Excel worksheet.
-::Excel::SetHeaderRow $worksheetId [list "Entity" "Shots" "Hits"]
+Excel SetHeaderRow $worksheetId [list "Entity" "Shots" "Hits"]
 
-::Excel::SetColumnValues $worksheetId 1 $entList   2
-::Excel::SetColumnValues $worksheetId 2 $shootList 2
-::Excel::SetColumnValues $worksheetId 3 $hitList   2
+Excel SetColumnValues $worksheetId 1 $entList   2
+Excel SetColumnValues $worksheetId 2 $shootList 2
+Excel SetColumnValues $worksheetId 3 $hitList   2
 
 # Fit the column width automatically.
-::Excel::SetColumnsWidth $worksheetId 1 3 0
+Excel SetColumnsWidth $worksheetId 1 3 0
 
-set columnChartId [::Excel::AddColumnChartSimple $worksheetId $numRows 2 "Clustered Column"]
+set columnChartId [Excel AddColumnChartSimple $worksheetId $numRows 2 "Clustered Column"]
 
 # Place the column chart as an object in the current worksheet.
-set columnChartObjId [::Excel::PlaceChart $columnChartId $worksheetId]
+set columnChartObjId [Excel PlaceChart $columnChartId $worksheetId]
 
 # Set the size of the placed chart object.
-::Excel::SetChartObjSize $columnChartObjId 640 480
+Excel SetChartObjSize $columnChartObjId 640 480
 
 # Check number of rows in different range objects.
-puts "Number of rows in worksheet   : [::Excel::GetNumRows    $worksheetId]"
-puts "Number of columns in worksheet: [::Excel::GetNumColumns $worksheetId]"
+puts "Number of rows in worksheet   : [Excel GetNumRows    $worksheetId]"
+puts "Number of columns in worksheet: [Excel GetNumColumns $worksheetId]"
 
-set rangeId [::Excel::SelectRangeByIndex $worksheetId 2 1 \
+set rangeId [Excel SelectRangeByIndex $worksheetId 2 1 \
                                          [expr $numRows+1] 3 true]
-::Cawt::CheckNumber 10 [::Excel::GetNumRows    $rangeId] "Number of rows in range"
-::Cawt::CheckNumber  3 [::Excel::GetNumColumns $rangeId] "Number of columns in range"
+::Cawt::CheckNumber 10 [Excel GetNumRows    $rangeId] "Number of rows in range"
+::Cawt::CheckNumber  3 [Excel GetNumColumns $rangeId] "Number of columns in range"
 
 # Enable the auto filter menus.
-::Excel::ToggleAutoFilter $rangeId
+Excel ToggleAutoFilter $rangeId
 
 # If we have the Img and Twapi extension, get the chart as a photo image
 # from the clipboard and create a Tk label to display it.
@@ -277,10 +277,10 @@ if { $retVal == 0 } {
 
     set retVal [catch {::Cawt::ImgToClipboard $phImgHalf}]
     if { $retVal == 0 } {
-        set pasteWorksheetId [::Excel::AddWorksheet $workbookId "ImagePaste"]
+        set pasteWorksheetId [Excel AddWorksheet $workbookId "ImagePaste"]
         set row 5
         set col 2
-        set cellId [::Excel::SelectCellByIndex $pasteWorksheetId $row $col true]
+        set cellId [Excel SelectCellByIndex $pasteWorksheetId $row $col true]
         $pasteWorksheetId Paste
     } else {
         puts "Warning: Base64 extension missing"
@@ -290,12 +290,12 @@ if { $retVal == 0 } {
 }
 
 puts "Saving as Excel file: $xlsFile"
-::Excel::SaveAs $workbookId $xlsFile
+Excel SaveAs $workbookId $xlsFile
 
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Excel::Quit $appId
+    Excel Quit $appId
     ::Cawt::Destroy
     exit 0
 }

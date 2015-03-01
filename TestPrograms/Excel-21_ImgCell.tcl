@@ -10,13 +10,13 @@ package require Tk
 set testImg [file join [pwd] "testIn/wish.gif"]
 
 # Open Excel, show the application window and create a workbook.
-set appId [::Excel::Open true]
-set workbookId [::Excel::AddWorkbook $appId]
+set appId [Excel Open true]
+set workbookId [Excel AddWorkbook $appId]
 
 # Delete Excel file from previous test run.
 file mkdir testOut
 set xlsFile [file join [pwd] "testOut" "Excel-21_ImgCell"]
-append xlsFile [::Excel::GetExtString $appId]
+append xlsFile [Excel GetExtString $appId]
 file delete -force $xlsFile
 
 frame .f1
@@ -37,45 +37,45 @@ set numPix [expr { $w * $h }]
 update
 
 puts "Add an image as cell background colors (at specific position) ..."
-set worksheetId2 [::Excel::AddWorksheet $workbookId "ImageParam"]
-::Excel::UseImgTransparency false
+set worksheetId2 [Excel AddWorksheet $workbookId "ImageParam"]
+Excel UseImgTransparency false
 
 set t1 [clock clicks -milliseconds]
-::Excel::ImgToWorksheet $phImg $worksheetId2 10 3  5 1
+Excel ImgToWorksheet $phImg $worksheetId2 10 3  5 1
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to put $numPix pixels (ignoring transparency) into worksheet."
 
 puts "Add an image as cell background colors (without screen update) ..."
-set worksheetId3 [::Excel::AddWorksheet $workbookId "ImageNoUpdate"]
-::Excel::UseImgTransparency false
+set worksheetId3 [Excel AddWorksheet $workbookId "ImageNoUpdate"]
+Excel UseImgTransparency false
 
-::Excel::ScreenUpdate $appId false
+Excel ScreenUpdate $appId false
 set t1 [clock clicks -milliseconds]
-::Excel::ImgToWorksheet $phImg $worksheetId3 10 3  5 1
+Excel ImgToWorksheet $phImg $worksheetId3 10 3  5 1
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to put $numPix pixels (ignoring transparency) into worksheet."
-::Excel::ScreenUpdate $appId true
+Excel ScreenUpdate $appId true
 
 puts "Add an image as cell background colors (Default params) ..."
-set worksheetId4 [::Excel::AddWorksheet $workbookId "ImageDefault"]
-::Excel::UseImgTransparency true
+set worksheetId4 [Excel AddWorksheet $workbookId "ImageDefault"]
+Excel UseImgTransparency true
 
 set t1 [clock clicks -milliseconds]
-::Excel::ImgToWorksheet $phImg $worksheetId4
+Excel ImgToWorksheet $phImg $worksheetId4
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to put $numPix pixels (using transparency) into worksheet."
 
 puts "Paint a cross ..."
-set rangeId [::Excel::SelectRangeByIndex $worksheetId4 [expr $h/2] 1 [expr $h/2 +1] $w]
-::Excel::SetRangeFillColor $rangeId 255 0 255
+set rangeId [Excel SelectRangeByIndex $worksheetId4 [expr $h/2] 1 [expr $h/2 +1] $w]
+Excel SetRangeFillColor $rangeId 255 0 255
 
-set rangeId [::Excel::SelectRangeByIndex $worksheetId4 1 [expr $w/2] $h [expr $w/2 +1]]
+set rangeId [Excel SelectRangeByIndex $worksheetId4 1 [expr $w/2] $h [expr $w/2 +1]]
 
-::Excel::SetRangeFillColor $rangeId 255 0 255
+Excel SetRangeFillColor $rangeId 255 0 255
 
 puts "Export changed image into a Tk photo ..."
 set t1 [clock clicks -milliseconds]
-set phImgPainted [::Excel::WorksheetToImg $worksheetId4 1 1 $h $w]
+set phImgPainted [Excel WorksheetToImg $worksheetId4 1 1 $h $w]
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to get $numPix pixels from worksheet."
 
@@ -94,12 +94,12 @@ puts "Saving painted images: $imgFile"
 $phImgPainted write $imgFile -format "GIF"
 
 puts "Saving as Excel file: $xlsFile"
-::Excel::SaveAs $workbookId $xlsFile "" false
+Excel SaveAs $workbookId $xlsFile "" false
 
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Excel::Quit $appId
+    Excel Quit $appId
     ::Cawt::Destroy
     exit 0
 }

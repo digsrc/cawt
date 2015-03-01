@@ -1,7 +1,17 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export ExcelFileToMatlabFile
+    namespace export MatlabFileToExcelFile
+    namespace export MatlabFileToWorksheet
+    namespace export ReadMatlabFile
+    namespace export ReadMatlabHeader
+    namespace export WorksheetToMatlabFile
+    namespace export WriteMatlabFile
 
     proc _PutMatlabHeader { matFp width height matrixName } {
         puts -nonewline $matFp [binary format iiiii \
@@ -45,7 +55,7 @@ namespace eval ::Excel {
             error "Cannot open file $matFileName"
         }
         fconfigure $matFp -translation binary
-        set headerList [::Excel::_GetMatlabHeader $matFp]
+        set headerList [Excel::_GetMatlabHeader $matFp]
         close $matFp
         return $headerList
     }
@@ -68,7 +78,7 @@ namespace eval ::Excel {
         }
         fconfigure $matFp -translation binary
 
-        set headerList [::Excel::_GetMatlabHeader $matFp]
+        set headerList [Excel::_GetMatlabHeader $matFp]
         lassign $headerList version width height
 
         # Parse a Level 4 MAT-File
@@ -112,7 +122,7 @@ namespace eval ::Excel {
 
         set height [llength $matrixList]
         set width  [llength [lindex $matrixList 0]]
-        ::Excel::_PutMatlabHeader $matFp $width $height [file rootname $matFileName]
+        Excel::_PutMatlabHeader $matFp $width $height [file rootname $matFileName]
         for { set col 0 } { $col < $width } { incr col } {
             for { set row 0 } { $row < $height } { incr row } {
                 set pix [lindex [lindex $matrixList $row] $col]
@@ -141,13 +151,13 @@ namespace eval ::Excel {
 
         set startRow 1
         if { $useHeader } {
-            set headerList [::Excel::ReadMatlabHeader $matFileName]
-            ::Excel::SetHeaderRow $worksheetId $headerList
-            ::Excel::FreezePanes $worksheetId 1 0 true
+            set headerList [Excel::ReadMatlabHeader $matFileName]
+            Excel SetHeaderRow $worksheetId $headerList
+            Excel FreezePanes $worksheetId 1 0 true
             incr startRow
         }
-        set matrixList [::Excel::ReadMatlabFile $matFileName]
-        ::Excel::SetMatrixValues $worksheetId $matrixList $startRow 1
+        set matrixList [Excel ReadMatlabFile $matFileName]
+        Excel SetMatrixValues $worksheetId $matrixList $startRow 1
     }
 
     proc WorksheetToMatlabFile { worksheetId matFileName { useHeader true } } {
@@ -167,13 +177,13 @@ namespace eval ::Excel {
         # WorksheetToWikitFile WorksheetToMediaWikiFile WorksheetToRawImageFile
         # WorksheetToTablelist WorksheetToWordTable
 
-        set numRows [::Excel::GetLastUsedRow $worksheetId]
-        set numCols [::Excel::GetLastUsedColumn $worksheetId]
+        set numRows [Excel GetLastUsedRow $worksheetId]
+        set numCols [Excel GetLastUsedColumn $worksheetId]
         set startRow 1
         if { $useHeader } {
             incr startRow
         }
-        set excelList [::Excel::GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
+        set excelList [Excel GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
         WriteMatlabFile $excelList $matFileName
     }
 
@@ -195,13 +205,13 @@ namespace eval ::Excel {
         #
         # See also: MatlabFileToWorksheet ExcelFileToMatlabFile ReadMatlabFile
 
-        set appId [::Excel::OpenNew true]
-        set workbookId [::Excel::AddWorkbook $appId]
-        set worksheetId [::Excel::AddWorksheet $workbookId "Matlab"]
-        ::Excel::MatlabFileToWorksheet $matFileName $worksheetId $useHeader
-        ::Excel::SaveAs $workbookId $excelFileName
+        set appId [Excel OpenNew true]
+        set workbookId [Excel AddWorkbook $appId]
+        set worksheetId [Excel AddWorksheet $workbookId "Matlab"]
+        Excel MatlabFileToWorksheet $matFileName $worksheetId $useHeader
+        Excel SaveAs $workbookId $excelFileName
         if { $quitExcel } {
-            ::Excel::Quit $appId
+            Excel Quit $appId
         } else {
             return $appId
         }
@@ -229,16 +239,16 @@ namespace eval ::Excel {
         # See also: MatlabFileToWorksheet MatlabFileToExcelFile
         # ReadMatlabFile WriteMatlabFile
 
-        set appId [::Excel::OpenNew true]
-        set workbookId [::Excel::OpenWorkbook $appId $excelFileName true]
+        set appId [Excel OpenNew true]
+        set workbookId [Excel OpenWorkbook $appId $excelFileName true]
         if { [string is integer $worksheetNameOrIndex] } {
-            set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId [expr int($worksheetNameOrIndex)]]
+            set worksheetId [Excel GetWorksheetIdByIndex $workbookId [expr int($worksheetNameOrIndex)]]
         } else {
-            set worksheetId [::Excel::GetWorksheetIdByName $workbookId $worksheetNameOrIndex]
+            set worksheetId [Excel GetWorksheetIdByName $workbookId $worksheetNameOrIndex]
         }
-        ::Excel::WorksheetToMatlabFile $worksheetId $matFileName $useHeader
+        Excel WorksheetToMatlabFile $worksheetId $matFileName $useHeader
         if { $quitExcel } {
-            ::Excel::Quit $appId
+            Excel Quit $appId
         } else {
             return $appId
         }

@@ -1,7 +1,21 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export ClipboardToMatrix
+    namespace export ClipboardToWorksheet
+    namespace export DiffExcelFiles
+    namespace export FormatHeaderRow
+    namespace export ImgToWorksheet
+    namespace export MatrixToClipboard
+    namespace export Search
+    namespace export SetHeaderRow
+    namespace export UseImgTransparency
+    namespace export WorksheetToClipboard
+    namespace export WorksheetToImg
 
     variable sUseTransparency true
 
@@ -21,13 +35,13 @@ namespace eval ::Excel {
         # If no cell matches the search criteria, an empty list is returned.
 
         if { $row2 < 0 } {
-            set row2 [::Excel::GetLastUsedRow $worksheetId]
+            set row2 [Excel GetLastUsedRow $worksheetId]
         }
         if { $col2 < 0 } {
-            set col2 [::Excel::GetLastUsedColumn $worksheetId]
+            set col2 [Excel GetLastUsedColumn $worksheetId]
         }
 
-        set matrixList [::Excel::GetMatrixValues $worksheetId $row1 $col1 $row2 $col2]
+        set matrixList [Excel GetMatrixValues $worksheetId $row1 $col1 $row2 $col2]
         set row 1
         foreach rowList $matrixList {
             set col [lsearch -exact $rowList $str]
@@ -40,8 +54,8 @@ namespace eval ::Excel {
     }
 
     proc _ConvertFormula { workbookId formula } {
-        set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId 1]
-        set cell [::Excel::SelectCellByIndex $worksheetId 1 1]
+        set worksheetId [Excel GetWorksheetIdByIndex $workbookId 1]
+        set cell [Excel SelectCellByIndex $worksheetId 1 1]
         set original [$cell Formula]
         $cell Formula $formula
         set formula  [$cell FormulaLocal]
@@ -52,7 +66,7 @@ namespace eval ::Excel {
     # Generate Absolute Reference Formula of Worksheet.
     proc _ToAbsoluteReference { worksheetId } {
         return [format "\[%s\]%s" [$worksheetId -with { Parent } Name] \
-                                  [::Excel::GetWorksheetName $worksheetId]]
+                                  [Excel GetWorksheetName $worksheetId]]
     }
 
     proc DiffExcelFiles { excelBaseFile excelNewFile { r 255 } { g 0 } { b 0 } } {
@@ -99,59 +113,59 @@ namespace eval ::Excel {
             file copy -force $excelBaseFile $tmpName
             set excelBaseFile $tmpName
         }
-        set appId [::Excel::OpenNew true]
-        set baseWorkbookId [::Excel::OpenWorkbook $appId [file nativename $excelBaseFile] true]
-        set newWorkbookId  [::Excel::OpenWorkbook $appId [file nativename $excelNewFile]  true]
-        if { [::Excel::IsWorkbookProtected $baseWorkbookId] } {
+        set appId [Excel OpenNew true]
+        set baseWorkbookId [Excel OpenWorkbook $appId [file nativename $excelBaseFile] true]
+        set newWorkbookId  [Excel OpenWorkbook $appId [file nativename $excelNewFile]  true]
+        if { [Excel IsWorkbookProtected $baseWorkbookId] } {
             puts "Unable to arrange windows, because $excelBaseFile is protected."
         }
-        if { [::Excel::IsWorkbookProtected $newWorkbookId] } {
+        if { [Excel IsWorkbookProtected $newWorkbookId] } {
             puts "Unable to arrange windows, because $excelNewFile is protected."
         }
 
         set winId [$appId -with { Windows } Item [expr 2]]
         set caption [$winId Caption]
         $appId -with { Windows } CompareSideBySideWith $caption
-        ::Excel::SetWindowState $appId $::Excel::xlMaximized
-        ::Excel::ArrangeWindows $appId $::Excel::xlArrangeStyleHorizontal
-        if { ! $fastMode && [::Excel::IsWorkbookProtected $newWorkbookId] } {
-            puts "Fall back to fast mode because [::Excel::GetWorkbookName $newWorkbookId] is protected.");
+        Excel SetWindowState $appId $Excel::xlMaximized
+        Excel ArrangeWindows $appId $Excel::xlArrangeStyleHorizontal
+        if { ! $fastMode && [Excel IsWorkbookProtected $newWorkbookId] } {
+            puts "Fall back to fast mode because [Excel GetWorkbookName $newWorkbookId] is protected.");
             set fastMode true
         }
         ::Cawt::Destroy $winId
 
         # Create a special workbook for formula convertion.
-        set convWorkbookId [::Excel::AddWorkbook $appId]
+        set convWorkbookId [Excel AddWorkbook $appId]
 
-        set numWorksheets [::Excel::GetNumWorksheets $newWorkbookId]
+        set numWorksheets [Excel GetNumWorksheets $newWorkbookId]
         for { set i 1 } { $i <= $numWorksheets } { incr i } {
-            set baseWorksheetId [::Excel::GetWorksheetIdByIndex $baseWorkbookId $i]
-            set newWorksheetId  [::Excel::GetWorksheetIdByIndex $newWorkbookId  $i]
+            set baseWorksheetId [Excel GetWorksheetIdByIndex $baseWorkbookId $i]
+            set newWorksheetId  [Excel GetWorksheetIdByIndex $newWorkbookId  $i]
 
-            ::Excel::UnhideWorksheet $baseWorksheetId
-            ::Excel::UnhideWorksheet $newWorksheetId
+            Excel UnhideWorksheet $baseWorksheetId
+            Excel UnhideWorksheet $newWorksheetId
 
             if { ! $fastMode } {
-                set lastWorksheetId [::Excel::GetWorksheetIdByIndex $newWorkbookId [::Excel::GetNumWorksheets $newWorkbookId]]
-                set dummyWorksheetId [::Excel::CopyWorksheetAfter $baseWorksheetId $lastWorksheetId "Dummy_for_Comparison_$i"]
-                $dummyWorksheetId Visible [expr $::Excel::xlSheetVisible]
-                ::Excel::SetWorksheetTabColor $dummyWorksheetId 127 127 255
+                set lastWorksheetId [Excel GetWorksheetIdByIndex $newWorkbookId [Excel GetNumWorksheets $newWorkbookId]]
+                set dummyWorksheetId [Excel CopyWorksheetAfter $baseWorksheetId $lastWorksheetId "Dummy_for_Comparison_$i"]
+                $dummyWorksheetId Visible [expr $Excel::xlSheetVisible]
+                Excel SetWorksheetTabColor $dummyWorksheetId 127 127 255
                 ::Cawt::Destroy $dummyWorksheetId
                 ::Cawt::Destroy $lastWorksheetId
             }
 
-            if { [::Excel::IsWorksheetProtected $newWorksheetId] } {
+            if { [Excel IsWorksheetProtected $newWorksheetId] } {
                 puts "Unable to mark differences because the Worksheet is protected."
             } else {
                 $newWorksheetId -with { Cells FormatConditions } Delete
 
                 if { $fastMode } {
-                    set formula [format "=INDIRECT(\"%s!\"&ADDRESS(ROW(),COLUMN()))" [::Excel::_ToAbsoluteReference $baseWorksheetId]]
+                    set formula [format "=INDIRECT(\"%s!\"&ADDRESS(ROW(),COLUMN()))" [Excel::_ToAbsoluteReference $baseWorksheetId]]
                 } else {
                     set formula [format "=INDIRECT(\"Dummy_for_Comparison_%d!\"&ADDRESS(ROW(),COLUMN()))" $i]
                 }
-                set formula [::Excel::_ConvertFormula $convWorkbookId $formula]
-                $newWorksheetId -with { Cells FormatConditions } Add $::Excel::xlCellValue $::Excel::xlNotEqual $formula
+                set formula [Excel::_ConvertFormula $convWorkbookId $formula]
+                $newWorksheetId -with { Cells FormatConditions } Add $Excel::xlCellValue $Excel::xlNotEqual $formula
                 set formatCondition [$newWorksheetId -with { Cells FormatConditions } Item 1]
                 $formatCondition -with { Interior } Color [::Cawt::RgbToColor $r $g $b]
                 ::Cawt::Destroy $formatCondition
@@ -165,8 +179,8 @@ namespace eval ::Excel {
         $convWorkbookId Close
 
         # Activate first Worksheet
-        ::Excel::GetWorksheetIdByIndex $baseWorkbookId 1 true
-        ::Excel::GetWorksheetIdByIndex $newWorkbookId  1 true
+        Excel GetWorksheetIdByIndex $baseWorkbookId 1 true
+        Excel GetWorksheetIdByIndex $newWorkbookId  1 true
 
         # Suppress save dialog if nothing changed
         $baseWorkbookId Saved [::Cawt::TclBool true]
@@ -188,8 +202,8 @@ namespace eval ::Excel {
         # See also: SetRowValues FormatHeaderRow
 
         set len [llength $headerList]
-        ::Excel::SetRowValues $worksheetId $row $headerList $startCol $len
-        ::Excel::FormatHeaderRow $worksheetId $row $startCol [expr {$startCol + $len -1}]
+        Excel SetRowValues $worksheetId $row $headerList $startCol $len
+        Excel FormatHeaderRow $worksheetId $row $startCol [expr {$startCol + $len -1}]
     }
 
     proc FormatHeaderRow { worksheetId row startCol endCol } {
@@ -207,10 +221,10 @@ namespace eval ::Excel {
         #
         # See also: SetHeaderRow
 
-        set header [::Excel::SelectRangeByIndex $worksheetId $row $startCol $row $endCol]
-        ::Excel::SetRangeHorizontalAlignment $header $::Excel::xlCenter
-        ::Excel::SetRangeVerticalAlignment   $header $::Excel::xlCenter
-        ::Excel::SetRangeFontBold $header
+        set header [Excel SelectRangeByIndex $worksheetId $row $startCol $row $endCol]
+        Excel SetRangeHorizontalAlignment $header $Excel::xlCenter
+        Excel SetRangeVerticalAlignment   $header $Excel::xlCenter
+        Excel SetRangeFontBold $header
         ::Cawt::Destroy $header
     }
 
@@ -232,8 +246,8 @@ namespace eval ::Excel {
         set clipboardData [twapi::read_clipboard $csvFmt]
         twapi::close_clipboard
 
-        ::Excel::SetCsvSeparatorChar $sepChar
-        set matrixList [::Excel::CsvStringToMatrix $clipboardData]
+        Excel SetCsvSeparatorChar $sepChar
+        set matrixList [Excel CsvStringToMatrix $clipboardData]
         return $matrixList
     }
 
@@ -253,7 +267,7 @@ namespace eval ::Excel {
         #
         # See also: ClipboardToMatrix WorksheetToClipboard
 
-        set matrixList [::Excel::ClipboardToMatrix $sepChar]
+        set matrixList [Excel ClipboardToMatrix $sepChar]
         SetMatrixValues $worksheetId $matrixList $startRow $startCol
     }
 
@@ -273,8 +287,8 @@ namespace eval ::Excel {
         set csvFmt [twapi::register_clipboard_format "Csv"]
         twapi::open_clipboard
         twapi::empty_clipboard
-        ::Excel::SetCsvSeparatorChar $sepChar
-        twapi::write_clipboard $csvFmt [::Excel::MatrixToCsvString $matrixList]
+        Excel SetCsvSeparatorChar $sepChar
+        twapi::write_clipboard $csvFmt [Excel MatrixToCsvString $matrixList]
         twapi::close_clipboard
     }
 
@@ -294,8 +308,8 @@ namespace eval ::Excel {
         #
         # See also: ClipboardToWorksheet MatrixToClipboard
 
-        set matrixList [::Excel::GetMatrixValues $worksheetId $row1 $col1 $row2 $col2]
-        ::Excel::MatrixToClipboard $matrixList $sepChar
+        set matrixList [Excel GetMatrixValues $worksheetId $row1 $col1 $row2 $col2]
+        Excel MatrixToClipboard $matrixList $sepChar
     }
 
     proc ImgToWorksheet { phImg worksheetId { row 1 } { col 1 } { rowHeight 9 } { colWidth 1 } } {
@@ -320,26 +334,26 @@ namespace eval ::Excel {
         set w [image width $phImg]
         set h [image height $phImg]
 
-        ::Excel::SetRowsHeight   $worksheetId $row [expr {$row + $h -1}] $rowHeight
-        ::Excel::SetColumnsWidth $worksheetId $col [expr {$col + $w -1}] $colWidth
+        Excel SetRowsHeight   $worksheetId $row [expr {$row + $h -1}] $rowHeight
+        Excel SetColumnsWidth $worksheetId $col [expr {$col + $w -1}] $colWidth
 
         set curRow $row
         for { set y 0 } { $y < $h } { incr y } {
             set curCol $col
             for { set x 0 } { $x < $w } { incr x } {
-                set rangeId [::Excel::SelectCellByIndex $worksheetId $curRow $curCol]
+                set rangeId [Excel SelectCellByIndex $worksheetId $curRow $curCol]
                 if { $sUseTransparency } {
                     if { [$phImg transparency get $x $y] } {
-                        $rangeId -with { Interior } Pattern $::Excel::xlNone
+                        $rangeId -with { Interior } Pattern $Excel::xlNone
                     } else {
                         set rgb [$phImg get $x $y]
                         lassign $rgb r g b
-                        ::Excel::SetRangeFillColor $rangeId $r $g $b
+                        Excel SetRangeFillColor $rangeId $r $g $b
                     }
                 } else {
                     set rgb [$phImg get $x $y]
                     lassign $rgb r g b
-                    ::Excel::SetRangeFillColor $rangeId $r $g $b
+                    Excel SetRangeFillColor $rangeId $r $g $b
                 }
                 incr curCol
                 ::Cawt::Destroy $rangeId
@@ -370,10 +384,10 @@ namespace eval ::Excel {
         variable sUseTransparency
 
         if { $endRow eq "end" } {
-            set endRow [::Excel::GetLastUsedRow $worksheetId]
+            set endRow [Excel GetLastUsedRow $worksheetId]
         }
         if { $endCol eq "end" } {
-            set endCol [::Excel::GetLastUsedColumn $worksheetId]
+            set endCol [Excel GetLastUsedColumn $worksheetId]
         }
 
         set w [expr { $endCol - $startCol + 1 }]
@@ -385,17 +399,17 @@ namespace eval ::Excel {
         for { set y 0 } { $y < $h } { incr y } {
             set curCol $startCol
             for { set x 0 } { $x < $w } { incr x } {
-                set rangeId [::Excel::SelectCellByIndex $worksheetId $curRow $curCol]
+                set rangeId [Excel SelectCellByIndex $worksheetId $curRow $curCol]
                 if { $sUseTransparency } {
-                    if { [$rangeId -with { Interior } Pattern] == $::Excel::xlNone } {
+                    if { [$rangeId -with { Interior } Pattern] == $Excel::xlNone } {
                         $phImg transparency set $x $y true
                     } else {
-                        set rgb [::Excel::GetRangeFillColor $rangeId]
+                        set rgb [Excel GetRangeFillColor $rangeId]
                         set colorVal [format "#%02X%02X%02X" [lindex $rgb 0] [lindex $rgb 1] [lindex $rgb 2]]
                         $phImg put $colorVal -to $x $y
                     }
                 } else {
-                    set rgb [::Excel::GetRangeFillColor $rangeId]
+                    set rgb [Excel GetRangeFillColor $rangeId]
                     set colorVal [format "#%02X%02X%02X" [lindex $rgb 0] [lindex $rgb 1] [lindex $rgb 2]]
                     $phImg put $colorVal -to $x $y
                 }

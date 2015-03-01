@@ -26,18 +26,18 @@ proc CheckWorksheets { workbookId testName } {
     set startCol 1
     for { set ws 0 } { $ws < $numWorksheets } { incr ws } {
         set wsName "$testName-$ws"
-        set worksheetId [::Excel::GetWorksheetIdByName $workbookId $wsName]
-        ::Cawt::CheckNumber $numRows [::Excel::GetNumUsedRows $worksheetId] \
+        set worksheetId [Excel GetWorksheetIdByName $workbookId $wsName]
+        ::Cawt::CheckNumber $numRows [Excel GetNumUsedRows $worksheetId] \
                             "Number of used rows in $wsName"
-        ::Cawt::CheckNumber $numCols [::Excel::GetNumUsedColumns $worksheetId] \
+        ::Cawt::CheckNumber $numCols [Excel GetNumUsedColumns $worksheetId] \
                             "Number of used columns in $wsName"
-        ::Cawt::CheckNumber $startRow [::Excel::GetFirstUsedRow $worksheetId] \
+        ::Cawt::CheckNumber $startRow [Excel GetFirstUsedRow $worksheetId] \
                             "First used row in $wsName"
-        ::Cawt::CheckNumber $startCol [::Excel::GetFirstUsedColumn $worksheetId] \
+        ::Cawt::CheckNumber $startCol [Excel GetFirstUsedColumn $worksheetId] \
                             "First used column in $wsName"
-        ::Cawt::CheckNumber [expr { $numRows + $startRow - 1 }] [::Excel::GetLastUsedRow $worksheetId] \
+        ::Cawt::CheckNumber [expr { $numRows + $startRow - 1 }] [Excel GetLastUsedRow $worksheetId] \
                             "Last used row in $wsName"
-        ::Cawt::CheckNumber [expr { $numCols + $startCol - 1 }] [::Excel::GetLastUsedColumn $worksheetId] \
+        ::Cawt::CheckNumber [expr { $numCols + $startCol - 1 }] [Excel GetLastUsedColumn $worksheetId] \
                             "Last used column in $wsName"
 
         incr startRow 2
@@ -52,10 +52,10 @@ proc InsertWithSetRowValues { workbookId matrixList testName } {
     set startRow 1
     set startCol 1
     for { set ws 0 } { $ws < $numWorksheets } { incr ws } {
-        set worksheetId [::Excel::AddWorksheet $workbookId "$testName-$ws"]
+        set worksheetId [Excel AddWorksheet $workbookId "$testName-$ws"]
         set row $startRow
         foreach rowList $matrixList {
-            ::Excel::SetRowValues $worksheetId $row $rowList $startCol
+            Excel SetRowValues $worksheetId $row $rowList $startCol
             incr row
         }
         incr startRow 2
@@ -70,21 +70,21 @@ proc InsertWithSetMatrixValues { workbookId matrixList testName } {
     set startRow 1
     set startCol 1
     for { set ws 0 } { $ws < $numWorksheets } { incr ws } {
-        set worksheetId [::Excel::AddWorksheet $workbookId "$testName-$ws"]
-        ::Excel::SetMatrixValues $worksheetId $matrixList $startRow $startCol
+        set worksheetId [Excel AddWorksheet $workbookId "$testName-$ws"]
+        Excel SetMatrixValues $worksheetId $matrixList $startRow $startCol
         incr startRow 2
         incr startCol 1
     }
 }
 
 # Open new instance of Excel and create a workbook.
-set appId [::Excel::OpenNew]
-set workbookId [::Excel::AddWorkbook $appId]
+set appId [Excel OpenNew]
+set workbookId [Excel AddWorkbook $appId]
 
 # Delete Excel file from previous test run.
 file mkdir testOut
 set xlsFile [file join [pwd] "testOut" "Excel-18_SparseMatrix"]
-append xlsFile [::Excel::GetExtString $appId]
+append xlsFile [Excel GetExtString $appId]
 file delete -force $xlsFile
 
 # Perform test 1: Insert rows with procedure SetRowValues.
@@ -96,12 +96,12 @@ InsertWithSetMatrixValues $workbookId $testMatrix "SetMatrixValues"
 CheckWorksheets $workbookId "SetMatrixValues"
 
 puts "Saving as Excel file: $xlsFile"
-::Excel::SaveAs $workbookId $xlsFile
+Excel SaveAs $workbookId $xlsFile
 
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Excel::Quit $appId
+    Excel Quit $appId
     ::Cawt::Destroy
     exit 0
 }

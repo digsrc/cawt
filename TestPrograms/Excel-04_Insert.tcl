@@ -22,21 +22,21 @@ proc InsertWithSetRowValues { appId workbookId rowList testName hideApp } {
 
     set t1 [clock clicks -milliseconds]
     if { $hideApp } {
-        ::Excel::Visible $appId false
+        Excel Visible $appId false
     }
     set startRow 1
     set startCol 1
     for { set ws 0 } { $ws < $numWorksheets } { incr ws } {
-        set worksheetId [::Excel::AddWorksheet $workbookId "$testName-$ws"]
+        set worksheetId [Excel AddWorksheet $workbookId "$testName-$ws"]
         for { set row $startRow } { $row < [expr {$numRows+$startRow}] } { incr row } {
-            ::Excel::SetRowValues $worksheetId $row $rowList $startCol
+            Excel SetRowValues $worksheetId $row $rowList $startCol
         }
 
         incr startRow 2
         incr startCol 1
     }
     if { $hideApp } {
-        ::Excel::Visible $appId true
+        Excel Visible $appId true
     }
     set t2 [clock clicks -milliseconds]
     puts "[expr $t2 - $t1] ms to set row values in $testName mode."
@@ -48,19 +48,19 @@ proc CheckWorksheets { workbookId } {
     set startRow 1
     set startCol 1
     for { set ws $numWorksheets } { $ws >= 1 } { incr ws -1 } {
-        set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId $ws]
-        set wsName [::Excel::GetWorksheetName $worksheetId]
-        ::Cawt::CheckNumber $numRows [::Excel::GetNumUsedRows $worksheetId] \
+        set worksheetId [Excel GetWorksheetIdByIndex $workbookId $ws]
+        set wsName [Excel GetWorksheetName $worksheetId]
+        ::Cawt::CheckNumber $numRows [Excel GetNumUsedRows $worksheetId] \
                             "Number of used rows in $wsName"
-        ::Cawt::CheckNumber $numCols [::Excel::GetNumUsedColumns $worksheetId] \
+        ::Cawt::CheckNumber $numCols [Excel GetNumUsedColumns $worksheetId] \
                             "Number of used columns in $wsName"
-        ::Cawt::CheckNumber $startRow [::Excel::GetFirstUsedRow $worksheetId] \
+        ::Cawt::CheckNumber $startRow [Excel GetFirstUsedRow $worksheetId] \
                             "First used row in $wsName"
-        ::Cawt::CheckNumber $startCol [::Excel::GetFirstUsedColumn $worksheetId] \
+        ::Cawt::CheckNumber $startCol [Excel GetFirstUsedColumn $worksheetId] \
                             "First used column in $wsName"
-        ::Cawt::CheckNumber [expr { $numRows + $startRow - 1 }] [::Excel::GetLastUsedRow $worksheetId] \
+        ::Cawt::CheckNumber [expr { $numRows + $startRow - 1 }] [Excel GetLastUsedRow $worksheetId] \
                             "Last used row in $wsName"
-        ::Cawt::CheckNumber [expr { $numCols + $startCol - 1 }] [::Excel::GetLastUsedColumn $worksheetId] \
+        ::Cawt::CheckNumber [expr { $numCols + $startCol - 1 }] [Excel GetLastUsedColumn $worksheetId] \
                             "Last used column in $wsName"
 
         incr startRow 2
@@ -74,20 +74,20 @@ proc InsertWithSetColumnValues { appId workbookId rowList testName hideApp } {
 
     set t1 [clock clicks -milliseconds]
     if { $hideApp } {
-        ::Excel::Visible $appId false
+        Excel Visible $appId false
     }
     set startRow 1
     set startCol 1
     for { set ws 0 } { $ws < $numWorksheets } { incr ws } {
-        set worksheetId [::Excel::AddWorksheet $workbookId "$testName-$ws"]
+        set worksheetId [Excel AddWorksheet $workbookId "$testName-$ws"]
         for { set row $startRow } { $row < [expr {$numRows+$startRow}] } { incr row } {
-            ::Excel::SetColumnValues $worksheetId $row $rowList $startCol
+            Excel SetColumnValues $worksheetId $row $rowList $startCol
         }
         incr startRow 2
         incr startCol 1
     }
     if { $hideApp } {
-        ::Excel::Visible $appId true
+        Excel Visible $appId true
     }
     set t2 [clock clicks -milliseconds]
     puts "[expr $t2 - $t1] ms to set column values in $testName mode."
@@ -99,7 +99,7 @@ proc InsertWithSetMatrixValues { appId workbookId rowList testName hideApp } {
 
     set t1 [clock clicks -milliseconds]
     if { $hideApp } {
-        ::Excel::Visible $appId false
+        Excel Visible $appId false
     }
     for { set i 1 } { $i <= $numRows } { incr i } {
         lappend rangeList $rowList
@@ -107,26 +107,26 @@ proc InsertWithSetMatrixValues { appId workbookId rowList testName hideApp } {
     set startRow 1
     set startCol 1
     for { set ws 0 } { $ws < $numWorksheets } { incr ws } {
-        set worksheetId [::Excel::AddWorksheet $workbookId "$testName-$ws"]
-        ::Excel::SetMatrixValues $worksheetId $rangeList $startRow $startCol
+        set worksheetId [Excel AddWorksheet $workbookId "$testName-$ws"]
+        Excel SetMatrixValues $worksheetId $rangeList $startRow $startCol
         incr startRow 2
         incr startCol 1
     }
     if { $hideApp } {
-        ::Excel::Visible $appId true
+        Excel Visible $appId true
     }
     set t2 [clock clicks -milliseconds]
     puts "[expr $t2 - $t1] ms to set row values in $testName mode."
 }
 
 # Open new instance of Excel and create a workbook.
-set appId [::Excel::OpenNew]
-set workbookId [::Excel::AddWorkbook $appId]
+set appId [Excel OpenNew]
+set workbookId [Excel AddWorkbook $appId]
 
 # Delete Excel file from previous test run.
 file mkdir testOut
 set xlsFile [file join [pwd] "testOut" "Excel-04_Insert"]
-append xlsFile [::Excel::GetExtString $appId]
+append xlsFile [Excel GetExtString $appId]
 file delete -force $xlsFile
 
 # Perform test 1: Insert rows with Excel window visible.
@@ -149,12 +149,12 @@ InsertWithSetColumnValues $appId $workbookId $valList "ColumnVisible" false
 InsertWithSetColumnValues $appId $workbookId $valList "ColumnHidden" true
 
 puts "Saving as Excel file: $xlsFile"
-::Excel::SaveAs $workbookId $xlsFile
+Excel SaveAs $workbookId $xlsFile
 
 ::Cawt::PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Excel::Quit $appId
+    Excel Quit $appId
     ::Cawt::Destroy
     exit 0
 }

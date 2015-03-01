@@ -9,7 +9,16 @@
 #
 # Keywords: <<pipe>> <<br>>
 
-namespace eval ::Excel {
+namespace eval Excel {
+
+    namespace ensemble create
+
+    namespace export ExcelFileToWikitFile
+    namespace export ReadWikitFile
+    namespace export WikitFileToExcelFile
+    namespace export WikitFileToWorksheet
+    namespace export WorksheetToWikitFile
+    namespace export WriteWikitFile
 
     proc _WikitList2RowString { lineList beginSep endSep } {
         set lineStr "$beginSep "
@@ -38,7 +47,7 @@ namespace eval ::Excel {
     proc _WikitRowString2List { rowStr } {
         set rowList [list]
         foreach cell [split $rowStr "|"] {
-            lappend rowList [::Excel::_WikitSubstHtml $cell]
+            lappend rowList [Excel::_WikitSubstHtml $cell]
         }
         return $rowList
     }
@@ -70,19 +79,19 @@ namespace eval ::Excel {
             } elseif { [string index $line 0] eq "|" } {
                 set rowStr [string range $line 1 end-1]
             }
-            lappend matrixList [::Excel::_WikitRowString2List $rowStr]
+            lappend matrixList [Excel::_WikitRowString2List $rowStr]
         }
         close $fp
         return $matrixList
     }
 
     proc _WriteWikitHeader { fp headerList { tableName "" } } {
-        puts $fp [::Excel::_WikitList2RowString $headerList "%|" "|%"]
+        puts $fp [Excel::_WikitList2RowString $headerList "%|" "|%"]
     }
 
     proc _WriteWikitData { fp matrixList } {
         foreach row $matrixList {
-            puts $fp [::Excel::_WikitList2RowString $row "&|" "|&"]
+            puts $fp [Excel::_WikitList2RowString $row "&|" "|&"]
         }
     }
 
@@ -108,9 +117,9 @@ namespace eval ::Excel {
         set curLine 1
         foreach line $matrixList {
             if { $useHeader && $curLine == 1 } {
-                puts $fp [::Excel::_WikitList2RowString $line "%|" "|%"]
+                puts $fp [Excel::_WikitList2RowString $line "%|" "|%"]
             } else {
-                puts $fp [::Excel::_WikitList2RowString $line "&|" "|&"]
+                puts $fp [Excel::_WikitList2RowString $line "&|" "|&"]
             }
             incr curLine
         }
@@ -145,16 +154,16 @@ namespace eval ::Excel {
             set line [string trim $line]
             if { ( [string range $line 0 1] eq "%|" && $useHeader ) } {
                 set rowStr [string map {"%|" "" "|%" "" } $line]
-                set rowList [::Excel::_WikitRowString2List $rowStr]
-                ::Excel::SetHeaderRow $worksheetId $rowList
+                set rowList [Excel::_WikitRowString2List $rowStr]
+                Excel SetHeaderRow $worksheetId $rowList
             } elseif { [string range $line 0 1] eq "&|" } {
                 set rowStr [string map {"&|" "" "|&" "" } $line]
-                set rowList [::Excel::_WikitRowString2List $rowStr]
-                ::Excel::SetRowValues $worksheetId $row $rowList
+                set rowList [Excel::_WikitRowString2List $rowStr]
+                Excel SetRowValues $worksheetId $row $rowList
             } elseif { [string index $line 0] eq "|" } {
                 set rowStr [string range $line 1 end-1]
-                set rowList [::Excel::_WikitRowString2List $rowStr]
-                ::Excel::SetRowValues $worksheetId $row $rowList
+                set rowList [Excel::_WikitRowString2List $rowStr]
+                Excel SetRowValues $worksheetId $row $rowList
             }
             incr row
         }
@@ -177,21 +186,21 @@ namespace eval ::Excel {
         # WorksheetToMediaWikiFile WorksheetToWordTable WorksheetToMatlabFile
         # WorksheetToRawImageFile WorksheetToTablelist
 
-        set numRows [::Excel::GetLastUsedRow $worksheetId]
-        set numCols [::Excel::GetLastUsedColumn $worksheetId]
+        set numRows [Excel GetLastUsedRow $worksheetId]
+        set numCols [Excel GetLastUsedColumn $worksheetId]
         set startRow 1
         set catchVal [catch {open $wikiFileName w} fp]
         if { $catchVal != 0 } {
             error "Could not open file \"$wikiFileName\" for writing."
         }
         if { $useHeader } {
-            set headerList [::Excel::GetMatrixValues $worksheetId $startRow 1 $startRow $numCols]
-            set worksheetName [::Excel::GetWorksheetName $worksheetId]
-            ::Excel::_WriteWikitHeader $fp [lindex $headerList 0] $worksheetName
+            set headerList [Excel GetMatrixValues $worksheetId $startRow 1 $startRow $numCols]
+            set worksheetName [Excel GetWorksheetName $worksheetId]
+            Excel::_WriteWikitHeader $fp [lindex $headerList 0] $worksheetName
             incr startRow
         }
-        set matrixList [::Excel::GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
-        ::Excel::_WriteWikitData $fp $matrixList
+        set matrixList [Excel GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
+        Excel::_WriteWikitData $fp $matrixList
         close $fp
     }
 
@@ -215,13 +224,13 @@ namespace eval ::Excel {
         # See also: WikitFileToWorksheet ExcelFileToWikitFile
         # ReadWikitFile MediaWikiFileToExcelFile
 
-        set appId [::Excel::OpenNew true]
-        set workbookId [::Excel::AddWorkbook $appId]
-        set worksheetId [::Excel::AddWorksheet $workbookId "Wikit"]
-        ::Excel::WikitFileToWorksheet $wikiFileName $worksheetId $useHeader
-        ::Excel::SaveAs $workbookId $excelFileName
+        set appId [Excel OpenNew true]
+        set workbookId [Excel AddWorkbook $appId]
+        set worksheetId [Excel AddWorksheet $workbookId "Wikit"]
+        Excel WikitFileToWorksheet $wikiFileName $worksheetId $useHeader
+        Excel SaveAs $workbookId $excelFileName
         if { $quitExcel } {
-            ::Excel::Quit $appId
+            Excel Quit $appId
         } else {
             return $appId
         }
@@ -249,16 +258,16 @@ namespace eval ::Excel {
         # See also: WikitFileToWorksheet WikitFileToExcelFile
         # ReadWikitFile WriteWikitFile MediaWikiFileToExcelFile
 
-        set appId [::Excel::OpenNew true]
-        set workbookId [::Excel::OpenWorkbook $appId $excelFileName true]
+        set appId [Excel OpenNew true]
+        set workbookId [Excel OpenWorkbook $appId $excelFileName true]
         if { [string is integer $worksheetNameOrIndex] } {
-            set worksheetId [::Excel::GetWorksheetIdByIndex $workbookId [expr int($worksheetNameOrIndex)]]
+            set worksheetId [Excel GetWorksheetIdByIndex $workbookId [expr int($worksheetNameOrIndex)]]
         } else {
-            set worksheetId [::Excel::GetWorksheetIdByName $workbookId $worksheetNameOrIndex]
+            set worksheetId [Excel GetWorksheetIdByName $workbookId $worksheetNameOrIndex]
         }
-        ::Excel::WorksheetToWikitFile $worksheetId $wikiFileName $useHeader
+        Excel WorksheetToWikitFile $worksheetId $wikiFileName $useHeader
         if { $quitExcel } {
-            ::Excel::Quit $appId
+            Excel Quit $appId
         } else {
             return $appId
         }

@@ -50,18 +50,18 @@ proc CheckWorksheets { workbookId } {
     for { set ws $numWorksheets } { $ws >= 1 } { incr ws -1 } {
         set worksheetId [Excel GetWorksheetIdByIndex $workbookId $ws]
         set wsName [Excel GetWorksheetName $worksheetId]
-        ::Cawt::CheckNumber $numRows [Excel GetNumUsedRows $worksheetId] \
-                            "Number of used rows in $wsName"
-        ::Cawt::CheckNumber $numCols [Excel GetNumUsedColumns $worksheetId] \
-                            "Number of used columns in $wsName"
-        ::Cawt::CheckNumber $startRow [Excel GetFirstUsedRow $worksheetId] \
-                            "First used row in $wsName"
-        ::Cawt::CheckNumber $startCol [Excel GetFirstUsedColumn $worksheetId] \
-                            "First used column in $wsName"
-        ::Cawt::CheckNumber [expr { $numRows + $startRow - 1 }] [Excel GetLastUsedRow $worksheetId] \
-                            "Last used row in $wsName"
-        ::Cawt::CheckNumber [expr { $numCols + $startCol - 1 }] [Excel GetLastUsedColumn $worksheetId] \
-                            "Last used column in $wsName"
+        Cawt CheckNumber $numRows [Excel GetNumUsedRows $worksheetId] \
+                         "Number of used rows in $wsName"
+        Cawt CheckNumber $numCols [Excel GetNumUsedColumns $worksheetId] \
+                         "Number of used columns in $wsName"
+        Cawt CheckNumber $startRow [Excel GetFirstUsedRow $worksheetId] \
+                         "First used row in $wsName"
+        Cawt CheckNumber $startCol [Excel GetFirstUsedColumn $worksheetId] \
+                         "First used column in $wsName"
+        Cawt CheckNumber [expr { $numRows + $startRow - 1 }] [Excel GetLastUsedRow $worksheetId] \
+                         "Last used row in $wsName"
+        Cawt CheckNumber [expr { $numCols + $startCol - 1 }] [Excel GetLastUsedColumn $worksheetId] \
+                         "Last used column in $wsName"
 
         incr startRow 2
         incr startCol 1
@@ -151,11 +151,11 @@ InsertWithSetColumnValues $appId $workbookId $valList "ColumnHidden" true
 puts "Saving as Excel file: $xlsFile"
 Excel SaveAs $workbookId $xlsFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

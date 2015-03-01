@@ -49,15 +49,15 @@ puts "Copy clipboard to worksheet with offset"
 Excel ClipboardToWorksheet $worksheetId2 3 2
 set matrixList2 [Excel GetWorksheetAsMatrix $worksheetId2]
 
-::Cawt::CheckMatrix $matrixList1 $matrixList2 "ClipboardToWorksheet"
+Cawt CheckMatrix $matrixList1 $matrixList2 "ClipboardToWorksheet"
 
 Excel SaveAs $workbookId $xlsOutFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

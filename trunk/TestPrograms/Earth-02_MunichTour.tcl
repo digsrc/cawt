@@ -112,7 +112,7 @@ proc Quit { appId geApp } {
     if { $geApp ne "" } {
         Earth Quit $geApp
     }
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
 

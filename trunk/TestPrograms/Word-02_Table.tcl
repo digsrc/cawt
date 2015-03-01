@@ -65,14 +65,14 @@ Word SetRangeBackgroundColor $rowRange 200 100 50
 set colRange [Word GetColumnRange $table(2,Id) 2]
 Word SetRangeFontItalic $colRange true
 
-Word SetColumnWidth $table(2,Id) 1 [::Cawt::InchesToPoints 1]
-Word SetColumnWidth $table(2,Id) 2 [::Cawt::CentiMetersToPoints 2.54]
+Word SetColumnWidth $table(2,Id) 1 [Cawt InchesToPoints 1]
+Word SetColumnWidth $table(2,Id) 2 [Cawt CentiMetersToPoints 2.54]
 
 # Read the number of rows and columns and check them.
 set numRowsRead [Word GetNumRows $table(2,Id)]
 set numColsRead [Word GetNumColumns $table(2,Id)]
-::Cawt::CheckNumber [expr $numRows + 3] $numRowsRead "GetNumRows"
-::Cawt::CheckNumber $numCols $numColsRead "GetNumColumns"
+Cawt CheckNumber [expr $numRows + 3] $numRowsRead "GetNumRows"
+Cawt CheckNumber $numCols $numColsRead "GetNumColumns"
 
 # Read back the contents of the table and insert them into a newly created table
 # (which is 2 rows and 1 column larger than the original).
@@ -86,7 +86,7 @@ set table(3,Rows) [expr $numRows+2]
 set matrixList [Word GetMatrixValues $table(2,Id) 1 1 $numRows $numCols]
 Word SetMatrixValues $table(3,Id) $matrixList 3 2
 
-Word SetColumnsWidth $table(3,Id) 1 [expr $numCols+1] [::Cawt::InchesToPoints 1.9]
+Word SetColumnsWidth $table(3,Id) 1 [expr $numCols+1] [Cawt InchesToPoints 1.9]
 Word SetTableBorderLineStyle $table(3,Id) \
         wdLineStyleEmboss3D wdLineStyleDashDot
 
@@ -96,15 +96,15 @@ Word SetColumnValues $table(3,Id) 1 $colList 3
 
 # Read back the values of the column starting at row 3.
 set readList [Word GetColumnValues $table(3,Id) 1 3 [llength $colList]]
-::Cawt::CheckList $colList $readList "GetColumnValues"
+Cawt CheckList $colList $readList "GetColumnValues"
 
 # Count the number of tables and return their identifiers.
 set numTables [Word GetNumTables $docId]
-::Cawt::CheckNumber 3 $numTables "GetNumTables"
+Cawt CheckNumber 3 $numTables "GetNumTables"
 for { set n 1 } { $n <= $numTables } {incr n } {
     set tableId [Word GetTableIdByIndex $docId $n]
-    ::Cawt::CheckNumber $table($n,Rows) [Word GetNumRows $tableId] "Table $n GetNumRows"
-    ::Cawt::Destroy $tableId
+    Cawt CheckNumber $table($n,Rows) [Word GetNumRows $tableId] "Table $n GetNumRows"
+    Cawt Destroy $tableId
 }
 
 # Test inserting an image.
@@ -112,8 +112,8 @@ Word AppendText $docId "The wish lamp cropped at the right side:"
 set imgId [Word InsertImage [Word GetEndRange $docId] [file join [pwd] "testIn/wish.gif"]]
 
 # CropImage imgId cropBottom cropTop cropLeft cropRight
-Word CropImage $imgId 0 0 0 [::Cawt::CentiMetersToPoints 0.3]
-::Cawt::Destroy $imgId
+Word CropImage $imgId 0 0 0 [Cawt CentiMetersToPoints 0.3]
+Cawt Destroy $imgId
 
 Word UpdateFields $docId
 
@@ -121,11 +121,11 @@ Word UpdateFields $docId
 puts "Saving as Word file: $wordFile"
 Word SaveAs $docId $wordFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Word Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

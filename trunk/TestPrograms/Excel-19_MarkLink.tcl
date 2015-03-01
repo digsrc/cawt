@@ -60,7 +60,7 @@ Excel SetRangeComment $rangeId "Overwritten comment text."
 Excel SetCellValue $worksheetId 5 3 "Cell with comment image"
 set rangeId [Excel SelectCellByIndex $worksheetId 5 3 true]
 set commentId [Excel SetRangeComment $rangeId "Comment text." [file join [pwd] "testIn/wish.gif"]]
-Excel SetCommentSize $commentId [::Cawt::CentiMetersToPoints 3] [::Cawt::CentiMetersToPoints 5]
+Excel SetCommentSize $commentId [Cawt CentiMetersToPoints 3] [Cawt CentiMetersToPoints 5]
 
 Excel SetCommentDisplayMode $appId true true
 
@@ -74,11 +74,11 @@ Excel SetColumnWidth $worksheetId 3 0
 puts "Saving as Excel file: $xlsFile"
 Excel SaveAs $workbookId $xlsFile "" false
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

@@ -10,7 +10,7 @@ set appId [Earth OpenNew]
 
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
-puts [format "%-25s: %s" "Twapi version" [::Cawt::GetPkgVersion "twapi"]]
+puts [format "%-25s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
 
 puts [format "%-25s: %s.%s.%s (%s)" "Google Earth Version" \
                              [$appId versionMajor] \
@@ -20,7 +20,7 @@ puts [format "%-25s: %s.%s.%s (%s)" "Google Earth Version" \
 
 if { [lindex $argv 0] eq "auto" } {
     Earth Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

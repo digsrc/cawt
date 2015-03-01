@@ -30,10 +30,10 @@ set slideId1 [Ppt AddSlide $presId1]
 set slideId2 [Ppt AddSlide $presId2]
 
 set imgId1 [Ppt InsertImage $slideId1 $imgName \
-           [::Cawt::CentiMetersToPoints 1] [::Cawt::CentiMetersToPoints 2] \
-           [::Cawt::CentiMetersToPoints 6] [::Cawt::CentiMetersToPoints 6]]
+           [Cawt CentiMetersToPoints 1] [Cawt CentiMetersToPoints 2] \
+           [Cawt CentiMetersToPoints 6] [Cawt CentiMetersToPoints 6]]
 set imgId2 [Ppt InsertImage $slideId2 $imgName \
-           [::Cawt::CentiMetersToPoints 1] [::Cawt::CentiMetersToPoints 2]]
+           [Cawt CentiMetersToPoints 1] [Cawt CentiMetersToPoints 2]]
 
 # Copy slide 1 of presId1 to the end of the presentation.
 set copiedSlide1 [Ppt CopySlide $presId1 1]
@@ -56,11 +56,11 @@ Ppt CloseAll $appId
 # Reopen presentation 2.
 Ppt OpenPres $appId $pptFile2
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Ppt Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

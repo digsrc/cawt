@@ -10,7 +10,7 @@ set appId [Excel OpenNew false]
 
 puts [format "%-30s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-30s: %s" "Cawt version" $pkgVersion]
-puts [format "%-30s: %s" "Twapi version" [::Cawt::GetPkgVersion "twapi"]]
+puts [format "%-30s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
 
 puts [format "%-30s: %s (%s)" "Excel Version" \
                              [Excel GetVersion $appId] \
@@ -20,43 +20,43 @@ puts [format "%-30s: %s" "Excel filename extension" \
                              [Excel GetExtString $appId]]
 
 puts [format "%-30s: %s" "Active Printer" \
-                        [::Cawt::GetActivePrinter $appId]]
+                        [Cawt GetActivePrinter $appId]]
 
 puts [format "%-30s: %s" "User Name" \
-                        [::Cawt::GetUserName $appId]]
+                        [Cawt GetUserName $appId]]
 
 puts [format "%-30s: %s" "Startup Pathname" \
-                         [::Cawt::GetStartupPath $appId]]
+                         [Cawt GetStartupPath $appId]]
 puts [format "%-30s: %s" "Templates Pathname" \
-                         [::Cawt::GetTemplatesPath $appId]]
+                         [Cawt GetTemplatesPath $appId]]
 puts [format "%-30s: %s" "Add-ins Pathname" \
-                         [::Cawt::GetUserLibraryPath $appId]]
+                         [Cawt GetUserLibraryPath $appId]]
 puts [format "%-30s: %s" "Installation Pathname" \
-                         [::Cawt::GetInstallationPath $appId]]
+                         [Cawt GetInstallationPath $appId]]
 puts [format "%-30s: %s" "User Folder Pathname" \
-                         [::Cawt::GetUserPath $appId]]
+                         [Cawt GetUserPath $appId]]
 
 set workbookId [Excel AddWorkbook $appId]
 set worksheetId [Excel GetWorksheetIdByIndex $workbookId 1]
 set cellsId [Excel GetCellsId $worksheetId]
 
 puts [format "%-30s: %s" "Appl. name (from Application)" \
-         [::Cawt::GetApplicationName $appId]]
+         [Cawt GetApplicationName $appId]]
 puts [format "%-30s: %s" "Appl. name (from Workbook)" \
-         [::Cawt::GetApplicationName [::Cawt::GetApplicationId $workbookId]]]
+         [Cawt GetApplicationName [Cawt GetApplicationId $workbookId]]]
 puts [format "%-30s: %s" "Appl. name (from Worksheet)" \
-         [::Cawt::GetApplicationName [::Cawt::GetApplicationId $worksheetId]]]
+         [Cawt GetApplicationName [Cawt GetApplicationId $worksheetId]]]
 puts [format "%-30s: %s" "Appl. name (from Cells)" \
-         [::Cawt::GetApplicationName [::Cawt::GetApplicationId $cellsId]]]
+         [Cawt GetApplicationName [Cawt GetApplicationId $cellsId]]]
 puts [format "%-30s: %s" "Floating point separator" \
          [Excel GetFloatSeparator]]
 
-::Cawt::CheckNumber  1 [Excel ColumnCharToInt A] "ColumnCharToInt A"
-::Cawt::CheckNumber 13 [Excel ColumnCharToInt M] "ColumnCharToInt M"
-::Cawt::CheckNumber 26 [Excel ColumnCharToInt Z] "ColumnCharToInt Z"
+Cawt CheckNumber  1 [Excel ColumnCharToInt A] "ColumnCharToInt A"
+Cawt CheckNumber 13 [Excel ColumnCharToInt M] "ColumnCharToInt M"
+Cawt CheckNumber 26 [Excel ColumnCharToInt Z] "ColumnCharToInt Z"
 
-::Cawt::CheckString "B:G" [Excel GetColumnRange 2 7] "GetColumnRange 2 7"
-::Cawt::CheckString "B1:G5" [Excel GetCellRange 1 2  5 7] "GetCellRange (1,2) (5,7)"
+Cawt CheckString "B:G" [Excel GetColumnRange 2 7] "GetColumnRange 2 7"
+Cawt CheckString "B1:G5" [Excel GetCellRange 1 2  5 7] "GetCellRange (1,2) (5,7)"
 
 puts "Printing ColumnIntToChar conversions:"
 for { set col 1 } { $col <= 100 } { incr col } {
@@ -75,7 +75,7 @@ puts "Testing column conversion procedures (both directions for $maxCols columns
 for { set col 1 } { $col <= $maxCols } { incr col } {
     set colStr [Excel ColumnIntToChar $col]
     set colNum [Excel ColumnCharToInt $colStr]
-    ::Cawt::CheckNumber $col $colNum "Convert column indices. Column number $col" false
+    Cawt CheckNumber $col $colNum "Convert column indices. Column number $col" false
 }
 
 puts ""
@@ -91,11 +91,11 @@ puts ""
 
 Excel Close $workbookId
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

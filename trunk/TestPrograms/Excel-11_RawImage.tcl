@@ -91,12 +91,12 @@ set excelAppId2 [Excel RawImageFileToExcelFile $rawFile $xlsOutFile2 true false]
 puts "Convert Excel file $xlsOutFile2 to raw image file."
 Excel ExcelFileToRawImageFile $xlsOutFile2 $rawOutFile3 1 true true
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $excelAppId1
     Excel Quit $excelAppId2
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

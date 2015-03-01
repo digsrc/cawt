@@ -21,7 +21,7 @@ set presId [Ppt AddPres $appId $tmplFile]
 puts "Add slides from template file $tmplFile"
 
 set numLayouts [Ppt GetNumCustomLayouts $presId]
-::Cawt::CheckNumber 4 $numLayouts "Number of layouts"
+Cawt CheckNumber 4 $numLayouts "Number of layouts"
 
 for { set layoutNum 1 } { $layoutNum <= $numLayouts } { incr layoutNum } {
     set customLayoutId [Ppt GetCustomLayoutId $presId $layoutNum]
@@ -34,21 +34,21 @@ for { set layoutNum 1 } { $layoutNum <= $numLayouts } { incr layoutNum } {
 set layoutName "Layout 3 - 2 widgets"
 set customLayoutId [Ppt GetCustomLayoutId $presId $layoutName]
 Ppt AddSlide $presId $customLayoutId
-::Cawt::CheckString $layoutName [Ppt GetCustomLayoutName $customLayoutId] "Adding layout by name"
+Cawt CheckString $layoutName [Ppt GetCustomLayoutName $customLayoutId] "Adding layout by name"
 
 set customLayoutId [Ppt GetCustomLayoutId $presId end]
 Ppt AddSlide $presId $customLayoutId
-::Cawt::CheckString [lindex $layoutNameList end] [Ppt GetCustomLayoutName $customLayoutId] \
+Cawt CheckString [lindex $layoutNameList end] [Ppt GetCustomLayoutName $customLayoutId] \
                     "Adding layout by special index end"
 
 puts "Saving as PowerPoint file: $pptFile"
 Ppt SaveAs $presId $pptFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Ppt Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

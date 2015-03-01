@@ -43,7 +43,7 @@ pack .frOut2.tl -side top -fill both -expand 1
 
 puts "Filling source tablelist with data"
 Excel SetTablelistHeader .frIn.tl $headerList
-::Cawt::CheckList $headerList [Excel GetTablelistHeader .frIn.tl] "GetTablelistHeader"
+Cawt CheckList $headerList [Excel GetTablelistHeader .frIn.tl] "GetTablelistHeader"
 set matrixList [list]
 
 for { set row 1 } { $row <= $numRows } { incr row } {
@@ -54,7 +54,7 @@ for { set row 1 } { $row <= $numRows } { incr row } {
     lappend matrixList $rowList
 }
 Excel SetTablelistValues .frIn.tl $matrixList
-::Cawt::CheckMatrix $matrixList [Excel GetTablelistValues .frIn.tl] "GetTablelistValues"
+Cawt CheckMatrix $matrixList [Excel GetTablelistValues .frIn.tl] "GetTablelistValues"
 update
 
 # Open new instance of Excel and add a workbook.
@@ -81,7 +81,7 @@ set t1 [clock clicks -milliseconds]
 Excel WorksheetToTablelist $worksheetId .frOut1.tl $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WorksheetToTablelist: [expr $t2 - $t1] ms (using header: $useHeader)."
-::Cawt::CheckMatrix $matrixList [Excel GetTablelistValues .frOut1.tl] "GetTablelistValues"
+Cawt CheckMatrix $matrixList [Excel GetTablelistValues .frOut1.tl] "GetTablelistValues"
 update
 
 
@@ -99,17 +99,17 @@ set t1 [clock clicks -milliseconds]
 Excel WorksheetToTablelist $worksheetId .frOut2.tl $useHeader
 set t2 [clock clicks -milliseconds]
 puts "WorksheetToTablelist: [expr $t2 - $t1] ms (using header: $useHeader)."
-::Cawt::CheckMatrix $matrixList [Excel GetTablelistValues .frOut2.tl] "GetTablelistValues"
+Cawt CheckMatrix $matrixList [Excel GetTablelistValues .frOut2.tl] "GetTablelistValues"
 update
 
 puts "Saving as Excel file: $xlsFile"
 Excel SaveAs $workbookId $xlsFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

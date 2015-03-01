@@ -83,7 +83,7 @@ puts "Saving as Excel file: $xlsFile"
 if { [lindex $argv 0] eq "auto" } {
     ::Word::Quit $appWordId
     ::Excel::Quit $appExcelId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

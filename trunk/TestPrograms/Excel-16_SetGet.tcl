@@ -42,18 +42,18 @@ Excel SetCellValue $worksheetId 4 3  1.6 "real"
 Excel FormatHeaderRow  $worksheetId 1  1 3
 Excel SetColumnsWidth  $worksheetId 1 3  0
 
-::Cawt::CheckString "1.6" [Excel GetCellValue $worksheetId 4 1 "text"] "GetCellValue text"
-::Cawt::CheckNumber 1     [Excel GetCellValue $worksheetId 4 2 "int"]  "GetCellValue int"
-::Cawt::CheckNumber 1.6   [Excel GetCellValue $worksheetId 4 3 "real"] "GetCellValue real"
+Cawt CheckString "1.6" [Excel GetCellValue $worksheetId 4 1 "text"] "GetCellValue text"
+Cawt CheckNumber 1     [Excel GetCellValue $worksheetId 4 2 "int"]  "GetCellValue int"
+Cawt CheckNumber 1.6   [Excel GetCellValue $worksheetId 4 3 "real"] "GetCellValue real"
 
 puts "Saving as Excel file: $xlsFile"
 Excel SaveAs $workbookId $xlsFile
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {
     Excel Quit $appId
-    ::Cawt::Destroy
+    Cawt Destroy
     exit 0
 }
-::Cawt::Destroy
+Cawt Destroy

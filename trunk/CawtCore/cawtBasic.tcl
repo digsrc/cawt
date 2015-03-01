@@ -1,7 +1,40 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-namespace eval ::Cawt {
+namespace eval Cawt {
+
+    namespace ensemble create
+
+    namespace export CentiMetersToPoints
+    namespace export ColorToRgb
+    namespace export Destroy
+    namespace export GetActivePrinter
+    namespace export GetApplicationId
+    namespace export GetApplicationName
+    namespace export GetComObjects
+    namespace export GetDotsPerInch
+    namespace export GetInstallationPath
+    namespace export GetNumComObjects
+    namespace export GetOrCreateApp
+    namespace export GetPkgVersion
+    namespace export GetStartupPath
+    namespace export GetTemplatesPath
+    namespace export GetUserLibraryPath
+    namespace export GetUserName
+    namespace export GetUserPath
+    namespace export HavePkg
+    namespace export InchesToPoints
+    namespace export IsValidId
+    namespace export KillApp
+    namespace export PopComObjects
+    namespace export PrintNumComObjects
+    namespace export PushComObjects
+    namespace export RgbToColor
+    namespace export SetDotsPerInch
+    namespace export ShowAlerts
+    namespace export TclBool
+    namespace export TclInt
+
     variable pkgInfo
     variable dotsPerInch
     variable _ruffdoc
@@ -278,7 +311,7 @@ namespace eval ::Cawt {
         # No return value.
 
         if { $onOff } {
-            if { [::Cawt::GetApplicationName $appId] eq "Microsoft Word" } {
+            if { [Cawt GetApplicationName $appId] eq "Microsoft Word" } {
                 set alertLevel [expr $::Word::wdAlertsAll]
             } else {
                 set alertLevel [expr 1]
@@ -370,7 +403,7 @@ namespace eval ::Cawt {
         set comObjStack [lrange $comObjStack 0 end-1]
         foreach comObj [lsort -dictionary [GetComObjects]] {
             if { [lsearch -exact $lastEntry $comObj] < 0 } {
-                ::Cawt::Destroy $comObj
+                Cawt Destroy $comObj
             }
         }
         if { $printStack } {
@@ -526,4 +559,4 @@ namespace eval ::Cawt {
     }
 }
 
-::Cawt::_Init
+Cawt::_Init

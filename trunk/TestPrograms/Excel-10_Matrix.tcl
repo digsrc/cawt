@@ -43,7 +43,7 @@ set matrixList2 [Excel ReadMatlabFile $matOutFile]
 Excel WriteRawImageFile $matrixList2 $rawOutFile
 set t2 [clock clicks -milliseconds]
 puts "[expr $t2 - $t1] ms to put Matlab matrix data into a RAW image file."
-::Cawt::CheckMatrix $matrixList1 $matrixList2 "ReadMatlabFile"
+Cawt CheckMatrix $matrixList1 $matrixList2 "ReadMatlabFile"
 
 if { $retVal == 0 } {
     set phImg2 [image create photo -file $rawOutFile \
@@ -52,9 +52,9 @@ if { $retVal == 0 } {
     .l2 configure -image $phImg2
 }
 
-::Cawt::PrintNumComObjects
+Cawt PrintNumComObjects
 
-::Cawt::Destroy
+Cawt Destroy
 if { [lindex $argv 0] eq "auto" } {
     exit 0
 }

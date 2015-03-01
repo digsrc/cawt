@@ -6,7 +6,7 @@
 source "SetTestPathes.tcl"
 set retVal [catch {package require cawt} pkgVersion]
 
-set appId [::Earth::OpenNew]
+set appId [Earth OpenNew]
 
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
@@ -19,7 +19,7 @@ puts [format "%-25s: %s.%s.%s (%s)" "Google Earth Version" \
                              [$appId VersionAppType]]
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Earth::Quit $appId
+    Earth Quit $appId
     ::Cawt::Destroy
     exit 0
 }

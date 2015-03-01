@@ -6,7 +6,7 @@
 source "SetTestPathes.tcl"
 set retVal [catch {package require cawt} pkgVersion]
 
-set appId [::Explorer::OpenNew false]
+set appId [Explorer OpenNew false]
 
 puts [format "%-30s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-30s: %s" "Cawt version" $pkgVersion]
@@ -33,7 +33,7 @@ puts [format "%-30s: %s" "Appl. name (from Application)" \
          [::Cawt::GetApplicationName $appId]]
 
 if { [lindex $argv 0] eq "auto" } {
-    ::Explorer::Quit $appId
+    Explorer Quit $appId
     ::Cawt::Destroy
     exit 0
 }

@@ -30,7 +30,7 @@ namespace eval Matlab {
 
         variable matlabAppName
 
-        set appId [::Cawt::GetOrCreateApp $matlabAppName false]
+        set appId [Cawt GetOrCreateApp $matlabAppName false]
         Matlab Visible $appId $visible
         return $appId
     }
@@ -47,7 +47,7 @@ namespace eval Matlab {
 
         variable matlabAppName
 
-        set appId [::Cawt::GetOrCreateApp $matlabAppName true]
+        set appId [Cawt GetOrCreateApp $matlabAppName true]
         Matlab Visible $appId $visible
         return $appId
     }
@@ -63,7 +63,7 @@ namespace eval Matlab {
         #
         # See also: Open OpenNew
 
-        $appId Visible [::Cawt::TclInt $visible]
+        $appId Visible [Cawt TclInt $visible]
     }
 
     proc Quit { appId } {

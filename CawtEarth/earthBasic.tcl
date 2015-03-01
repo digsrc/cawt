@@ -30,7 +30,7 @@ namespace eval Earth {
 
         variable earthAppName
 
-        set appId [::Cawt::GetOrCreateApp $earthAppName false]
+        set appId [Cawt GetOrCreateApp $earthAppName false]
         return $appId
     }
 
@@ -43,7 +43,7 @@ namespace eval Earth {
 
         variable earthAppName
 
-        set appId [::Cawt::GetOrCreateApp $earthAppName true]
+        set appId [Cawt GetOrCreateApp $earthAppName true]
         return $appId
     }
 
@@ -60,7 +60,7 @@ namespace eval Earth {
 
         # Quit method not available, so we kill the application.
         # This may have some strnage effects in comination with MediaPlayer.
-        # ::Cawt::KillApp $earthProgName
+        # Cawt KillApp $earthProgName
     }
 
     proc IsInitialized { appId } {

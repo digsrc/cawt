@@ -34,7 +34,7 @@ namespace eval Ocr {
 
 	variable ocrAppName
 
-        set docId [::Cawt::GetOrCreateApp $ocrAppName true]
+        set docId [Cawt GetOrCreateApp $ocrAppName true]
         return $docId
     }
 
@@ -86,7 +86,7 @@ namespace eval Ocr {
         $docId OCR
         set imgId [$docId -with { Images } Item [expr int($imgNum)]]
         set layoutId [$imgId Layout]
-        ::Cawt::Destroy $imgId
+        Cawt Destroy $imgId
         return $layoutId
     }
 
@@ -120,7 +120,7 @@ namespace eval Ocr {
 
         set word [$layoutId -with { Words } Item [expr int($wordNum)]]
         set wordText [$word Text]
-        ::Cawt::Destroy $word
+        Cawt Destroy $word
         return $wordText
     }
 
@@ -141,7 +141,7 @@ namespace eval Ocr {
         dict set wordStats "RegionId" [$word RegionId]
         dict set wordStats "FontId" [$word FontId]
         dict set wordStats "Confidence" [$word RecognitionConfidence]
-        ::Cawt::Destroy $word
+        Cawt Destroy $word
         return $wordStats
     }
 }

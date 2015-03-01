@@ -85,5 +85,5 @@ if { $catchVal } {
 # Quit Word application without showing possible alerts.
 Word Close $docId
 Word Quit $appId false
-::Cawt::Destroy
+Cawt Destroy
 exit 0

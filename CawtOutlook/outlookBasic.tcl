@@ -70,7 +70,7 @@ namespace eval Outlook {
         variable outlookAppName
 	variable outlookVersion
 
-        set appId [::Cawt::GetOrCreateApp $outlookAppName false]
+        set appId [Cawt GetOrCreateApp $outlookAppName false]
         set outlookVersion [Outlook GetVersion $appId]
         if { $width >= 0 } {
             $appId Width [expr $width]
@@ -94,7 +94,7 @@ namespace eval Outlook {
         variable outlookAppName
 	variable outlookVersion
 
-        set appId [::Cawt::GetOrCreateApp $outlookAppName true]
+        set appId [Cawt GetOrCreateApp $outlookAppName true]
         set outlookVersion [Outlook GetVersion $appId]
         if { $width >= 0 } {
             $appId Width [expr $width]
@@ -117,7 +117,7 @@ namespace eval Outlook {
         # See also: Open OpenNew
 
         if { ! $showAlert } {
-            ::Cawt::ShowAlerts $appId false
+            Cawt ShowAlerts $appId false
         }
         $appId Quit
     }

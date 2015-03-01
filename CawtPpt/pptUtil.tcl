@@ -54,10 +54,10 @@ namespace eval Ppt {
         #
         # See also: ExportSlide ExportSlides
 
-        set appId [Ppt::OpenNew]
+        set appId [Ppt OpenNew]
 
         # Open presentation file in read-only mode
-        set presId [Ppt::OpenPres $appId $pptFile true]
+        set presId [Ppt OpenPres $appId $pptFile true]
 
         set actWin  [$appId ActiveWindow]
         set actPres [$appId ActivePresentation]
@@ -75,8 +75,8 @@ namespace eval Ppt {
                 if { [$curSelection Type] != $Ppt::ppSelectionNone } {
                     $actWin -with { Selection ShapeRange } Delete
                 }
-                ::Cawt::Destroy $curSelection
-                ::Cawt::Destroy $shape
+                Cawt Destroy $curSelection
+                Cawt Destroy $shape
             }
 
             set retVal [catch {$actWin ViewType $Ppt::ppViewSlideMaster}]
@@ -87,8 +87,8 @@ namespace eval Ppt {
                 if { [$curSelection Type] != $Ppt::ppSelectionNone } {
                     $actWin -with { Selection ShapeRange } Delete
                 }
-                ::Cawt::Destroy $curSelection
-                ::Cawt::Destroy $shape
+                Cawt Destroy $curSelection
+                Cawt Destroy $shape
             }
         }
         $actWin ViewType $Ppt::ppViewSlide
@@ -97,14 +97,14 @@ namespace eval Ppt {
             file delete -force $outputDir
         }
 
-        Ppt::ExportSlides $actPres $outputDir $outputFileFmt $startIndex $endIndex $imgType $width $height
-        Ppt::Close $presId
-        Ppt::Quit $appId
+        Ppt ExportSlides $actPres $outputDir $outputFileFmt $startIndex $endIndex $imgType $width $height
+        Ppt Close $presId
+        Ppt Quit $appId
 
-        ::Cawt::Destroy $actWin
-        ::Cawt::Destroy $actPres
-        ::Cawt::Destroy $presId
-        ::Cawt::Destroy $appId
+        Cawt Destroy $actWin
+        Cawt Destroy $actPres
+        Cawt Destroy $presId
+        Cawt Destroy $appId
 
         if { $genHtmlTable } {
             package require Tk

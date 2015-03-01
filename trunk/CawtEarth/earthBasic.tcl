@@ -2,7 +2,16 @@
 # Distributed under BSD license.
 # Idea taken from http://wiki.tcl.tk/24099
 
-namespace eval ::Earth {
+namespace eval Earth {
+
+    namespace ensemble create
+
+    namespace export IsInitialized
+    namespace export Open
+    namespace export OpenNew
+    namespace export Quit
+    namespace export SaveImage
+    namespace export SetCamera
 
     variable earthAppName  "GoogleEarth.ApplicationGE"
     variable earthProgName "GoogleEarth.exe"

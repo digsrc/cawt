@@ -107,14 +107,6 @@ for { set n 1 } { $n <= $numTables } {incr n } {
     Cawt Destroy $tableId
 }
 
-# Test inserting an image.
-Word AppendText $docId "The wish lamp cropped at the right side:"
-set imgId [Word InsertImage [Word GetEndRange $docId] [file join [pwd] "testIn/wish.gif"]]
-
-# CropImage imgId cropBottom cropTop cropLeft cropRight
-Word CropImage $imgId 0 0 0 [Cawt CentiMetersToPoints 0.3]
-Cawt Destroy $imgId
-
 Word UpdateFields $docId
 
 # Save document as Word file.

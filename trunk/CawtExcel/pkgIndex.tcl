@@ -13,6 +13,7 @@ proc __CawtExcelSourcePkgs { dir } {
     source [file join $dir excelMatlabFile.tcl]
     source [file join $dir excelMediaWiki.tcl]
     source [file join $dir excelWikit.tcl]
+    source [file join $dir excelHtml.tcl]
     source [file join $dir excelChart.tcl]
     source [file join $dir excelCsv.tcl]
     rename ::__CawtExcelSourcePkgs {}

@@ -24,6 +24,8 @@ set inFileWikit   [file join $inPath  WikitTable.txt]
 set outFileWikit1 [file join $outPath Excel-07_Csv_Wikit1.txt]
 set outFileWikit2 [file join $outPath Excel-07_Csv_Wikit2.txt]
 
+set outFileHtml1  [file join $outPath Excel-07_Csv_Html1.html]
+
 set outFileMultiExcel [file join $outPath Excel-07_Csv_MultiExcel.csv]
 set outFileMultiCsv   [file join $outPath Excel-07_Csv_MultiCsv.csv]
 
@@ -84,6 +86,10 @@ puts "Writing Wikit file $outFileWikit2"
 Excel WriteWikitFile $wikitList $outFileWikit2
 
 Cawt CheckMatrix $mediaWikiList $wikitList "MediaWiki vs. Wikit"
+
+# Use the matrix generated above and write it to a new HTML file.
+puts "Writing HTML file $outFileHtml1"
+Excel WriteHtmlFile $csvMatrix $outFileHtml1
 
 set appId [Excel OpenNew]
 set workbookId [Excel OpenWorkbook $appId $xlsMultiFile]

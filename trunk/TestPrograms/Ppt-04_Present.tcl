@@ -38,18 +38,6 @@ Ppt SlideShowPrev $slideShowId
 
 Ppt ExitSlideShow $slideShowId
 
-# TODO
-# With ActivePresentation.SlideShowSettings
-#        .ShowType = ppShowTypeSpeaker
-#        .LoopUntilStopped = true
-#        .ShowWithNarration = msoTrue
-#        .ShowWithAnimation = msoTrue
-#        .RangeType = ppShowAll
-#        .AdvanceMode = ppSlideShowUseSlideTimings
-#        .PointerColor.RGB = RGB(Red:=255, Green:=0, Blue:=0)
-#        .Run
-#    End With
-
 Cawt PrintNumComObjects
 
 if { [lindex $argv 0] eq "auto" } {

@@ -40,7 +40,7 @@ Excel InsertImage $worksheetId2 $squareImg  2 9  true  true
 
 set catchVal [ catch { Excel InsertImage $worksheetId2 $squareImg 2 13 false false } retVal]
 if { $catchVal } {
-    puts "Error successfully caught: $retVal"
+    puts "Successfully caught: $retVal"
 }
 
 puts "Inserting and scaling images ..."

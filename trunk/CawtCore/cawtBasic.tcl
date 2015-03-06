@@ -24,6 +24,7 @@ namespace eval Cawt {
     namespace export GetUserPath
     namespace export HavePkg
     namespace export InchesToPoints
+    namespace export IsComObject
     namespace export IsValidId
     namespace export KillApp
     namespace export PopComObjects
@@ -323,6 +324,12 @@ namespace eval Cawt {
     }
 
     proc IsValidId { comObj } {
+        # Obsolete: Replaced with IsComObject in version 2.0.0
+
+        return [IsComObject $comObj]
+    }
+    
+    proc IsComObject { comObj } {
         # Check, if a COM object is valid.
         #
         # comObj - The COM object.
@@ -338,7 +345,7 @@ namespace eval Cawt {
     proc GetComObjects {} {
         # Return the COM objects currently in use as a list.
         #
-        # See also: IsValidId GetNumComObjects PrintNumComObjects
+        # See also: IsComObject GetNumComObjects PrintNumComObjects Destroy
 
         return [twapi::comobj_instances]
     }
@@ -346,7 +353,7 @@ namespace eval Cawt {
     proc GetNumComObjects {} {
         # Return the number of COM objects currently in use.
         #
-        # See also: IsValidId GetComObjects PrintNumComObjects
+        # See also: IsComObject GetComObjects PrintNumComObjects Destroy
 
         return [llength [GetComObjects]]
     }
@@ -354,7 +361,7 @@ namespace eval Cawt {
     proc PrintNumComObjects {} {
         # Print the number of currently available COM objects to stdout.
         #
-        # See also: IsValidId GetComObjects GetNumComObjects
+        # See also: IsComObject GetComObjects GetNumComObjects Destroy
 
         puts "Number of COM objects: [GetNumComObjects]"
     }
@@ -423,6 +430,8 @@ namespace eval Cawt {
         # have to put a call to Destroy at the end of your Cawt script.
         # For further details about COM objects and their lifetime see the Twapi
         # documentation.
+        #
+        # See also: PushComObjects PopComObjects
 
         if { $comObj ne "" } {
             $comObj -destroy

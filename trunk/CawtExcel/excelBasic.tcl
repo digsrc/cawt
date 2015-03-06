@@ -41,6 +41,7 @@ namespace eval Excel {
     namespace export GetNumWorksheets
     namespace export GetRangeCharacters
     namespace export GetRangeFillColor
+    namespace export GetRangeTextColor
     namespace export GetRowValues
     namespace export GetVersion
     namespace export GetWorkbookName
@@ -583,6 +584,22 @@ namespace eval Excel {
         $rangeId -with { Interior } Pattern $Excel::xlSolid
     }
 
+    proc GetRangeTextColor { rangeId } {
+        # Get the text color of a cell range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # The r, g and b values are returned as integers in the
+        # range [0, 255].
+        #
+        # Return the text color as a list of r, b and b values.
+        #
+        # See also: SetRangeTextColor ::Cawt::ColorToRgb SelectRangeByIndex SelectRangeByString
+
+        set colorNum [$rangeId -with { Font } Color]
+        return [Cawt ColorToRgb $colorNum]
+    }
+
     proc SetRangeTextColor { rangeId r g b } {
         # Set the text color of a cell range.
         #
@@ -736,7 +753,7 @@ namespace eval Excel {
         # ::Cawt::GetUserName
 
         set commentId [$rangeId Comment]
-        if { ! [Cawt IsValidId $commentId] } {
+        if { ! [Cawt IsComObject $commentId] } {
             set commentId [$rangeId AddComment]
         }
         $commentId Visible [Cawt TclBool $visible]
@@ -1842,7 +1859,7 @@ namespace eval Excel {
         # row         - Row number. Row numbering starts with 1.
         # col         - Column number. Column numbering starts with 1.
         # linkToFile  - Insert a link to the image file.
-        # saveWithDoc - Embed the image into the Excel document.
+        # saveWithDoc - Embed the image into the document.
         #
         # The file name of the image must be an absolute pathname. Use a
         # construct like [file join [pwd] "myImage.gif"] to insert

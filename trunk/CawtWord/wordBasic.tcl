@@ -62,6 +62,7 @@ namespace eval Word {
     namespace export ReplaceString
     namespace export SaveAs
     namespace export SaveAsPdf
+    namespace export ScaleImage
     namespace export SelectRange
     namespace export SetCellValue
     namespace export SetColumnValues
@@ -165,7 +166,7 @@ namespace eval Word {
         # Return true, if string was found. Otherwise false.
         # If the string was found, the selection is set to the found string.
         #
-        # See also: ReplaceString GetSelectionRange
+        # See also: ReplaceString ReplaceByProc GetSelectionRange
 
         if { [Word::_IsDocument $rangeOrDocId] } {
             set numFound 0
@@ -175,7 +176,7 @@ namespace eval Word {
                 set retVal [Word::_FindOrReplace $story "find" $str $matchCase]
                 incr numFound
                 set nextStory [$story NextStoryRange]
-                while { [Cawt IsValidId $nextStory] } {
+                while { [Cawt IsComObject $nextStory] } {
                     lappend storyList $nextStory
                     set retVal [Word::_FindOrReplace $nextStory "find" $str $matchCase]
                     incr numFound
@@ -205,7 +206,7 @@ namespace eval Word {
         # Return true, if string could be replaced, i.e. the search string was found.
         # Otherwise false.
         #
-        # See also: SearchString ReplaceByProc
+        # See also: FindString ReplaceByProc
 
         if { [Word::_IsDocument $rangeOrDocId] } {
             set numReplaced 0
@@ -215,7 +216,7 @@ namespace eval Word {
                 set retVal [Word::_FindOrReplace $story "replace" $searchStr $matchCase $replaceStr $howMuch]
                 incr numReplaced
                 set nextStory [$story NextStoryRange]
-                while { [Cawt IsValidId $nextStory] } {
+                while { [Cawt IsComObject $nextStory] } {
                     lappend storyList $nextStory
                     set retVal [Word::_FindOrReplace $nextStory "replace" $searchStr $matchCase $replaceStr $howMuch]
                     incr numReplaced
@@ -250,12 +251,12 @@ namespace eval Word {
         #
         # No return value.
         #
-        # See also: SearchString ReplaceString
+        # See also: FindString ReplaceString
 
         set myFind [$rangeId Find]
         set count 0
         while { 1 } {
-            # See proc FindString for parameter list of Execute command.
+            # See proc _FindOrReplace for a parameter list of the Execute command.
             set retVal [$myFind -callnamedargs Execute \
                                 FindText $str \
                                 MatchCase True \
@@ -604,7 +605,7 @@ namespace eval Word {
         # Set the highlight color of a text range.
         #
         # rangeId   - Identifier of the text range.
-        # colorEnum - Value of enumeration type WdColor (see wordConst.tcl).
+        # colorEnum - Value of enumeration type WdColorIndex (see wordConst.tcl).
         #
         # No return value.
         #
@@ -961,7 +962,7 @@ namespace eval Word {
             lappend storyList $story
             $story -with { Fields } Update
             set nextStory [$story NextStoryRange]
-            while { [Cawt IsValidId $nextStory] } {
+            while { [Cawt IsComObject $nextStory] } {
                 lappend storyList $nextStory
                 $nextStory -with { Fields } Update
                 set nextStory [$nextStory NextStoryRange]
@@ -1435,37 +1436,55 @@ namespace eval Word {
         }
     }
 
-    proc InsertImage { rangeId imgFileName { linkToFile false } { saveWithDocument false } } {
+    proc InsertImage { rangeId imgFileName { linkToFile false } { saveWithDoc true } } {
         # Insert an image into a range of a document.
         #
-        # rangeId          - Identifier of the text range.
-        # imgFileName      - File name of the image (as absolute path).
-        # linkToFile       - Insert a link to the image instead of a copy.
-        # saveWithDocument - If using a link, store the image in the file, too.
+        # rangeId     - Identifier of the text range.
+        # imgFileName - File name of the image (as absolute path).
+        # linkToFile  - Insert a link to the image file.
+        # saveWithDoc - Embed the image into the document.
         #
         # The file name of the image must be an absolute pathname. Use a
         # construct like [file join [pwd] "myImage.gif"] to insert
         # images from the current directory.
         #
-        # Return the identifier of the inserted image.
+        # Return the identifier of the inserted image as an inline shape.
         #
-        # See also: CropImage InsertFile InsertCaption InsertList InsertText
+        # See also: ScaleImage CropImage InsertFile InsertCaption InsertList InsertText
+
+        if { ! $linkToFile && ! $saveWithDoc } { 
+            error "InsertImage: linkToFile and saveWithDoc are both set to false."
+        }
 
 	set fileName [file nativename $imgFileName]
-        if { 0 } {
-            # TODO
-            set imgId [$rangeId -with { InlineShapes } AddPicture $fileName \
-                       [Cawt TclBool $linkToFile] [Cawt TclBool $saveWithDocument]]
-        } else {
-            set imgId [$rangeId -with { InlineShapes } AddPicture $fileName]
-        }
-        return $imgId
+        set shapeId [$rangeId -with { InlineShapes } AddPicture $fileName \
+                  [Cawt TclInt $linkToFile] \
+                  [Cawt TclInt $saveWithDoc]]
+        return $shapeId
     }
 
-    proc CropImage { imgId { cropBottom 0.0 } { cropTop 0.0 } { cropLeft 0.0 } { cropRight 0.0 } } {
+    proc ScaleImage { shapeId scaleWidth scaleHeight } {
+        # Scale an image.
+        #
+        # shapeId     - Identifier of the image inline shape.
+        # scaleWidth  - Horizontal scale factor.
+        # scaleHeight - Vertical scale factor.
+        #
+        # The scale factors are floating point values. 1.0 means no scaling.
+        #
+        # No return value.
+        #
+        # See also: InsertImage CropImage
+
+        $shapeId LockAspectRatio [Cawt TclInt false]
+        $shapeId ScaleWidth  [expr { 100.0 * double($scaleWidth) }]
+        $shapeId ScaleHeight [expr { 100.0 * double($scaleHeight) }]
+    }
+
+    proc CropImage { shapeId { cropBottom 0.0 } { cropTop 0.0 } { cropLeft 0.0 } { cropRight 0.0 } } {
         # Crop an image at the four borders.
         #
-        # imgId      - Identifier of the image.
+        # shapeId    - Identifier of the image inline shape.
         # cropBottom - Crop amount at the bottom border.
         # cropTop    - Crop amount at the top border.
         # cropLeft   - Crop amount at the left border.
@@ -1477,12 +1496,12 @@ namespace eval Word {
         #
         # No return value.
         #
-        # See also: InsertImage ::Cawt::CentiMetersToPoints ::Cawt::InchesToPoints
+        # See also: InsertImage ScaleImage ::Cawt::CentiMetersToPoints ::Cawt::InchesToPoints
 
-        $imgId -with { PictureFormat } CropBottom $cropBottom
-        $imgId -with { PictureFormat } CropTop    $cropTop
-        $imgId -with { PictureFormat } CropLeft   $cropLeft
-        $imgId -with { PictureFormat } CropRight  $cropRight
+        $shapeId -with { PictureFormat } CropBottom $cropBottom
+        $shapeId -with { PictureFormat } CropTop    $cropTop
+        $shapeId -with { PictureFormat } CropLeft   $cropLeft
+        $shapeId -with { PictureFormat } CropRight  $cropRight
     }
 
     proc InsertCaption { rangeId labelId text { pos wdCaptionPositionBelow } } {

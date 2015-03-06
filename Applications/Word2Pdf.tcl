@@ -3,7 +3,7 @@
 # Copyright: 2013-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-set cawtDir [pwd]
+set cawtDir [file join [pwd] ".."]
 set auto_path [linsert $auto_path 0 $cawtDir [file join $cawtDir "Externals"]]
 
 package require cawt
@@ -40,7 +40,7 @@ while { $curArg < $argc } {
 }
 
 if { $optPrintHelp } {
-    PrintUsage $optStartApp
+    PrintUsage $argv0
     exit 0
 }
 

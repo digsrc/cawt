@@ -23,7 +23,7 @@ set auto_path [linsert $auto_path 0 $cawtDir [file join $cawtDir "Externals"]]
 
 package require twapi 4
 
-# TODO: Workaround for loading ITypeLibProxy_from_path in Twapi 4.0 alpha.
+# Workaround for loading ITypeLibProxy_from_path in Twapi 4.0 alpha.
 catch { twapi::name_to_iid }
 
 set typeLib [twapi::ITypeLibProxy_from_path $applName]

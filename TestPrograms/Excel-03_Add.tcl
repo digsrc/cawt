@@ -24,7 +24,7 @@ for { set i 1 } { $i <= $numCols } { incr i } {
 for { set s 1 } { $s <= $numSheets } { incr s } {
     set appId [Excel Open]
     set workbookId [Excel GetActiveWorkbook $appId]
-    if { ! [Cawt IsValidId $workbookId] } {
+    if { ! [Cawt IsComObject $workbookId] } {
         set workbookId [Excel AddWorkbook $appId]
     }
 

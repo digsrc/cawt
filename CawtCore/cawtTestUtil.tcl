@@ -22,6 +22,8 @@ namespace eval Cawt {
         # If "printCheck" is set to true, a line prepended with "Check:" and the
         # message supplied in "msg" is printed to standard output.
         # If the check fails, return false and print message prepended with "Error:".
+        #
+        # See also: CheckList CheckMatrix CheckNumber CheckString GetNumComObjects
 
         set value [Cawt GetNumComObjects]
         if { $expected != $value } {
@@ -46,6 +48,8 @@ namespace eval Cawt {
         # If "printCheck" is set to true, a line prepended with "Check:" and the
         # message supplied in "msg" is printed to standard output.
         # If the check fails, return false and print message prepended with "Error:".
+        #
+        # See also: CheckComObjects CheckList CheckMatrix CheckNumber
 
         if { $expected ne $value } {
             puts "Error: $msg (Expected: \"$expected\" Have: \"$value\")"
@@ -69,6 +73,8 @@ namespace eval Cawt {
         # If "printCheck" is set to true, a line prepended with "Check:" and the
         # message supplied in "msg" is printed to standard output.
         # If the check fails, return false and print message prepended with "Error:".
+        #
+        # See also: CheckComObjects CheckList CheckMatrix CheckString
 
         if { $expected != $value } {
             puts "Error: $msg (Expected: $expected Have: $value)"
@@ -92,6 +98,8 @@ namespace eval Cawt {
         # If "printCheck" is set to true, a line prepended with "Check:" and the
         # message supplied in "msg" is printed to standard output.
         # If the check fails, return false and print message prepended with "Error:".
+        #
+        # See also: CheckComObjects CheckMatrix CheckNumber CheckString
 
         if { [llength $expected] != [llength $value] } {
             puts "Error: $msg (List length differ. Expected: [llength $expected] Have: [llength $value])"
@@ -123,6 +131,8 @@ namespace eval Cawt {
         # If "printCheck" is set to true, a line prepended with "Check:" and the
         # message supplied in "msg" is printed to standard output.
         # If the check fails, return false and print message prepended with "Error:". 
+        #
+        # See also: CheckComObjects CheckList CheckNumber CheckString
 
         if { [llength $expected] != [llength $value] } {
             puts "Error: $msg (Matrix rows differ. Expected: [llength $expected] Have: [llength $value])"

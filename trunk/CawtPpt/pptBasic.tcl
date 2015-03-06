@@ -369,11 +369,9 @@ namespace eval Ppt {
         #
         # Note, that CustomLayouts are not supported with PowerPoint versions before 2007.
         #
-        # TODO: Add to SeeAlso about CustomLayouts
-        #
         # Return the identifier of the new slide.
         #
-        # See also: CopySlide
+        # See also: CopySlide GetNumSlides GetCustomLayoutName GetCustomLayoutId
 
         variable pptVersion
 
@@ -697,7 +695,7 @@ namespace eval Ppt {
         #
         # presId - Identifier of the presentation.
         #
-        # See also: GetNumSlides
+        # See also: GetNumSlides GetCustomLayoutName GetCustomLayoutId
 
         return [$presId -with { SlideMaster CustomLayouts } Count]
     }
@@ -724,7 +722,7 @@ namespace eval Ppt {
         # If the index is out of bounds or a custom layout with specified name
         # is not found, an error is thrown.
         #
-        # See also: GetNumCustomLayouts AddPres
+        # See also: GetNumCustomLayouts GetCustomLayoutName AddPres
 
         set count [Ppt GetNumCustomLayouts $presId]
         if { [string is integer $indexOrName] || $indexOrName eq "end" } {

@@ -47,10 +47,9 @@ Word PrintRange $range "Extended range:"
 Word ReplaceString $range "lines" "rows" "all"
 
 Word ReplaceByProc [Word::GetStartRange $inDocId] "paragraph" \
-                        Word::SetRangeFontItalic true
-# TODO This does not work
-# Word ReplaceByProc [Word::GetStartRange $inDocId] "paragraph" \
-#                     Word::SetRangeHighlightColorByEnum wdYellow
+                    Word::SetRangeFontItalic true
+Word ReplaceByProc [Word::GetStartRange $inDocId] "paragraph" \
+                    Word::SetRangeHighlightColorByEnum wdTurquoise
 
 Word InsertText $inDocId "Inserted text at beginning of document\n"
 

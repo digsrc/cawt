@@ -1,5 +1,5 @@
-# Test miscellaneous CawtExcel procedures like setting colors, fonts and column width,
-# inserting formulas and images, searching and page setup.
+# Test miscellaneous CawtExcel procedures like setting colors, column width,
+# inserting formulas, searching and page setup.
 #
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
@@ -74,33 +74,15 @@ $cell Formula "=TODAY()"
 Cawt CheckString "=TODAY()" [$cell Formula] "cellId Formula"
 puts "  FormulaLocal: [$cell FormulaLocal]"
 
-# Test the font capabilities.
-Excel SetCellValue $worksheetId 3 [expr $numCols + 2] "Hallo"
-Excel SetCellValue $worksheetId 4 [expr $numCols + 2] "Holla"
-Excel SetCellValue $worksheetId 5 [expr $numCols + 2] "Subscript"
-Excel SetCellValue $worksheetId 6 [expr $numCols + 2] "Superscript"
-Excel SetCellValue $worksheetId 7 [expr $numCols + 2] "Subscript"
-Excel SetCellValue $worksheetId 8 [expr $numCols + 2] "Superscript"
+# Test the border capabilities.
+Excel SetCellValue $worksheetId  3 [expr $numCols + 2] "Hallo"
+Excel SetCellValue $worksheetId  4 [expr $numCols + 2] "Holla"
 
 set rangeId [Excel SelectCellByIndex $worksheetId 3 [expr $numCols + 2] true]
-Excel SetRangeFontBold $rangeId true
 Excel SetRangeBorders $rangeId xlThin xlContinuous 255 0 0
 
 set rangeId [Excel SelectCellByIndex $worksheetId 4 [expr $numCols + 2] true]
-Excel SetRangeFontItalic $rangeId true
 Excel SetRangeBorders $rangeId xlThin xlContinuous 0 0 255
-
-set rangeId [Excel SelectCellByIndex $worksheetId 5 [expr $numCols + 2] true]
-Excel SetRangeFontSubscript $rangeId true
-
-set rangeId [Excel SelectCellByIndex $worksheetId 6 [expr $numCols + 2] true]
-Excel SetRangeFontSuperscript $rangeId true
-
-set rangeId [Excel SelectCellByIndex $worksheetId 7 [expr $numCols + 2] true]
-Excel SetRangeFontSubscript [Excel GetRangeCharacters $rangeId 4] true
-
-set rangeId [Excel SelectCellByIndex $worksheetId 8 [expr $numCols + 2] true]
-Excel SetRangeFontSuperscript [Excel GetRangeCharacters $rangeId 6 6] true
 
 # Test merging cells.
 Excel SetCellValue $worksheetId 1 6 "MergedCells"

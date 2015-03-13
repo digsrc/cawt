@@ -41,7 +41,16 @@ namespace eval Excel {
     namespace export GetNumWorksheets
     namespace export GetRangeCharacters
     namespace export GetRangeFillColor
+    namespace export GetRangeFontBold
+    namespace export GetRangeFontItalic
+    namespace export GetRangeFontName
+    namespace export GetRangeFontSize
+    namespace export GetRangeFontSubscript
+    namespace export GetRangeFontSuperscript
+    namespace export GetRangeFontUnderline
+    namespace export GetRangeHorizontalAlignment
     namespace export GetRangeTextColor
+    namespace export GetRangeVerticalAlignment
     namespace export GetRowValues
     namespace export GetVersion
     namespace export GetWorkbookName
@@ -83,8 +92,11 @@ namespace eval Excel {
     namespace export SetRangeFillColor
     namespace export SetRangeFontBold
     namespace export SetRangeFontItalic
+    namespace export SetRangeFontName
+    namespace export SetRangeFontSize
     namespace export SetRangeFontSubscript
     namespace export SetRangeFontSuperscript
+    namespace export SetRangeFontUnderline
     namespace export SetRangeFormat
     namespace export SetRangeHorizontalAlignment
     namespace export SetRangeMergeCells
@@ -440,6 +452,43 @@ namespace eval Excel {
         }
     }
 
+    proc GetRangeFontName { rangeId } {
+        # Get the font name of a cell or character range.
+        #
+        # rangeId  - Identifier of the cell range.
+        #
+        # Return the font name in specified cell range as a string.
+        #
+        # See also: SetRangeFontName SelectRangeByIndex
+
+        return [$rangeId -with { Font } Name]
+    }
+
+    proc SetRangeFontName { rangeId fontName } {
+        # Set the font name of a cell or character range.
+        #
+        # rangeId  - Identifier of the cell range.
+        # fontName - Name of the font as a string.
+        #
+        # No return value.
+        #
+        # See also: SetRangeFontSubscript SetRangeFontSuperscript SetRangeFontBold SetRangeFontSize SelectRangeByIndex
+
+        $rangeId -with { Font } Name $fontName
+    }
+
+    proc GetRangeFontSubscript { rangeId } {
+        # Get the subscript font style of a cell or character range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return true, if the font in specified cell range has the subscript flag set.
+        #
+        # See also: SetRangeFontSubscript SelectRangeByIndex
+
+        return [$rangeId -with { Font } Subscript]
+    }
+
     proc SetRangeFontSubscript { rangeId { onOff true } } {
         # Set the subscript font style of a cell or character range.
         #
@@ -449,9 +498,21 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: SetRangeFontSuperscript SelectRangeByIndex GetRangeCharacters
+        # See also: SetRangeFontName SetRangeFontSuperscript SelectRangeByIndex
 
         $rangeId -with { Font } Subscript [Cawt TclBool $onOff]
+    }
+
+    proc GetRangeFontSuperscript { rangeId } {
+        # Get the superscript font style of a cell or character range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return true, if the font in specified cell range has the superscript flag set.
+        #
+        # See also: SetRangeFontSuperscript SelectRangeByIndex GetRangeCharacters
+
+        return [$rangeId -with { Font } Superscript]
     }
 
     proc SetRangeFontSuperscript { rangeId { onOff true } } {
@@ -463,9 +524,46 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: SetRangeFontSubscript SelectRangeByIndex GetRangeCharacters
+        # See also: SetRangeFontName SetRangeFontSubscript SelectRangeByIndex GetRangeCharacters
 
         $rangeId -with { Font } Superscript [Cawt TclBool $onOff]
+    }
+
+    proc GetRangeFontSize { rangeId } {
+        # Get the font size of a cell range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return the size of the font in specified cell range measured in points.
+        #
+        # See also: SetRangeFontSize SelectRangeByIndex
+
+        return [$rangeId -with { Font } Size]
+    }
+
+    proc SetRangeFontSize { rangeId sizeInPoints } {
+        # Set the font size of a cell range.
+        #
+        # rangeId      - Identifier of the cell range.
+        # sizeInPoints - Font size in points.
+        #
+        # No return value.
+        #
+        # See also: SetRangeFontName SetRangeFontBold SetRangeFontItalic SetRangeFontUnderline SelectRangeByIndex
+
+        $rangeId -with { Font } Size $sizeInPoints
+    }
+
+    proc GetRangeFontBold { rangeId } {
+        # Get the bold font style of a cell range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return true, if the font in specified cell range has the bold flag set.
+        #
+        # See also: SetRangeFontBold SelectRangeByIndex
+
+        return [$rangeId -with { Font } Bold]
     }
 
     proc SetRangeFontBold { rangeId { onOff true } } {
@@ -477,9 +575,21 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: SetRangeFontItalic SelectRangeByIndex SelectRangeByString
+        # See also: SetRangeFontName SetRangeFontItalic SetRangeFontUnderline SetRangeFontSize SelectRangeByIndex
 
         $rangeId -with { Font } Bold [Cawt TclBool $onOff]
+    }
+
+    proc GetRangeFontItalic { rangeId } {
+        # Get the italic font style of a cell range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return true, if the font in specified cell range has the italic flag set.
+        #
+        # See also: SetRangeFontItalic SelectRangeByIndex
+
+        return [$rangeId -with { Font } Italic]
     }
 
     proc SetRangeFontItalic { rangeId { onOff true } } {
@@ -491,9 +601,35 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: SetRangeFontBold SelectRangeByIndex SelectRangeByString
+        # See also: SetRangeFontName SetRangeFontBold SetRangeFontUnderline SetRangeFontSize SelectRangeByIndex
 
         $rangeId -with { Font } Italic [Cawt TclBool $onOff]
+    }
+
+    proc GetRangeFontUnderline { rangeId } {
+        # Get the underline font style of a cell range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return the underline style of specified cell range.
+        # The returned value is of enumeration type XlUnderlineStyle (see excelConst.tcl).
+        #
+        # See also: SetRangeFontUnderline SelectRangeByIndex
+
+        return [$rangeId -with { Font } Underline]
+    }
+
+    proc SetRangeFontUnderline { rangeId { style xlUnderlineStyleSingle } } {
+        # Set the underline font style of a cell range.
+        #
+        # rangeId - Identifier of the cell range.
+        # style   - Value of enumeration type XlUnderlineStyle (see excelConst.tcl).
+        #
+        # No return value.
+        #
+        # See also: SetRangeFontName SetRangeFontBold SetRangeFontItalic SetRangeFontSize SelectRangeByIndex
+
+        $rangeId -with { Font } Underline [Excel GetEnum $style]
     }
 
     proc SetRangeMergeCells { rangeId { onOff true } } {
@@ -507,7 +643,24 @@ namespace eval Excel {
         #
         # See also: SetRangeVerticalAlignment SelectRangeByIndex SelectRangeByString
 
+        set appId [Cawt GetApplicationId $rangeId]
+        Cawt ShowAlerts $appId false
         $rangeId MergeCells [Cawt TclBool $onOff]
+        Cawt ShowAlerts $appId true
+        Cawt Destroy $appId
+    }
+
+    proc GetRangeHorizontalAlignment { rangeId } {
+        # Get the horizontal alignment of a cell range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return the horizontal alignment as a value of enumeration
+        # type XlHAlign (see excelConst.tcl).
+        #
+        # See also: SetRangeHorizontalAlignment SelectRangeByIndex SelectRangeByString
+
+        return [$rangeId HorizontalAlignment]
     }
 
     proc SetRangeHorizontalAlignment { rangeId align } {
@@ -518,9 +671,23 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: SetRangeVerticalAlignment SelectRangeByIndex SelectRangeByString
+        # See also: GetRangeHorizontalAlignment SetRangeVerticalAlignment
+        #           SelectRangeByIndex SelectRangeByString
 
         $rangeId HorizontalAlignment [Excel GetEnum $align]
+    }
+
+    proc GetRangeVerticalAlignment { rangeId } {
+        # Get the vrtical alignment of a cell range.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return the vrtical alignment as a value of enumeration
+        # type XlVAlign (see excelConst.tcl).
+        #
+        # See also: SetRangeVerticalAlignment SelectRangeByIndex SelectRangeByString
+
+        return [$rangeId VerticalAlignment]
     }
 
     proc SetRangeVerticalAlignment { rangeId align } {

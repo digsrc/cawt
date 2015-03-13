@@ -197,6 +197,7 @@ if { $option eq "user" || $option eq "all" } {
         set cropValues(Figure-06)  9.0    ; # Module excelImgRaw
         set cropValues(Figure-07)  9.0    ; # Module excelMediaWiki
         set cropValues(Figure-08)  9.0    ; # Module excelWikit
+        set cropValues(Figure-09)  9.0    ; # Module excelHtml
 
         foreach fig [glob -directory $outFigureDir *] {
             set figImg  [file tail $fig]

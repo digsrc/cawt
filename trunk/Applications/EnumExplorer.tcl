@@ -1,3 +1,7 @@
+#!/bin/sh
+# the next line restarts using tclsh \
+exec tclsh "$0" -- ${1+"$@"}
+
 # Utility script to convert a Word document to a PDF file.
 #
 # Copyright: 2013-2015 Paul Obermeier (obermeier@poSoft.de)
@@ -17,14 +21,19 @@ proc PrintUsage { appName } {
     global gPo
 
     puts ""
-    puts "$appName \[Namespace\]"
+    puts "Usage: $appName \[Namespace\]"
     puts ""
-    puts "Start enumeration explorer for given namespace."
+    puts "Start enumeration explorer and display specified namespace."
     puts "If no namespace is given, the first namespace in this list is used:"
     puts "  $gPo(defNamespaces)"
     puts ""
-    puts "Pressing the Copy button or the c key copies the currently selected"
-    puts "enumeration name to the clipboard."
+    puts "Pressing the \"Copy as enum\" button or the \"C\" key copies the"
+    puts "currently selected enumeration as Tcl variable to the clipboard."
+    puts "Example: \$Excel::xlAboveStdDev"
+    puts ""
+    puts "Pressing the \"Copy as string\" button or the \"c\" key copies the"
+    puts "currently selected enumeration name to the clipboard."
+    puts "Example: xlAboveStdDev"
     puts ""
 }
 

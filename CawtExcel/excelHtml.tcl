@@ -274,6 +274,12 @@ namespace eval Excel {
         # worksheetId  - Identifier of the worksheet.
         # htmlFileName - Name of the HTML file.
         #
+        # The following attributes are exported to the HTML file:
+        # Font: Name, size, style (bold, italic, underline).
+        # Column span across a row.
+        # Text and background color.
+        # Horizontal and vertical text alignment.
+        #
         # No return value.
         #
         # See also: GetMatrixValues

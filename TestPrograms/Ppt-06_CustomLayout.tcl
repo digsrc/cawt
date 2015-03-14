@@ -17,32 +17,38 @@ set pptFile [file join [pwd] "testOut" "Ppt-06_CustomLayout"]
 append pptFile [Ppt GetExtString $appId]
 file delete -force $pptFile
 
-set presId [Ppt AddPres $appId $tmplFile]
-puts "Add slides from template file $tmplFile"
+# Use in a catch statement, as CustomLayout is available only
+# in PowerPoint 2007 an up.
+set catchVal [ catch { Ppt AddPres $appId $tmplFile } presId]
+if { $catchVal } {
+    puts "Error: $presId"
+} else {
+    puts "Add slides from template file $tmplFile"
 
-set numLayouts [Ppt GetNumCustomLayouts $presId]
-Cawt CheckNumber 4 $numLayouts "Number of layouts"
+    set numLayouts [Ppt GetNumCustomLayouts $presId]
+    Cawt CheckNumber 4 $numLayouts "Number of layouts"
 
-for { set layoutNum 1 } { $layoutNum <= $numLayouts } { incr layoutNum } {
-    set customLayoutId [Ppt GetCustomLayoutId $presId $layoutNum]
-    set layoutName [Ppt GetCustomLayoutName $customLayoutId]
-    puts "  Adding $layoutName"
-    lappend layoutNameList $layoutName
+    for { set layoutNum 1 } { $layoutNum <= $numLayouts } { incr layoutNum } {
+        set customLayoutId [Ppt GetCustomLayoutId $presId $layoutNum]
+        set layoutName [Ppt GetCustomLayoutName $customLayoutId]
+        puts "  Adding $layoutName"
+        lappend layoutNameList $layoutName
+        Ppt AddSlide $presId $customLayoutId
+    }
+
+    set layoutName "Layout 3 - 2 widgets"
+    set customLayoutId [Ppt GetCustomLayoutId $presId $layoutName]
     Ppt AddSlide $presId $customLayoutId
+    Cawt CheckString $layoutName [Ppt GetCustomLayoutName $customLayoutId] "Adding layout by name"
+
+    set customLayoutId [Ppt GetCustomLayoutId $presId end]
+    Ppt AddSlide $presId $customLayoutId
+    Cawt CheckString [lindex $layoutNameList end] [Ppt GetCustomLayoutName $customLayoutId] \
+                        "Adding layout by special index end"
+
+    puts "Saving as PowerPoint file: $pptFile"
+    Ppt SaveAs $presId $pptFile
 }
-
-set layoutName "Layout 3 - 2 widgets"
-set customLayoutId [Ppt GetCustomLayoutId $presId $layoutName]
-Ppt AddSlide $presId $customLayoutId
-Cawt CheckString $layoutName [Ppt GetCustomLayoutName $customLayoutId] "Adding layout by name"
-
-set customLayoutId [Ppt GetCustomLayoutId $presId end]
-Ppt AddSlide $presId $customLayoutId
-Cawt CheckString [lindex $layoutNameList end] [Ppt GetCustomLayoutName $customLayoutId] \
-                    "Adding layout by special index end"
-
-puts "Saving as PowerPoint file: $pptFile"
-Ppt SaveAs $presId $pptFile
 
 Cawt PrintNumComObjects
 

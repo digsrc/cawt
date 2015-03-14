@@ -11,11 +11,10 @@ set appId [Ppt OpenNew]
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
 puts [format "%-25s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
-
-puts [format "%-25s: %s (%s)" "PowerPoint Version" \
+puts [format "%-25s: %s (%s)" "PowerPoint version" \
                              [Ppt GetVersion $appId] \
                              [Ppt GetVersion $appId true]]
-
+puts ""
 puts [format "%-25s: %s" "PowerPoint extension" \
                              [Ppt GetExtString $appId]]
 
@@ -38,10 +37,11 @@ puts [format "%-25s: %s" "User Folder Pathname" \
 
 set presId [Ppt AddPres $appId]
 
-puts [format "%-30s: %s" "Appl. name (from Application)" \
-         [Cawt GetApplicationName $appId]]
-puts [format "%-30s: %s" "Appl. name (from Presentation)" \
-         [Cawt GetApplicationName [Cawt GetApplicationId $presId]]]
+puts [format "%-30s: %s" "Appl. name (from Application)"  [Cawt GetApplicationName $appId]]
+puts [format "%-30s: %s" "Appl. name (from Presentation)" [Cawt GetApplicationName $presId]]
+
+puts [format "%-30s: %s" "Version (from Application)"  [Ppt GetVersion $appId]]
+puts [format "%-30s: %s" "Version (from Presentation)" [Ppt GetVersion $presId]]
 
 puts ""
 puts "PowerPoint has [llength [Ppt GetEnumTypes]] enumeration types."

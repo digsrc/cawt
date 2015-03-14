@@ -11,6 +11,7 @@ namespace eval Cawt {
     namespace export GetActivePrinter
     namespace export GetApplicationId
     namespace export GetApplicationName
+    namespace export GetApplicationVersion
     namespace export GetComObjects
     namespace export GetDotsPerInch
     namespace export GetInstallationPath
@@ -24,6 +25,7 @@ namespace eval Cawt {
     namespace export GetUserPath
     namespace export HavePkg
     namespace export InchesToPoints
+    namespace export IsApplicationId
     namespace export IsComObject
     namespace export IsValidId
     namespace export KillApp
@@ -328,7 +330,7 @@ namespace eval Cawt {
 
         return [IsComObject $comObj]
     }
-    
+
     proc IsComObject { comObj } {
         # Check, if a COM object is valid.
         #
@@ -399,7 +401,7 @@ namespace eval Cawt {
         # printStack - Print stack content after popping onto stdout.
         #
         # Pop last entry from COM objects stack and
-        # remove all COM objects currently in use which 
+        # remove all COM objects currently in use which
         # are not contained in the popped entry.
         #
         # See also: PushComObjects
@@ -442,24 +444,74 @@ namespace eval Cawt {
         }
     }
 
-    proc GetApplicationId { componentId } {
-        # Get the application identifier of an Office component.
+    proc IsApplicationId { objId } {
+        # Check, if Office object is an application identifier.
         #
-        # componentId - The identifier of an Office component.
+        # objId - The identifier of an Office object.
         #
-        # Office components are Workbooks, Worksheets, ...
+        # Return true
+        # Return true, if objId is a valid Office application identifier.
+        # Otherwise return false.
+        #
+        # See also: IsComObj GetApplicationId GetApplicationName
 
-        return [$componentId Application]
+        set retVal [catch {$objId Version} errMsg]
+        # Version is a property of all Office application classes.
+        if { $retVal == 0 } {
+            return true
+        } else {
+            return false
+        }
     }
 
-    proc GetApplicationName { appId } {
+    proc GetApplicationId { objId } {
+        # Get the application identifier of an Office object.
+        #
+        # objId - The identifier of an Office object.
+        #
+        # Office object are Workbooks, Worksheets, ...
+        #
+        # See also: GetApplicationName IsApplicationId
+
+        return [$objId Application]
+    }
+
+    proc GetApplicationName { objId } {
         # Get the name of an Office application.
         #
-        # appId - The application identifier.
+        # objId - The identifier of an Office object.
         #
         # Return the name of the application as a string.
+        #
+        # See also: GetApplicationId IsApplicationId
 
-        return [$appId Name]
+        if { ! [Cawt IsApplicationId $objId] } {
+            set appId [Cawt GetApplicationId $objId]
+            set name [$appId Name]
+            Cawt Destroy $appId
+            return $name
+        } else {
+            return [$objId Name]
+        }
+    }
+
+    proc GetApplicationVersion { objId } {
+        # Get the version number of an Office application.
+        #
+        # objId - The identifier of an Office object.
+        #
+        # Return the version of the application as a floating point number.
+        #
+        # See also: GetApplicationId GetApplicationName
+
+        if { ! [Cawt IsApplicationId $objId] } {
+            set appId [Cawt GetApplicationId $objId]
+            set version [$appId Version]
+            Cawt Destroy $appId
+        } else {
+            set version [$objId Version]
+        }
+        return $version
     }
 
     proc GetActivePrinter { appId } {

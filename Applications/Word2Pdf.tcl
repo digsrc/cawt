@@ -1,3 +1,7 @@
+#!/bin/sh
+# the next line restarts using tclsh \
+exec tclsh "$0" -- ${1+"$@"}
+
 # Utility script to convert a Word document to a PDF file.
 #
 # Copyright: 2013-2015 Paul Obermeier (obermeier@poSoft.de)
@@ -10,7 +14,7 @@ package require cawt
 
 proc PrintUsage { appName } {
     puts ""
-    puts "$appName \[Options\] WordFile PdfFile"
+    puts "Usage: $appName \[Options\] WordFile PdfFile"
     puts ""
     puts "Options: None at the moment."
     puts ""
@@ -58,7 +62,6 @@ if { $pdfFile eq "" } {
 
 set wordFile [file nativename [file normalize $wordFile]]
 set pdfFile  [file nativename [file normalize $pdfFile]]
-puts "wordFile = $wordFile"
 
 if { ! [file exists $wordFile] } {
     puts "Specified Word file $wordFile not existent."
@@ -66,6 +69,7 @@ if { ! [file exists $wordFile] } {
     exit 1
 }
 
+puts "Reading Word file: $wordFile"
 # Open new Word instance and show the application window.
 set appId [Word OpenNew true]
 

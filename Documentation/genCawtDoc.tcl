@@ -198,6 +198,7 @@ if { $option eq "user" || $option eq "all" } {
         set cropValues(Figure-07)  9.0    ; # Module excelMediaWiki
         set cropValues(Figure-08)  9.0    ; # Module excelWikit
         set cropValues(Figure-09)  9.0    ; # Module excelHtml
+        set cropValues(Figure-10)  9.2    ; # Application EnumExplorer
 
         foreach fig [glob -directory $outFigureDir *] {
             set figImg  [file tail $fig]
@@ -250,7 +251,9 @@ if { $option eq "user" || $option eq "all" } {
 
     Cawt CheckComObjects 3 "ComObjs after UpdateFields" $printChecks
 
+    puts "    Saving as $userManFile ..."
     Word SaveAs $docId $userManFile
+    puts "    Saving as $pdfManFile ..."
     set retVal [catch {Word SaveAsPdf $docId $pdfManFile} errMsg]
     if { $retVal } {
         puts "Warning: $errMsg"

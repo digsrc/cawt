@@ -11,11 +11,10 @@ set appId [Excel OpenNew false]
 puts [format "%-30s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-30s: %s" "Cawt version" $pkgVersion]
 puts [format "%-30s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
-
-puts [format "%-30s: %s (%s)" "Excel Version" \
+puts [format "%-30s: %s (%s)" "Excel version" \
                              [Excel GetVersion $appId] \
                              [Excel GetVersion $appId true]]
-
+puts ""
 puts [format "%-30s: %s" "Excel filename extension" \
                              [Excel GetExtString $appId]]
 
@@ -40,16 +39,17 @@ set workbookId [Excel AddWorkbook $appId]
 set worksheetId [Excel GetWorksheetIdByIndex $workbookId 1]
 set cellsId [Excel GetCellsId $worksheetId]
 
-puts [format "%-30s: %s" "Appl. name (from Application)" \
-         [Cawt GetApplicationName $appId]]
-puts [format "%-30s: %s" "Appl. name (from Workbook)" \
-         [Cawt GetApplicationName [Cawt GetApplicationId $workbookId]]]
-puts [format "%-30s: %s" "Appl. name (from Worksheet)" \
-         [Cawt GetApplicationName [Cawt GetApplicationId $worksheetId]]]
-puts [format "%-30s: %s" "Appl. name (from Cells)" \
-         [Cawt GetApplicationName [Cawt GetApplicationId $cellsId]]]
-puts [format "%-30s: %s" "Floating point separator" \
-         [Excel GetFloatSeparator]]
+puts [format "%-30s: %s" "Appl. name (from Application)" [Cawt GetApplicationName $appId]]
+puts [format "%-30s: %s" "Appl. name (from Workbook)"    [Cawt GetApplicationName $workbookId]]
+puts [format "%-30s: %s" "Appl. name (from Worksheet)"   [Cawt GetApplicationName $worksheetId]]
+puts [format "%-30s: %s" "Appl. name (from Cells)"       [Cawt GetApplicationName $cellsId]]
+
+puts [format "%-30s: %s" "Version (from Application)" [Excel GetVersion $appId]]
+puts [format "%-30s: %s" "Version (from Workbook)"    [Excel GetVersion $workbookId]]
+puts [format "%-30s: %s" "Version (from Worksheet)"   [Excel GetVersion $worksheetId]]
+puts [format "%-30s: %s" "Version (from Cells)"       [Excel GetVersion $cellsId]]
+
+puts [format "%-30s: %s" "Floating point separator" [Excel GetFloatSeparator]]
 
 Cawt CheckNumber  1 [Excel ColumnCharToInt A] "ColumnCharToInt A"
 Cawt CheckNumber 13 [Excel ColumnCharToInt M] "ColumnCharToInt M"

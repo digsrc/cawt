@@ -11,11 +11,10 @@ set appId [Outlook OpenNew]
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
 puts [format "%-25s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
-
-puts [format "%-25s: %s (%s)" "Outlook Version" \
+puts [format "%-25s: %s (%s)" "Outlook version" \
                              [Outlook GetVersion $appId] \
                              [Outlook GetVersion $appId true]]
-
+puts ""
 puts [format "%-25s: %s" "Active Printer" \
                         [Cawt GetActivePrinter $appId]]
 
@@ -33,8 +32,9 @@ puts [format "%-25s: %s" "Installation Pathname" \
 puts [format "%-25s: %s" "User Folder Pathname" \
                          [Cawt GetUserPath $appId]]
 
-puts [format "%-30s: %s" "Appl. name (from Application)" \
-         [Cawt GetApplicationName $appId]]
+puts [format "%-30s: %s" "Appl. name (from Application)" [Cawt GetApplicationName $appId]]
+
+puts [format "%-30s: %s" "Version (from Application)" [Outlook GetVersion $appId]]
 
 puts ""
 puts "Outlook has [llength [Outlook GetEnumTypes]] enumeration types."

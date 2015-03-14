@@ -11,11 +11,10 @@ set appId [Word OpenNew false]
 puts [format "%-25s: %s" "Tcl version" [info patchlevel]]
 puts [format "%-25s: %s" "Cawt version" $pkgVersion]
 puts [format "%-25s: %s" "Twapi version" [Cawt GetPkgVersion "twapi"]]
-
-puts [format "%-25s: %s (%s)" "Word Version" \
+puts [format "%-25s: %s (%s)" "Word version" \
                              [Word GetVersion $appId] \
                              [Word GetVersion $appId true]]
-
+puts ""
 puts [format "%-25s: %s" "Word filename extension" \
                              [Word GetExtString $appId]]
 
@@ -38,10 +37,11 @@ puts [format "%-25s: %s" "User Folder Pathname" \
 
 set docId [Word AddDocument $appId]
 
-puts [format "%-30s: %s" "Appl. name (from Application)" \
-         [Cawt GetApplicationName $appId]]
-puts [format "%-30s: %s" "Appl. name (from Document)" \
-         [Cawt GetApplicationName [Cawt GetApplicationId $docId]]]
+puts [format "%-30s: %s" "Appl. name (from Application)" [Cawt GetApplicationName $appId]]
+puts [format "%-30s: %s" "Appl. name (from Document)"    [Cawt GetApplicationName $docId]]
+
+puts [format "%-30s: %s" "Version (from Application)" [Word GetVersion $appId]]
+puts [format "%-30s: %s" "Version (from Document)"    [Word GetVersion $docId]]
 
 puts ""
 puts "Word has [llength [Word GetEnumTypes]] enumeration types."

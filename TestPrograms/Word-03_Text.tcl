@@ -90,7 +90,7 @@ puts "Saving as Word file: $wordFile"
 Word SaveAs $docId $wordFile
 
 puts "Saving as PDF file: $pdfFile"
-# # Use in a catch statement, as PDF export is available only in Word 2007 an up.
+# Use in a catch statement, as PDF export is available only in Word 2007 an up.
 set catchVal [ catch { Word SaveAsPdf $docId $pdfFile } retVal]
 if { $catchVal } {
     puts "Error: $retVal"

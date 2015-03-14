@@ -362,7 +362,7 @@ namespace eval Excel {
         # worksheetId - Identifier of the worksheet.
         #
         # See also: GetNumColumns GetNumUsedColumns GetLastUsedColumn GetNumUsedRows
- 
+
         return [$worksheetId -with { UsedRange } Column]
     }
 
@@ -952,12 +952,12 @@ namespace eval Excel {
         # No return value.
         #
         # See also: SetRangeComment ::Cawt::CentiMetersToPoints ::Cawt::InchesToPoints
-        
+
         $commentId -with { Shape } LockAspectRatio [Cawt TclInt 0]
         $commentId -with { Shape } Height [expr double ($width)]
         $commentId -with { Shape } Width  [expr double ($height)]
     }
-    
+
     proc SetRangeTooltip { rangeId tooltipMessage { tooltipTitle "" } } {
         # Set a selection based tooltip for a cell range.
         #
@@ -983,10 +983,10 @@ namespace eval Excel {
         return $validationId
     }
 
-    proc GetVersion { appId { useString false } } {
+    proc GetVersion { objId { useString false } } {
         # Return the version of an Excel application.
         #
-        # appId     - Identifier of the Excel instance.
+        # objId     - Identifier of an Excel object instance.
         # useString - true: Return the version name (ex. "Excel 2000").
         #             false: Return the version number (ex. "9.0").
         #
@@ -994,7 +994,7 @@ namespace eval Excel {
         # Version number is in a format, so that it can be evaluated as a
         # floating point number.
         #
-        # See also: GetFloatSeparator
+        # See also: GetFloatSeparator GetExtString
 
         array set map {
             "8.0"  "Excel 97"
@@ -1005,7 +1005,8 @@ namespace eval Excel {
             "14.0" "Excel 2010"
             "15.0" "Excel 2013"
         }
-        set version [$appId Version]
+        set version [Cawt GetApplicationVersion $objId]
+
         if { $useString } {
             if { [info exists map($version)] } {
                 return $map($version)
@@ -2038,7 +2039,7 @@ namespace eval Excel {
         #
         # See also: ScaleImage
 
-        if { ! $linkToFile && ! $saveWithDoc } { 
+        if { ! $linkToFile && ! $saveWithDoc } {
             error "InsertImage: linkToFile and saveWithDoc are both set to false."
         }
 

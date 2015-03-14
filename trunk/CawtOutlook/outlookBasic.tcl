@@ -20,10 +20,10 @@ namespace eval Outlook {
         The Outlook namespace provides commands to control Microsoft Outlook.
     }
 
-    proc GetVersion { appId { useString false } } {
+    proc GetVersion { objId { useString false } } {
         # Return the version of an Outlook application.
         #
-        # appId     - Identifier of the Outlook instance.
+        # objId     - Identifier of an Outlook object instance.
         # useString - true: Return the version name (ex. "Outlook 2000").
         #             false: Return the version number (ex. "9.0").
         #
@@ -43,7 +43,8 @@ namespace eval Outlook {
             "14.0" "Outlook 2010"
             "15.0" "Outlook 2013"
         }
-        set versionString [$appId Version]
+        set versionString [Cawt GetApplicationVersion $objId]
+
         set members [split $versionString "."]
         set version "[lindex $members 0].[lindex $members 1]"
         if { $useString } {
@@ -134,7 +135,7 @@ namespace eval Outlook {
         # Return the identifier of the new mail object.
         #
         # See also: SendMail
- 
+
         set mailId [$appId CreateItem $Outlook::olMailItem]
 
         $mailId Display

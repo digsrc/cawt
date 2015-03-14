@@ -664,7 +664,7 @@ namespace eval Word {
         # Add a bookmark to a text range.
         #
         # rangeId - Identifier of the text range.
-        # name    - Name of the bookmark. 
+        # name    - Name of the bookmark.
         #
         # Return the bookmark identifier.
         #
@@ -726,7 +726,7 @@ namespace eval Word {
         # Insert a Word list.
         #
         # rangeId     - Identifier of the text range.
-        # stringList  - List of text strings building up the Word list. 
+        # stringList  - List of text strings building up the Word list.
         # galleryType - Value of enumeration type WdListGalleryType (see wordConst.tcl).
         # listType    - Value of enumeration type WdListType (see wordConst.tcl)
         #
@@ -748,10 +748,10 @@ namespace eval Word {
         return $listRangeId
     }
 
-    proc GetVersion { appId { useString false } } {
+    proc GetVersion { objId { useString false } } {
         # Return the version of a Word application.
         #
-        # appId     - Identifier of the Word instance.
+        # objId     - Identifier of a Word object instance.
         # useString - true: Return the version name (ex. "Word 2000").
         #             false: Return the version number (ex. "9.0").
         #
@@ -771,7 +771,7 @@ namespace eval Word {
             "14.0" "Word 2010"
             "15.0" "Word 2013"
         }
-        set version [$appId Version]
+        set version [Cawt GetApplicationVersion $objId]
         if { $useString } {
             if { [info exists map($version)] } {
                 return $map($version)
@@ -789,7 +789,7 @@ namespace eval Word {
         # appId   - Identifier of the Word instance.
         # version - Word version number.
         #
-        # Return the compatibility mode of the current Word application, if 
+        # Return the compatibility mode of the current Word application, if
         # version is not specified or the empty string.
         # If version is a valid Word version as returned by GetVersion, the
         # corresponding compatibility mode is returned.
@@ -826,7 +826,7 @@ namespace eval Word {
         # See also: GetCompatibilityMode GetVersion
 
         # appId is only needed, so we are sure, that wordVersion is initialized.
- 
+
         variable wordVersion
 
         if { $wordVersion >= 12.0 } {
@@ -843,7 +843,7 @@ namespace eval Word {
         #
         # No return value.
         #
-        # See also: 
+        # See also: Open
 
         $appId -with { ActiveDocument } ShowGrammaticalErrors [Cawt TclBool $onOff]
         $appId -with { ActiveDocument } ShowSpellingErrors    [Cawt TclBool $onOff]
@@ -1038,7 +1038,7 @@ namespace eval Word {
         variable wordVersion
 
         if { $wordVersion < 12.0 } {
-            error "PDF export available only in Word 2007 and up."
+            error "PDF export available only in Word 2007 or newer. Running [Word GetVersion $docId true]."
         }
 
         set fileName [file nativename $fileName]
@@ -1241,7 +1241,7 @@ namespace eval Word {
         #
         # Return the new text range.
         #
-        # See also: AddText AppendText AddParagraph SetRangeStyle 
+        # See also: AddText AppendText AddParagraph SetRangeStyle
         #           InsertCaption InsertFile InsertImage InsertList
 
         set newRange [Word CreateRange $docId 0 0]
@@ -1399,7 +1399,7 @@ namespace eval Word {
         # Insert an external file a the text range identified by rangeId. If pasteFormat is
         # not specified or an empty string, the method InsertFile is used.
         # Otherwise the external file is opened in a new Word document, copied to the clipboard
-        # and pasted into the text range. For pasting the PasteAndFormat method is used, so it is 
+        # and pasted into the text range. For pasting the PasteAndFormat method is used, so it is
         # possible to merge the new text from the external file into the Word document in different ways.
         #
         # No return value.
@@ -1452,7 +1452,7 @@ namespace eval Word {
         #
         # See also: ScaleImage CropImage InsertFile InsertCaption InsertList InsertText
 
-        if { ! $linkToFile && ! $saveWithDoc } { 
+        if { ! $linkToFile && ! $saveWithDoc } {
             error "InsertImage: linkToFile and saveWithDoc are both set to false."
         }
 
@@ -1508,7 +1508,7 @@ namespace eval Word {
         # Insert a caption into a range of a document.
         #
         # rangeId - Identifier of the text range.
-        # labelId - Value of enumeration type WdCaptionLabelID. 
+        # labelId - Value of enumeration type WdCaptionLabelID.
         #           Possible values: wdCaptionEquation, wdCaptionFigure, wdCaptionTable
         # text    - Text of the caption.
         # pos     - Value of enumeration type WdCaptionPosition (see wordConst.tcl).
@@ -1516,7 +1516,7 @@ namespace eval Word {
         # Return the new extended range.
         #
         # See also: ConfigureCaption InsertFile InsertImage InsertList InsertText
- 
+
         $rangeId InsertCaption [Word GetEnum $labelId] $text "" [Word GetEnum $pos] 0
         return $rangeId
     }
@@ -1527,7 +1527,7 @@ namespace eval Word {
         # Configure style of a caption type identified by its label identifier.
         #
         # appId                - Identifier of the Word instance.
-        # labelId              - Value of enumeration type WdCaptionLabelID. 
+        # labelId              - Value of enumeration type WdCaptionLabelID.
         #                        Possible values: wdCaptionEquation, wdCaptionFigure, wdCaptionTable
         # chapterStyleLevel    - 1 corresponds to Heading1, 2 corresponds to Heading2, ...
         # includeChapterNumber - Flag indicating whether to include the chapter number.

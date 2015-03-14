@@ -40,7 +40,7 @@ namespace eval Ppt {
     namespace export SlideShowPrev
     namespace export UseSlideShow
     namespace export Visible
-    
+
     variable pptVersion  "0.0"
     variable pptAppName  "PowerPoint.Application"
     variable _ruffdoc
@@ -49,16 +49,18 @@ namespace eval Ppt {
         The Ppt namespace provides commands to control Microsoft PowerPoint.
     }
 
-    proc GetVersion { appId { useString false } } {
+    proc GetVersion { objId { useString false } } {
         # Return the version of a PowerPoint application.
         #
-        # appId     - Identifier of the Excel instance.
+        # objId     - Identifier of a PowerPoint object instance.
         # useString - true: Return the version name (ex. "PowerPoint 2003").
         #             false: Return the version number (ex. "11.0").
         #
         # Both version name and version number are returned as strings.
         # Version number is in a format, so that it can be evaluated as a
         # floating point number.
+        #
+        # See also: GetExtString
 
         array set map {
             "8.0"  "PowerPoint 97"
@@ -69,7 +71,7 @@ namespace eval Ppt {
             "14.0" "PowerPoint 2010"
             "15.0" "PowerPoint 2013"
         }
-        set version [$appId Version]
+        set version [Cawt GetApplicationVersion $objId]
         if { $useString } {
             if { [info exists map($version)] } {
                 return $map($version)
@@ -91,7 +93,7 @@ namespace eval Ppt {
         # In previous versions it was ".ppt".
 
         # appId is only needed, so we are sure, that pptVersion is initialized.
- 
+
         variable pptVersion
 
         if { $pptVersion >= 12.0 } {
@@ -110,7 +112,7 @@ namespace eval Ppt {
         # In previous versions it was ".pot".
 
         # appId is only needed, so we are sure, that pptVersion is initialized.
- 
+
         variable pptVersion
 
         if { $pptVersion >= 12.0 } {
@@ -280,8 +282,13 @@ namespace eval Ppt {
         #
         # See also: OpenPres GetActivePres
 
+        variable pptVersion
+
         set presId [$appId -with { Presentations } Add]
         if { $templateFile ne "" } {
+            if { $pptVersion < 12.0 } {
+                error "CustomLayout available only in PowerPoint 2007 or newer. Running [Ppt GetVersion $appId true]."
+            }
             set nativeName [file nativename $templateFile]
             $presId ApplyTemplate $nativeName
         }
@@ -376,16 +383,13 @@ namespace eval Ppt {
         variable pptVersion
 
         set typeInt [Ppt GetEnum $type]
-        #set retVal [catch { expr int($type) } typeInt]
         if { $typeInt eq "" } {
             # type seems to be a CustomLayout object.
             if { $pptVersion < 12.0 } {
-                set appId [Cawt GetApplicationId $presId]
-                set versionStr [Ppt GetVersion $appId true]
-                error "CustomLayout not supported with PowerPoint $versionStr"
+                error "CustomLayout available only in PowerPoint 2007 or newer. Running [Ppt GetVersion $presId true]."
             }
         }
-        
+
         if { $slideIndex eq "" || $slideIndex < 0 } {
             set slideIndex [expr [Ppt GetNumSlides $presId] +1]
         }
@@ -737,7 +741,7 @@ namespace eval Ppt {
             return $customLayoutId
         } else {
             for { set i 1 } { $i <= $count } { incr i } {
-                set customLayouts [$presId -with { SlideMaster } CustomLayouts] 
+                set customLayouts [$presId -with { SlideMaster } CustomLayouts]
                 set customLayoutId [$customLayouts Item [expr $i]]
                 if { $indexOrName eq [$customLayoutId Name] } {
                     Cawt Destroy $customLayouts

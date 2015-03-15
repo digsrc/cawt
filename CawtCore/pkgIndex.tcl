@@ -5,6 +5,7 @@ proc __CawtCoreSourcePkgs { dir } {
     package provide cawtcore 1.0.6
 
     source [file join $dir cawtBasic.tcl]
+    source [file join $dir cawtOffice.tcl]
     source [file join $dir cawtImgUtil.tcl]
     source [file join $dir cawtTestUtil.tcl]
     rename ::__CawtCoreSourcePkgs {}

@@ -114,7 +114,11 @@ namespace eval Cawt {
             incr index
         }
         if { $printCheck } {
-            puts "Check: $msg (List length. Expected: [llength $expected] Have: [llength $value])"
+            if { [llength $value] <= 4 } {
+                puts "Check: $msg (Expected: $expected Have: $value)"
+            } else {
+                puts "Check: $msg (Lists are identical. List length: [llength $value])"
+            }
         }
         return true
     }
@@ -151,7 +155,7 @@ namespace eval Cawt {
             incr row
         }
         if { $printCheck } {
-            puts "Check: $msg (Matrix rows. Expected: [llength $expected] Have: [llength $value])"
+            puts "Check: $msg (Matrices are identical. Matrix rows: [llength $value])"
         }
         return true
     }

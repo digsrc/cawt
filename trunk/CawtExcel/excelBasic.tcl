@@ -39,6 +39,8 @@ namespace eval Excel {
     namespace export GetNumUsedColumns
     namespace export GetNumUsedRows
     namespace export GetNumWorksheets
+    namespace export GetRangeAsIndex
+    namespace export GetRangeAsString
     namespace export GetRangeCharacters
     namespace export GetRangeFillColor
     namespace export GetRangeFontBold
@@ -214,7 +216,7 @@ namespace eval Excel {
     }
 
     proc GetCellRange { row1 col1 row2 col2 } {
-        # Return a numeric cell range as an Excel range string.
+        # Return a numeric cell range as an Excel range string in A1 notation.
         #
         # row1 - Row number of upper-left corner of the cell range.
         # col1 - Column number of upper-left corner of the cell range.
@@ -377,8 +379,39 @@ namespace eval Excel {
                        [Excel GetNumUsedColumns $worksheetId] - 1 }]
     }
 
+    proc GetRangeAsString { rangeId } {
+        # Get address of a cell range as Excel range string in A1 notation.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return address of a cell range as Excel range string in A1 notation.
+        #
+        # See also: SelectRangeByString GetCellRange
+
+        set rangeStr [string map { "$" "" } [$rangeId Address]]
+        return $rangeStr
+    }
+
+    proc GetRangeAsIndex { rangeId } {
+        # Get address of a cell range as list of row/column indices.
+        #
+        # rangeId - Identifier of the cell range.
+        #
+        # Return address of a cell range as 4 element list of integers:
+        # The first two elements represent the row and column indices of the top-left cell of the range.
+        # The last two elements represent the row and column indices of the bottom-right cell of the range.
+        #
+        # See also: SelectRangeByIndex GetCellRange
+
+        set rangeStr [Excel GetRangeAsString $rangeId]
+        regexp {(\w+)(\d+):(\w+)(\d+)} $rangeStr -> colStr1 row1 colStr2 row2
+        set col1 [ColumnCharToInt $colStr1]
+        set col2 [ColumnCharToInt $colStr2]
+        return [list $row1 $col1 $row2 $col2]
+    }
+
     proc SelectRangeByString { worksheetId rangeStr { visSel false } } {
-        # Select a range by specifying an Excel range string.
+        # Select a range by specifying an Excel range string in A1 notation.
         #
         # worksheetId - Identifier of the worksheet.
         # rangeStr    - String specifying a cell range.

@@ -62,11 +62,13 @@ set rangeId [Excel SelectRangeByIndex $worksheetId 6 1 7 2 true]
 Excel SetRangeFillColor $rangeId 0 255 0
 Excel SetRangeTextColor $rangeId 0 0 255
 Excel SetRangeBorders $rangeId xlThin xlDash
+Cawt CheckList {6 1 7 2} [Excel GetRangeAsIndex $rangeId] "GetRangeAsIndex"
 
 set rangeId [Excel SelectRangeByString $worksheetId "A8:C10" true]
 Excel SetRangeFillColor $rangeId 0 0 255
 Excel SetRangeTextColor $rangeId 255 0 0
 Excel SetRangeFormat $rangeId "real" [Excel GetLangNumberFormat "0" "000"]
+Cawt CheckString "A8:C10" [Excel GetRangeAsString $rangeId] "GetRangeAsString"
 
 # Test setting a formula.
 set cell [Excel SelectCellByIndex $worksheetId 1 [expr $numCols + 2] true]

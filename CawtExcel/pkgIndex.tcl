@@ -2,7 +2,7 @@
 # Distributed under BSD license.
 
 proc __CawtExcelSourcePkgs { dir } {
-    package provide cawtexcel 1.0.8
+    package provide cawtexcel 2.0.0
 
     source [file join $dir excelConst.tcl]
     source [file join $dir excelBasic.tcl]
@@ -20,4 +20,4 @@ proc __CawtExcelSourcePkgs { dir } {
 }
 
 # All modules are exported as package cawtexcel
-package ifneeded cawtexcel 1.0.8 "[list __CawtExcelSourcePkgs $dir]"
+package ifneeded cawtexcel 2.0.0 "[list __CawtExcelSourcePkgs $dir]"

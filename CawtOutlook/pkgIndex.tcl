@@ -2,7 +2,7 @@
 # Distributed under BSD license.
 
 proc __CawtOutlookSourcePkgs { dir } {
-    package provide cawtoutlook 1.0.0
+    package provide cawtoutlook 2.0.0
 
     source [file join $dir outlookConst.tcl]
     source [file join $dir outlookBasic.tcl]
@@ -10,4 +10,4 @@ proc __CawtOutlookSourcePkgs { dir } {
 }
 
 # All modules are exported as package cawtoutlook
-package ifneeded cawtoutlook 1.0.0 "[list __CawtOutlookSourcePkgs $dir]"
+package ifneeded cawtoutlook 2.0.0 "[list __CawtOutlookSourcePkgs $dir]"

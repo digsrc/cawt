@@ -1,4 +1,5 @@
 # Test mail functionality of the CawtOutlook package.
+# Note: This script sends a test mail to info@poSoft.de. 
 #
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.

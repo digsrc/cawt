@@ -109,18 +109,18 @@ for { set r 1 } { $r <= $numRows } {incr r } {
 expr srand (1)
 for { set i 1 } { $i <= $numRows } { incr i } {
     lappend entList "Entity-$i"
-    set shoots [expr int (20 * rand())]
-    if { $shoots < 5 } {
-        incr shoots 5
+    set trials [expr int (20 * rand())]
+    if { $trials < 5 } {
+        incr trials 5
     }
-    set hits [expr $shoots - int (10 * rand())]
+    set hits [expr $trials - int (10 * rand())]
     if { $hits < 0 } {
-        set hits $shoots
+        set hits $trials
     }
-    if { $hits > $shoots } {
-        set hits $shoots
+    if { $hits > $trials } {
+        set hits $trials
     }
-    lappend shootList $shoots
+    lappend trialList $trials
     lappend hitList $hits
 }
 
@@ -179,24 +179,24 @@ set worksheetId [Excel AddWorksheet $workbookId "PointChart"]
 InsertTestData $worksheetId $timeHeader $timeList $valsHeaderList $valsList
 
 set pointChartId [Excel AddPointChartSimple $worksheetId \
-                  $numRows 2 4 "MunitionDetonations"]
+                  $numRows 2 4 "Flight Path in 2D"]
 Excel SetChartScale $pointChartId $minVal $maxVal $minVal $maxVal
 set pointChartObjId [Excel PlaceChart $pointChartId $worksheetId]
 set chartRangeId [Excel SelectRangeByString $worksheetId "F2:K16"]
 Excel ResizeChartObj $pointChartObjId $chartRangeId
 
 # Perform test 3:
-# Load data from entList, hitList and shootList into a worksheet.
+# Load data from entList, hitList and trialList into a worksheet.
 # Display the data as a radar mark chart.
 
 # Create a worksheet and set its name.
 set worksheetId [Excel AddWorksheet $workbookId "RadarChart"]
 
 # Insert the list data into the Excel worksheet.
-Excel SetHeaderRow $worksheetId [list "Entity" "Shots" "Hits"]
+Excel SetHeaderRow $worksheetId [list "Entity" "Trials" "Hits"]
 
 Excel SetColumnValues $worksheetId 1 $entList   2
-Excel SetColumnValues $worksheetId 2 $shootList 2
+Excel SetColumnValues $worksheetId 2 $trialList 2
 Excel SetColumnValues $worksheetId 3 $hitList   2
 
 # Fit the column width automatically.
@@ -217,17 +217,17 @@ Excel ChartObjToClipboard $radarChartObjId
 Excel SaveChartObjAsImage $radarChartObjId [file join [pwd] "testOut" "Excel-06_Chart.gif"]
 
 # Perform test 4:
-# Load data from entList, hitList and shootList into a worksheet.
+# Load data from entList, hitList and trialList into a worksheet.
 # Display the data as a clustered column chart.
 
 # Create a worksheet and set its name.
 set worksheetId [Excel AddWorksheet $workbookId "ColumnChart"]
 
 # Insert the list data into the Excel worksheet.
-Excel SetHeaderRow $worksheetId [list "Entity" "Shots" "Hits"]
+Excel SetHeaderRow $worksheetId [list "Entity" "Trials" "Hits"]
 
 Excel SetColumnValues $worksheetId 1 $entList   2
-Excel SetColumnValues $worksheetId 2 $shootList 2
+Excel SetColumnValues $worksheetId 2 $trialList 2
 Excel SetColumnValues $worksheetId 3 $hitList   2
 
 # Fit the column width automatically.

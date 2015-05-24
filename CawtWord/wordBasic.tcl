@@ -6,6 +6,7 @@ namespace eval Word {
     namespace ensemble create
 
     namespace export AddBookmark
+    namespace export AddContentControl
     namespace export AddDocument
     namespace export AddPageBreak
     namespace export AddParagraph
@@ -485,6 +486,21 @@ namespace eval Word {
         $rangeId Start $startIndex
         $rangeId End $endIndex
         return $rangeId
+    }
+
+    proc AddContentControl { rangeId type } {
+        # Add a content control to a text range.
+        #
+        # rangeId - Identifier of the text range.
+        # type    - Value of enumeration type WdContentControlType (see wordConst.tcl).
+        #           Often used values: wdContentControlCheckBox, wdContentControlText
+        #
+        # Return the content control identifier.
+        #
+        # See also:
+
+        set controlId [$rangeId -with { ContentControls } Add [Word GetEnum $type]]
+        return $controlId
     }
 
     proc SetRangeStyle { rangeId style } {

@@ -1,0 +1,224 @@
+<html>
+<head>
+  <title>
+    Release history of CAWT
+  </title>
+</head>
+
+<body>
+
+<h1>Release history of CAWT</h1>
+<table border="1" cellspacing="2">
+  <tr bgcolor="#CCCCCC">
+    <th>Date</th>
+    <th>Tool</th>
+    <th>Version</th>
+    <th>Release information</th>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2015/03/31</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">2.0.0</td>
+    <td>Ensembled all CAWT namespaces.
+      <ul>
+        <li>Ensembled all CAWT namespaces, ex. write "Excel Open" instead of "::Excel::Open".</li>
+        <li>All Office enumerations are stored in module specific hash tables, ex.  write "xlThick" instead of "$::Excel::xlThick".</li>
+        <li>Updated and extended user manual (automatic insertion of CAWT procedure reference list).</li>
+        <li>Added new application EnumExplorer.tcl to display Office enumerations.</li>
+        <li>New module excelHtml.tcl for HTML export of Excel tables.</li>
+        <li>Updated Twapi to version 4.1.27.</li>
+        <li>Updated Img (32 and 64 bit) to version 1.4.3.</li>
+        <li>Updated Tablelist to version 5.13.</li>
+        <li>CawtExcel: New implementation of InsertImage based on Shapes.AddPicture instead of Pictures.Insert.</li>
+        <li>CawtWord: Extended procedure UpdateFields to additionally update TablesOfContents and TablesOfFigures of a document.</li>
+        <li>New procedures in CawtCore:
+            GetApplicationVersion, IsApplicationId,
+            PushComObjects, PopComObjects,
+            PrintNumComObjects, CheckComObjects, 
+            GetComObjects, GetNumComObjects,
+            Replaced procedure IsValidId with IsComObject</li>
+        <li>New procedures in CawtExcel:
+        GetRangeAsIndex, GetRangeAsString, GetRangeTextColor.</li>
+        <li>New procedures in CawtWord:
+            ScaleImage, SetInternalHyperlink, InsertFile, DiffWordFile</li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2014/12/14</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.2.0</td>
+    <td>New CawtWord procedures.
+      <ul>
+        <li>Compatibility issue: Incompatible changes in module CawtWord.
+            Removed parameter docId from all procedures, which had both docId and rangeId parameters:
+            SetRangeStartIndex, SetRangeEndIndex, ExtendRange, AddText, SetHyperlink, AddTable.</li>
+        <li>CawtExcel: Added optional startRow parameter to TablelistToWorksheet.</li>
+        <li>Extended test suite for changed and new procedures.</li>
+        <li>New procedures in CawtWord:
+            GetDocumentId, SetRangeFontUnderline, CreateRangeAfter,
+            InsertCaption, ConfigureCaption,
+            AddBookmark, GetBookmarkName, SetLinkToBookmark,
+            GetListGalleryId, GetListTemplateId, InsertList</li>
+      </ul>
+    </td>
+  </tr>
+  
+  <tr>
+    <td class="nowrap">2014/08/30</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.1.0</td>
+    <td>New CawtOutlook package.
+      <ul>
+        <li>Compatibility issue: Incompatible changes in module CawtWord.
+          Unified signatures of AddText, AppendText and AddParagraph, AppendParagraph.
+          Changed handling of text ranges.</li>
+        <li>New module CawtOutlook to control Microsoft Outlook applications.
+          Currently only functionality for creating and sending mails is implemented.</li>
+        <li>Extended test suite for changed and new procedures.</li>
+        <li>New procedures in CawtExcel:
+          FreezePanes, ScreenUpdate</li>
+        <li>New procedures in CawtWord:
+          SelectRange, GetRangeInformation, CreateRange, SetRangeFontName, SetRangeStyle, SetRangeFontSize,
+          InsertText, AddText, GetNumCharacters,
+          AddPageBreak, ToggleSpellCheck</li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2014/06/14</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.0.7</td>
+    <td>New Excel and PowerPoint utility procedures.
+      <ul>
+        <li>Updated Twapi version to official 4.0.61.</li>
+        <li>CawtExcel: Added support for reading and writing CSV files with multi-line cells.</li>
+        <li>CawtPpt: Extended CopySlide to copy slides between presentations.
+                     Extended AddPres with optional parameter for template file.
+                     Extended AddSlide to supply a custom layout object as type parameter.</li>
+        <li>Extended test suite for changed and new procedures.</li>
+        <li>New procedures in CawtCore: ColorToRgb</li>
+        <li>New procedures in CawtExcel: UseImgTransparency, WorksheetToImg, ImgToWorksheet,
+            SetRowHeight, SetRowsHeight, GetRangeFillColor, SetHyperlinkToFile, SetHyperlinkToCell, SetLinkToCell, SetRangeTooltip</li>
+        <li>New procedures in CawtPpt: MoveSlide, 
+            GetTemplateExtString, GetNumCustomLayouts, GetCustomLayoutName, GetCustomLayoutId</li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2014/04/21</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.0.6</td>
+    <td>New Excel utility procedures.
+      <ul>
+        <li>Improved and extended test suite.</li>
+        <li>Updated Twapi version to 4.0b53 to fix a bug with sparse matrices as well as core dumps with Word 2013.</li>
+        <li>Improved and corrected handling of sparse matrices in Excel.</li>
+        <li>Bug fix in excelCsv module.</li>
+        <li>Possible incompatibility in GetRowValues and GetColumnValues: Changed startRow resp. startCol to default value 0 instead of 1.</li>
+        <li>New procedures in CawtExcel: GetWorksheetAsMatrix, GetMaxRows, GetMaxColumns, GetFirstUsedRow, GetLastUsedRow, GetFirstUsedColumn, GetLastUsedColumn.</li>
+        <li>Updated user and reference manual.</li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2014/01/26</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.0.5</td>
+    <td>New Excel utility procedures.
+      <ul>
+        <li>New procedures in CawtExcel: SetCommentDisplayMode, SetRangeComment,
+        SetRangeMergeCells, SetRangeFontSubscript, SetRangeFontSuperscript, GetRangeCharacters.</li>
+        <li>Updated user and reference manual.</li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2013/11/23</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.0.4</td>
+    <td>Support for Office 2013 and 64-bit Office versions.
+      <ul>
+        <li>Added support for Office 2013.</li>
+        <li>Added support for 64-bit Office.</li>
+        <li>Improved test suite.</li>
+        <li>Updated Img extension to version 1.4.2 (32-bit and 64-bit).</li>
+        <li>Updated Tablelist to version 5.10.</li>
+        <li>New procedures in CawtWord: SaveAsPdf, UpdateFields, CropImage.</li>
+        <li>New procedures in CawtExcel: CopyWorksheetBefore, CopyWorksheetAfter,
+            GetWorksheetIndexByName, IsWorksheetProtected, IsWorksheetVisible,
+            SetWorksheetTabColor, UnhideWorksheet, DiffExcelFiles.</li>
+        <li>Updated user and reference manual.</li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2013/08/30</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.0.3</td>
+    <td>New Excel utility procedures.
+      <ul>
+        <li>New CawtExcel procedures: ExcelFileToMediaWikiFile, ExcelFileToWikitFile,
+            ExcelFileToRawImageFile, RawImageFileToExcelFile,
+            ExcelFileToMatlabFile, MatlabFileToExcelFile,
+            GetTablelistValues, SetTablelistValues.</li>
+        <li>Updated user and reference manual.</li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2013/07/28</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.0.2</td>
+    <td>New module CawtOcr.
+      <ul>
+        <li>Added new module CawtOcr for automation of Office Document Imaging.</li>
+        <li>Update of Twapi version to 4.0b22.</li>
+        <li>Update of Img version to 1.4.1.</li>
+        <li>New procedures: Excel::SetRangeBorder, Cawt::Clipboard2Img, Cawt::Img2Clipboard.</li>
+        <li>Updated user and reference manual.</li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2013/04/28</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.0.1</td>
+    <td>Added CAWT starkits.
+      <ul>
+        <li>Update of Twapi version to 4.0a16 (binary starkit compatible version).</li>
+        <li>Added support to create a CAWT Starkit.</li>
+        <li>Extended Excel chart generation.</li>
+        <li>Updated user and reference manual.</li>
+      </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="nowrap">2012/12/23</td>
+    <td class="nowrap">CAWT</td>
+    <td class="nowrap">1.0.0</td>
+    <td>Extended functionality and renaming from TcomOffice to CAWT.
+      <ul>
+        <li>Replaced Tcom with Twapi for COM access.</li>
+        <li>Added support for PowerPoint, Internet Explorer, Google Earth and Matlab.</li>
+        <li>Added user and reference manual.</li>
+        <li>Unification of procedure names.</li>
+        <li>Supports Microsoft Office versions 2003, 2007, 2010.</li>
+      </ul>
+    </td>
+  </tr>
+
+</table>
+
+</body>
+</html>

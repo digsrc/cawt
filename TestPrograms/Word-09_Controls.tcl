@@ -18,13 +18,27 @@ file delete -force $wordFile
 # Create a new document.
 set docId [Word AddDocument $appId]
 
-set range [Word AppendText $docId "This is a check box (wdContentControlCheckBox): "]
-Word AddContentControl [Word GetEndRange $docId] wdContentControlCheckBox
-Word AppendParagraph $docId
+set tableId [Word AddTable [Word GetEndRange $docId] 10 2]
+Word SetTableBorderLineStyle $tableId
+Word SetHeaderRow $tableId [list "Content Control Type" "Example"]
+set row 1
 
-set range [Word AppendText $docId "This is a text field (wdContentControlText): "]
-Word AddContentControl [Word GetEndRange $docId] wdContentControlText
-Word AppendParagraph $docId
+incr row
+Word SetCellValue $tableId $row 1 "wdContentControlCheckBox"
+set cellId [Word GetCellRange $tableId $row 2]
+Word AddContentControl $cellId wdContentControlCheckBox "CheckBox"
+
+incr row
+Word SetCellValue $tableId $row 1 "wdContentControlText"
+set cellId [Word GetCellRange $tableId $row 2]
+set controlId [Word AddContentControl $cellId wdContentControlText "Text"]
+Word SetContentControlText $controlId "What's your favorite language ?"
+
+incr row
+Word SetCellValue $tableId $row 1 "wdContentControlDropdownList"
+set cellId [Word GetCellRange $tableId $row 2]
+set controlId [Word AddContentControl $cellId wdContentControlDropdownList "Dropdown"]
+Word SetContentControlDropdown $controlId "Choose favorite language" [list Tcl Yes Python No]
 
 # Save document as Word file.
 puts "Saving as Word file: $wordFile"

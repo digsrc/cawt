@@ -70,6 +70,8 @@ namespace eval Word {
     namespace export SetColumnWidth
     namespace export SetColumnsWidth
     namespace export SetCompatibilityMode
+    namespace export SetContentControlDropdown
+    namespace export SetContentControlText
     namespace export SetHyperlink
     namespace export SetInternalHyperlink
     namespace export SetLinkToBookmark
@@ -488,19 +490,41 @@ namespace eval Word {
         return $rangeId
     }
 
-    proc AddContentControl { rangeId type } {
+    proc AddContentControl { rangeId type { title "" } } {
         # Add a content control to a text range.
         #
         # rangeId - Identifier of the text range.
         # type    - Value of enumeration type WdContentControlType (see wordConst.tcl).
         #           Often used values: wdContentControlCheckBox, wdContentControlText
+        # title   - Title string for the control.
         #
         # Return the content control identifier.
         #
         # See also:
 
         set controlId [$rangeId -with { ContentControls } Add [Word GetEnum $type]]
+        if { $title ne "" } {
+            $controlId Title $title
+        }
         return $controlId
+    }
+
+    # TODO Selection.ParentContentControl.LockContents = True
+
+    proc SetContentControlText { controlId placeholderText } {
+        if { $placeholderText ne "" } {
+            $controlId SetPlaceholderText NULL NULL $placeholderText
+        }
+    }
+
+    proc SetContentControlDropdown { controlId placeholderText keyValueList } {
+        if { $placeholderText ne "" } {
+            $controlId SetPlaceholderText NULL NULL $placeholderText
+        }
+        $controlId -with { DropdownListEntries } Clear
+        foreach { key val } $keyValueList {
+            $controlId -with { DropdownListEntries } Add $key $val
+        }
     }
 
     proc SetRangeStyle { rangeId style } {

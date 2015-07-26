@@ -99,6 +99,7 @@ namespace eval Ppt {
 
         Ppt ExportSlides $actPres $outputDir $outputFileFmt $startIndex $endIndex $imgType $width $height
         Ppt Close $presId
+        Ppt Quit  $appId
 
         Cawt Destroy $actWin
         Cawt Destroy $actPres

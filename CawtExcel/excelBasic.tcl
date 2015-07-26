@@ -28,6 +28,7 @@ namespace eval Excel {
     namespace export GetFirstUsedColumn
     namespace export GetFirstUsedRow
     namespace export GetFloatSeparator
+    namespace export GetHiddenColumns
     namespace export GetLangNumberFormat
     namespace export GetLastUsedColumn
     namespace export GetLastUsedRow
@@ -61,6 +62,7 @@ namespace eval Excel {
     namespace export GetWorksheetIdByName
     namespace export GetWorksheetIndexByName
     namespace export GetWorksheetName
+    namespace export HideColumn
     namespace export InsertImage
     namespace export IsWorkbookProtected
     namespace export IsWorksheetProtected
@@ -2323,6 +2325,48 @@ namespace eval Excel {
         for { set c $startCol } { $c <= $endCol } { incr c } {
             Excel SetColumnWidth $worksheetId $c $width
         }
+    }
+
+    proc HideColumn { worksheetId col { hide true } } {
+        # Hide or unhide a column.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # col         - Column number. Column numbering starts with 1.
+        # hide        - If set to true, the specified column is hidden, otherwise it is
+        #               shown.
+        #
+        # No return value.
+        #
+        # See also: GetHiddenColumns SetColumnWidth ColumnCharToInt
+
+        set cell [SelectCellByIndex $worksheetId 1 $col]
+        $cell -with { EntireColumn } Hidden [Cawt TclBool $hide]
+        Cawt Destroy $cell
+    }
+
+    proc GetHiddenColumns { worksheetId } {
+        # Return the hidden columns of a worksheet.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # hide        - If set to true, the specified column is hidden, otherwise it is
+        #               shown.
+        #
+        # Return the hidden columns as a list of column numbers.
+        # Column numbering starts with 1.
+        #
+        # See also: HideColumn ColumnCharToInt
+
+        set numUsedCols [Excel GetNumUsedColumns $worksheetId]
+        set hiddenList  [list]
+        for { set c 1 } { $c <= $numUsedCols } { incr c } {
+            set cell [SelectCellByIndex $worksheetId 1 $c]
+            set isHidden [$cell -with { EntireColumn } Hidden]
+            if { $isHidden } {
+                lappend hiddenList $c
+            }
+            Cawt Destroy $cell
+        }
+        return $hiddenList
     }
 
     proc SetColumnValues { worksheetId col valList { startRow 1 } { numVals 0 } } {

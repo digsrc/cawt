@@ -2332,8 +2332,8 @@ namespace eval Excel {
         #
         # worksheetId - Identifier of the worksheet.
         # col         - Column number. Column numbering starts with 1.
-        # hide        - If set to true, the specified column is hidden, otherwise it is
-        #               shown.
+        # hide        - If set to true, the specified column is hidden,
+        #               otherwise it is shown.
         #
         # No return value.
         #
@@ -2348,10 +2348,9 @@ namespace eval Excel {
         # Return the hidden columns of a worksheet.
         #
         # worksheetId - Identifier of the worksheet.
-        # hide        - If set to true, the specified column is hidden, otherwise it is
-        #               shown.
         #
         # Return the hidden columns as a list of column numbers.
+        # If no columns are hidden, an empty list is returned.
         # Column numbering starts with 1.
         #
         # See also: HideColumn ColumnCharToInt

@@ -86,8 +86,9 @@ namespace eval Excel {
         # RawImageFileToWorksheet WordTableToWorksheet
 
         set curRow $startRow
+        set numCols [$tableId columncount]
         if { $useHeader } {
-            set numCols [$tableId columncount]
+            set headerList [list]
             for { set col 0 } { $col < $numCols } { incr col } {
                 lappend headerList [$tableId columncget $col -title]
             }
@@ -96,6 +97,11 @@ namespace eval Excel {
         }
         set matrixList [$tableId get 0 end]
         Excel SetMatrixValues $worksheetId $matrixList $curRow 1
+        for { set col 0 } { $col < $numCols } { incr col } {
+            if { [$tableId columncget $col -hide] } {
+                Excel HideColumn $worksheetId [expr {$col + 1}]
+            }
+        }
     }
 
     proc WorksheetToTablelist { worksheetId tableId { useHeader true } } {
@@ -131,6 +137,9 @@ namespace eval Excel {
         set excelList [Excel GetMatrixValues $worksheetId $startRow 1 $numRows $numCols]
         foreach rowList $excelList {
             $tableId insert end $rowList
+        }
+        foreach col [Excel GetHiddenColumns $worksheetId] {
+            $tableId columnconfigure [expr {$col - 1}] -hide true
         }
     }
 }

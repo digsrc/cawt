@@ -24,6 +24,15 @@ extend the CAWT package.
 Release history:
 ================
 
+2.0.1   2015-XX-XX
+    CawtExcel:
+        Take hidden flag of both Excel and tablelist columns into account in
+        procedures TablelistToWorksheet and WorksheetToTablelist.
+    New procedures in CawtExcel:
+        HideColumn, GetHiddenColumns.
+    New procedures in CawtWord:
+        AddContentControl, SetContentControlDropdown, SetContentControlText.
+
 2.0.0   2015-03-31
     Ensembled all CAWT namespaces.
     All Office enumerations are stored in module specific hash tables.

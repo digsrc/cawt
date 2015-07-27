@@ -129,7 +129,7 @@ namespace eval Word {
         }
     }
 
-    proc _FindOrReplace { objId mode searchStr matchCase { replaceStr "" } { howMuch "one" } } {
+    proc _FindOrReplace { objId mode searchStr matchCase matchWildcards { replaceStr "" } { howMuch "one" } } {
         set myFind [$objId Find]
 
         # Execute([FindText], [MatchCase], [MatchWholeWord], [MatchWildcards],
@@ -140,6 +140,7 @@ namespace eval Word {
             set retVal [$myFind -callnamedargs Execute \
                                 FindText $searchStr \
                                 MatchCase [Cawt TclBool $matchCase] \
+                                MatchWildcards [Cawt TclBool $matchWildcards] \
                                 Wrap $Word::wdFindStop \
                                 Forward True]
         } else {
@@ -153,18 +154,20 @@ namespace eval Word {
                                 Replace $howMuchEnum \
                                 Wrap $Word::wdFindStop \
                                 MatchCase [Cawt TclBool $matchCase] \
+                                MatchWildcards [Cawt TclBool $matchWildcards] \
                                 Forward True]
         }
         Cawt Destroy $myFind
         return $retVal
     }
 
-    proc FindString { rangeOrDocId str { matchCase true } } {
+    proc FindString { rangeOrDocId str { matchCase true } { matchWildcards false } } {
         # Find a string in a text range or a document.
         #
-        # rangeOrDocId - Identifier of a text range or a document identifier.
-        # str          - Search string.
-        # matchCase    - Flag indicating case sensitive search.
+        # rangeOrDocId   - Identifier of a text range or a document identifier.
+        # str            - Search string.
+        # matchCase      - Flag indicating case sensitive search.
+        # matchWildcards - Flag indicating wildcard search.
         #
         # Return true, if string was found. Otherwise false.
         # If the string was found, the selection is set to the found string.
@@ -176,13 +179,13 @@ namespace eval Word {
             set stories [$rangeOrDocId StoryRanges]
             $stories -iterate story {
                 lappend storyList $story
-                set retVal [Word::_FindOrReplace $story "find" $str $matchCase]
-                incr numFound
+                set retVal [Word::_FindOrReplace $story "find" $str $matchCase $matchWildcards]
+                incr numFound $retVal
                 set nextStory [$story NextStoryRange]
                 while { [Cawt IsComObject $nextStory] } {
                     lappend storyList $nextStory
-                    set retVal [Word::_FindOrReplace $nextStory "find" $str $matchCase]
-                    incr numFound
+                    set retVal [Word::_FindOrReplace $nextStory "find" $str $matchCase $matchWildcards]
+                    incr numFound $retVal
                     set nextStory [$nextStory NextStoryRange]
                 }
             }
@@ -192,19 +195,20 @@ namespace eval Word {
             Cawt Destroy $stories
             return $numFound
         } else {
-            return [Word::_FindOrReplace $rangeOrDocId "find" $str $matchCase]
+            return [Word::_FindOrReplace $rangeOrDocId "find" $str $matchCase $matchWildcards]
         }
     }
 
     proc ReplaceString { rangeOrDocId searchStr replaceStr \
-                        { howMuch "one" } { matchCase true } } {
+                        { howMuch "one" } { matchCase true } { matchWildcards false } } {
         # Replace a string in a text range or a document. Simple case.
         #
-        # rangeOrDocId - Identifier of a text range or a document identifier.
-        # searchStr    - Search string.
-        # replaceStr   - Replacement string.
-        # howMuch      - "one" to replace first occurence only. "all" to replace all occurences.
-        # matchCase    - Flag indicating case sensitive search.
+        # rangeOrDocId   - Identifier of a text range or a document identifier.
+        # searchStr      - Search string.
+        # replaceStr     - Replacement string.
+        # howMuch        - "one" to replace first occurence only. "all" to replace all occurences.
+        # matchCase      - Flag indicating case sensitive search.
+        # matchWildcards - Flag indicating wildcard search. 
         #
         # Return true, if string could be replaced, i.e. the search string was found.
         # Otherwise false.
@@ -216,12 +220,12 @@ namespace eval Word {
             set stories [$rangeOrDocId StoryRanges]
             $stories -iterate story {
                 lappend storyList $story
-                set retVal [Word::_FindOrReplace $story "replace" $searchStr $matchCase $replaceStr $howMuch]
+                set retVal [Word::_FindOrReplace $story "replace" $searchStr $matchCase $matchWildcards $replaceStr $howMuch]
                 incr numReplaced
                 set nextStory [$story NextStoryRange]
                 while { [Cawt IsComObject $nextStory] } {
                     lappend storyList $nextStory
-                    set retVal [Word::_FindOrReplace $nextStory "replace" $searchStr $matchCase $replaceStr $howMuch]
+                    set retVal [Word::_FindOrReplace $nextStory "replace" $searchStr $matchCase $matchWildcards $replaceStr $howMuch]
                     incr numReplaced
                     set nextStory [$nextStory NextStoryRange]
                 }
@@ -232,7 +236,7 @@ namespace eval Word {
             Cawt Destroy $stories
             return $numReplaced
         } else {
-            return [Word::_FindOrReplace $rangeOrDocId "replace" $searchStr $matchCase $replaceStr $howMuch]
+            return [Word::_FindOrReplace $rangeOrDocId "replace" $searchStr $matchCase $matchWildcards $replaceStr $howMuch]
         }
     }
 

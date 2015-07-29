@@ -79,6 +79,11 @@ namespace eval Excel {
         #               false: Only transfer the tablelist data.
         # startRow    - Row number of insertion start. Row numbering starts with 1.
         #
+        # Note: The contents of hidden columns are transfered to Excel and are hidden there, too.
+        #       If the tablelist contains a column with automatic line numbering, this column is
+        #       transfered to Excel, too. If this behaviour is not wished, use the DeleteColumn
+        #       procedure to delete the corresponding column in Excel.
+        #
         # No return value.
         #
         # See also: WorksheetToTablelist SetMatrixValues
@@ -113,6 +118,9 @@ namespace eval Excel {
         #                     of the tablelist.
         #               false: Do not generate a tablelist header. All worksheet
         #                      cells are interpreted as data.
+        #
+        # Note: The contents of hidden columns are transfered from Excel to the tablelist
+        #       and are hidden there, too.
         #
         # No return value.
         #

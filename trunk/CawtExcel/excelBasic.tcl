@@ -14,6 +14,7 @@ namespace eval Excel {
     namespace export CopyWorksheet
     namespace export CopyWorksheetAfter
     namespace export CopyWorksheetBefore
+    namespace export DeleteColumn
     namespace export DeleteWorksheet
     namespace export DeleteWorksheetByIndex
     namespace export FreezePanes
@@ -2325,6 +2326,21 @@ namespace eval Excel {
         for { set c $startCol } { $c <= $endCol } { incr c } {
             Excel SetColumnWidth $worksheetId $c $width
         }
+    }
+
+    proc DeleteColumn { worksheetId col } {
+        # Delete a column.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # col         - Column number. Column numbering starts with 1.
+        #
+        # No return value.
+        #
+        # See also: DeleteWorksheet HideColumn
+
+        set cell [SelectCellByIndex $worksheetId 1 $col]
+        $cell -with { EntireColumn } Delete $::Excel::xlShiftToLeft
+        Cawt Destroy $cell
     }
 
     proc HideColumn { worksheetId col { hide true } } {

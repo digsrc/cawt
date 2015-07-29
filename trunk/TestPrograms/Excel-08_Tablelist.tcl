@@ -30,16 +30,25 @@ for { set c 1 } { $c <= $numCols } { incr c } {
     lappend headerList "Col-$c"
 }
 
-# Create frames for testing the transfer of full tablelists and for
-# tablelists with hidden columns.
+proc AddAutoNumberedColumn { tablelistId col } {
+    $tablelistId insertcolumns $col 0 "#"
+    $tablelistId columnconfigure $col -showlinenumbers true
+}
+
+# Create frames for testing the transfer of
+# - full tablelists
+# - tablelists with hidden columns
+# - tablelists with automatically numbered lines
 set fullFr .fullFr
 set hideFr .hideFr
-set frameList [list $fullFr $hideFr]
-set modeList  [list "Full" "Hidden"]
+set numFr  .numFr
+set frameList [list $fullFr $hideFr $numFr]
+set modeList  [list "Full" "Hidden" "Numbered"]
 
 ttk::labelframe $fullFr -padding 5 -text "Complete tablelists"
 ttk::labelframe $hideFr -padding 5 -text "Tablelists with hidden columns"
-pack $fullFr $hideFr -side left -fill both -expand true
+ttk::labelframe $numFr  -padding 5 -text "Tablelists with line numbers"
+pack $fullFr $hideFr $numFr -side left -fill both -expand true
 
 set width 50
 
@@ -62,9 +71,9 @@ foreach fr $frameList {
 }
 
 puts "Filling source tablelists with data"
-foreach fr $frameList {
+foreach fr $frameList mode $modeList {
     Excel SetTablelistHeader $fr.frIn.tl $headerList
-    Cawt CheckList $headerList [Excel GetTablelistHeader $fr.frIn.tl] "GetTablelistHeader"
+    Cawt CheckList $headerList [Excel GetTablelistHeader $fr.frIn.tl] "GetTablelistHeader $mode"
     set matrixList [list]
 
     for { set row 1 } { $row <= $numRows } { incr row } {
@@ -75,13 +84,16 @@ foreach fr $frameList {
         lappend matrixList $rowList
     }
     Excel SetTablelistValues $fr.frIn.tl $matrixList
-    Cawt CheckMatrix $matrixList [Excel GetTablelistValues $fr.frIn.tl] "GetTablelistValues"
+    Cawt CheckMatrix $matrixList [Excel GetTablelistValues $fr.frIn.tl] "GetTablelistValues $mode"
     update
 }
 
+# Hide some columns.
 foreach colNum $hiddenColumns {
     $hideFr.frIn.tl columnconfigure $colNum -hide true
 }
+# Add a column with automatic line numbering.
+AddAutoNumberedColumn $numFr.frIn.tl 0
 
 # Open new instance of Excel and add a workbook.
 set appId [Excel OpenNew]
@@ -100,14 +112,22 @@ foreach fr $frameList mode $modeList {
 
     set t1 [clock clicks -milliseconds]
     Excel TablelistToWorksheet $fr.frIn.tl $worksheetId $useHeader
+    if { $mode eq "Numbered" } {
+        Excel DeleteColumn $worksheetId 1
+    }
     set t2 [clock clicks -milliseconds]
     puts "TablelistToWorksheet: [expr $t2 - $t1] ms (Mode $mode using header: $useHeader)."
 
     set t1 [clock clicks -milliseconds]
     Excel WorksheetToTablelist $worksheetId $fr.frOut1.tl $useHeader
+    if { $mode eq "Numbered" } {
+        AddAutoNumberedColumn $fr.frOut1.tl 0
+    }
     set t2 [clock clicks -milliseconds]
     puts "WorksheetToTablelist: [expr $t2 - $t1] ms (Mode $mode using header: $useHeader)."
-    Cawt CheckMatrix $matrixList [Excel GetTablelistValues $fr.frOut1.tl] "GetTablelistValues"
+    if { $mode ne "Numbered" } {
+        Cawt CheckMatrix $matrixList [Excel GetTablelistValues $fr.frOut1.tl] "GetTablelistValues $mode"
+    }
     update
 
     # Transfer tablelist without header information into Excel and vice versa.
@@ -116,14 +136,22 @@ foreach fr $frameList mode $modeList {
 
     set t1 [clock clicks -milliseconds]
     Excel TablelistToWorksheet $fr.frIn.tl $worksheetId $useHeader
+    if { $mode eq "Numbered" } {
+        Excel DeleteColumn $worksheetId 1
+    }
     set t2 [clock clicks -milliseconds]
     puts "TablelistToWorksheet: [expr $t2 - $t1] ms (Mode $mode using header: $useHeader)."
 
     set t1 [clock clicks -milliseconds]
     Excel WorksheetToTablelist $worksheetId $fr.frOut2.tl $useHeader
+    if { $mode eq "Numbered" } {
+        AddAutoNumberedColumn $fr.frOut2.tl 0
+    }
     set t2 [clock clicks -milliseconds]
     puts "WorksheetToTablelist: [expr $t2 - $t1] ms (Mode $mode using header: $useHeader)."
-    Cawt CheckMatrix $matrixList [Excel GetTablelistValues $fr.frOut2.tl] "GetTablelistValues"
+    if { $mode ne "Numbered" } {
+        Cawt CheckMatrix $matrixList [Excel GetTablelistValues $fr.frOut2.tl] "GetTablelistValues $mode"
+    }
     update
 }
 

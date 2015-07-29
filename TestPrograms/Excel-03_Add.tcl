@@ -61,6 +61,14 @@ set colList [list E-6 E-5 E-4 E-3 E-2 E-1]
 Cawt CheckList $colList $colValuesList "Values of column 7 (starting at row 2)"
 Cawt CheckNumber 6 [llength $colValuesList] "Number of retrieved column elements in $wsName"
 
+# Delete a row and a column of worksheet number 2.
+Excel DeleteRow    $worksheetIds(2) 10
+Excel DeleteColumn $worksheetIds(2)  5
+Cawt CheckNumber 19 [Excel GetNumUsedRows $worksheetIds(2)] \
+                       "Number of used rows in Sheet-2"
+Cawt CheckNumber  9 [Excel GetNumUsedColumns $worksheetIds(2)] \
+                       "Number of used columns in Sheet-2"
+
 # Test different ways to delete a worksheet.
 set num [Excel GetNumWorksheets $workbookId]
 Cawt CheckNumber 5 $num "Number of worksheets before deletion of Sheet-1"

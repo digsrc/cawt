@@ -15,6 +15,7 @@ namespace eval Excel {
     namespace export CopyWorksheetAfter
     namespace export CopyWorksheetBefore
     namespace export DeleteColumn
+    namespace export DeleteRow
     namespace export DeleteWorksheet
     namespace export DeleteWorksheetByIndex
     namespace export FreezePanes
@@ -2328,6 +2329,21 @@ namespace eval Excel {
         }
     }
 
+    proc DeleteRow { worksheetId row } {
+        # Delete a row.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # row         - Row number. Row numbering starts with 1.
+        #
+        # No return value.
+        #
+        # See also: DeleteWorksheet DeleteColumn HideColumn
+
+        set cell [SelectCellByIndex $worksheetId $row 1]
+        $cell -with { EntireRow } Delete $::Excel::xlShiftUp
+        Cawt Destroy $cell
+    }
+
     proc DeleteColumn { worksheetId col } {
         # Delete a column.
         #
@@ -2336,7 +2352,7 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: DeleteWorksheet HideColumn
+        # See also: DeleteWorksheet DeleteRow HideColumn
 
         set cell [SelectCellByIndex $worksheetId 1 $col]
         $cell -with { EntireColumn } Delete $::Excel::xlShiftToLeft

@@ -29,7 +29,7 @@ Release history:
         Take hidden flag of both Excel and tablelist columns into account in
         procedures TablelistToWorksheet and WorksheetToTablelist.
     New procedures in CawtExcel:
-        DeleteColumn, HideColumn, GetHiddenColumns.
+        DeleteColumn, DeleteRow, HideColumn, GetHiddenColumns.
     New procedures in CawtWord:
         AddContentControl, SetContentControlDropdown, SetContentControlText.
 

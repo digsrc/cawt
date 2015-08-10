@@ -109,13 +109,14 @@ namespace eval Word {
         # str - String to be trimmed.
         #
         # The string is trimmed from the left and right side.
-        # Trimmed characters are: Whitespaces, BEL (0x7) and CR (0xD).
+        # Trimmed characters are whitespaces.
+        # Additionally all control characters matched by Tcl's regsub
+        # character class [:cntrl:] are removed.
         #
         # Return the trimmed string.
 
         set str [string trim $str]
-        set str [string trim $str [format "%c" 0x7]]
-        set str [string trim $str [format "%c" 0xD]]
+        regsub -all -- {[[:cntrl:]]} $str "" str
         return $str
     }
 

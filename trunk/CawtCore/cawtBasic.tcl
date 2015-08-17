@@ -23,6 +23,7 @@ namespace eval Cawt {
     namespace export SetDotsPerInch
     namespace export TclBool
     namespace export TclInt
+    namespace export TclString
 
     variable pkgInfo
     variable dotsPerInch
@@ -77,6 +78,9 @@ namespace eval Cawt {
         set retVal [catch {package require cawtword} version]
         set pkgInfo(cawtword,avail)   [expr !$retVal]
         set pkgInfo(cawtword,version) $version
+
+        set retVal [catch {twapi::tclcast bstr "0.0"} val]
+        set pkgInfo(haveStringCast) [expr !$retVal]
     }
 
     proc HavePkg { pkgName } {
@@ -178,7 +182,7 @@ namespace eval Cawt {
         # Return 1, if val is not equal to zero or true.
         # Return 0, if val is equal to zero or false.
         #
-        # See also: TclBool
+        # See also: TclBool TclString
 
         set tmp 0
         if { $val } {
@@ -195,9 +199,27 @@ namespace eval Cawt {
         # Return true, if val is not equal to zero or true.
         # Return false, if val is equal to zero or false.
         #
-        # See also: TclInt
+        # See also: TclInt TclString
 
         return [twapi::tclcast boolean $val]
+    }
+
+    proc TclString { val } {
+        # Cast a value to a string.
+        #
+        # val - The value to be casted.
+        #
+        # Return casted string in a format usable for the COM interface.
+        #
+        # See also: TclInt TclBool
+
+        variable pkgInfo
+
+        if { $pkgInfo(haveStringCast) } {
+            return [twapi::tclcast bstr $val]
+        } else {
+            return [twapi::tclcast string $val]
+        }
     }
 
     proc GetOrCreateApp { appName useExistingFirst } {

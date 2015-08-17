@@ -901,17 +901,18 @@ namespace eval Excel {
         # See also: SelectRangeByIndex SelectRangeByString
 
         if { $fmt eq "text" } {
-            $rangeId NumberFormat "@"
+            set numberFormat "@"
         } elseif { $fmt eq "int" } {
-            $rangeId NumberFormat "0"
+            set numberFormat "0"
         } elseif { $fmt eq "real" } {
             if { $subFmt eq "" } {
                 set subFmt [Excel GetLangNumberFormat "0" "00"]
             }
-            $rangeId NumberFormat $subFmt
+            set numberFormat $subFmt
         } else {
             error "Invalid cell format \"$fmt\" given"
         }
+        $rangeId NumberFormat [Cawt TclString $numberFormat]
     }
 
     proc SetCommentDisplayMode { appId { showComment false } { showIndicator true } } {
@@ -2127,7 +2128,7 @@ namespace eval Excel {
         set cellId [Excel GetCellIdByIndex $worksheetId $row $col]
         SetRangeFormat $cellId $fmt $subFmt
         if { $fmt eq "text" } {
-            $cellsId Item [expr {int($row)}] [expr {int($col)}] [format "%s" $val]
+            $cellsId Item [expr {int($row)}] [expr {int($col)}] [Cawt TclString $val]
         } elseif { $fmt eq "int" } {
             $cellsId Item [expr {int($row)}] [expr {int($col)}] [expr {int($val)}]
         } elseif { $fmt eq "real" } {

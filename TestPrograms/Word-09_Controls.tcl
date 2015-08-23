@@ -26,19 +26,23 @@ set row 1
 incr row
 Word SetCellValue $tableId $row 1 "wdContentControlCheckBox"
 set cellId [Word GetCellRange $tableId $row 2]
-Word AddContentControl $cellId wdContentControlCheckBox "CheckBox"
+# Use in a catch statement, as content controls are available only in Word 2007 an up.
+set catchVal [catch { Word AddContentControl $cellId wdContentControlCheckBox "CheckBox" } retVal]
+if { $catchVal } {
+    puts "Error: $retVal"
+} else {
+    incr row
+    Word SetCellValue $tableId $row 1 "wdContentControlText"
+    set cellId [Word GetCellRange $tableId $row 2]
+    set controlId [Word AddContentControl $cellId wdContentControlText "Text"]
+    Word SetContentControlText $controlId "What's your favorite language ?"
 
-incr row
-Word SetCellValue $tableId $row 1 "wdContentControlText"
-set cellId [Word GetCellRange $tableId $row 2]
-set controlId [Word AddContentControl $cellId wdContentControlText "Text"]
-Word SetContentControlText $controlId "What's your favorite language ?"
-
-incr row
-Word SetCellValue $tableId $row 1 "wdContentControlDropdownList"
-set cellId [Word GetCellRange $tableId $row 2]
-set controlId [Word AddContentControl $cellId wdContentControlDropdownList "Dropdown"]
-Word SetContentControlDropdown $controlId "Choose favorite language" [list Tcl Yes Python No]
+    incr row
+    Word SetCellValue $tableId $row 1 "wdContentControlDropdownList"
+    set cellId [Word GetCellRange $tableId $row 2]
+    set controlId [Word AddContentControl $cellId wdContentControlDropdownList "Dropdown"]
+    Word SetContentControlDropdown $controlId "Choose favorite language" [list Tcl Yes Python No]
+}
 
 # Save document as Word file.
 puts "Saving as Word file: $wordFile"

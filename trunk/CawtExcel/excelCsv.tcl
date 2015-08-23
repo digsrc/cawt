@@ -52,15 +52,8 @@ namespace eval Excel {
         set combine 0
 
         set wordList [split $rowStr $sSepChar]
-        set floatSep [Excel GetFloatSeparator]
 
         foreach word $wordList {
-            # TODO: Check conversion between different floating-point separators.
-            if { 0 && $floatSep ne "." && \
-                ([string is double $word] || [string is integer $word]) } {
-                    puts "string map"
-                set word [string map [list $floatSep "."] $word]
-            }
             set len [string length $word]
             if { [string index $word end] eq "\"" } {
                 set endQuote 1
@@ -127,18 +120,12 @@ namespace eval Excel {
         set rowStr ""
         set len1 [expr [llength $rowList] -1]
         set curVal 0
-        set floatSep [Excel GetFloatSeparator]
         foreach val $rowList {
             set tmp [string map {\n\r \ } $val]
             if { [string first $sSepChar $tmp] >= 0 || \
                  [string first "\"" $tmp] >= 0 } {
                 regsub -all {"} $tmp {""} tmp
                 set tmp [format "\"%s\"" $tmp]
-            }
-            if { 0 && $floatSep ne "." && \
-                ([string is double $tmp] || [string is integer $tmp]) } {
-                    puts "string map"
-                set tmp [string map [list "." $floatSep] $tmp]
             }
             if { $curVal < $len1 } {
                 append rowStr $tmp $sSepChar

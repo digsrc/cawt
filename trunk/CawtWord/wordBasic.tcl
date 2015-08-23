@@ -116,6 +116,10 @@ namespace eval Word {
         # Return the trimmed string.
 
         set str [string trim $str]
+        # Tcl 8.6.0 does not remove the following characters in the regsub command.
+        # So we remove them by trimming.
+        set str [string trim $str [format "%c" 0x7]]
+        set str [string trim $str [format "%c" 0xD]]
         regsub -all -- {[[:cntrl:]]} $str "" str
         return $str
     }
@@ -506,6 +510,12 @@ namespace eval Word {
         # Return the content control identifier.
         #
         # See also:
+
+        variable wordVersion
+
+        if { $wordVersion < 12.0 } {
+            error "Content controls available only in Word 2007 or newer. Running [Word GetVersion $rangeId true]."
+        }
 
         set controlId [$rangeId -with { ContentControls } Add [Word GetEnum $type]]
         if { $title ne "" } {

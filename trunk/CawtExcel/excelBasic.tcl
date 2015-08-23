@@ -26,6 +26,7 @@ namespace eval Excel {
     namespace export GetCellsId
     namespace export GetColumnRange
     namespace export GetColumnValues
+    namespace export GetDecimalSeparator
     namespace export GetExtString
     namespace export GetFirstUsedColumn
     namespace export GetFirstUsedRow
@@ -37,6 +38,7 @@ namespace eval Excel {
     namespace export GetMatrixValues
     namespace export GetMaxColumns
     namespace export GetMaxRows
+    namespace export GetNumberFormat
     namespace export GetNumColumns
     namespace export GetNumRows
     namespace export GetNumUsedColumns
@@ -57,6 +59,7 @@ namespace eval Excel {
     namespace export GetRangeTextColor
     namespace export GetRangeVerticalAlignment
     namespace export GetRowValues
+    namespace export GetThousandsSeparator
     namespace export GetVersion
     namespace export GetWorkbookName
     namespace export GetWorksheetAsMatrix
@@ -149,32 +152,87 @@ namespace eval Excel {
     }
 
     proc GetFloatSeparator {} {
+        # # Obsolete: Replaced with GetDecimalSeparator in version 2.1.0
+        #
         # Return the decimal separator used by Excel.
         #
         # Only valid, after a call of Open or OpenNew.
+        # Note, that this procedure has been superseeded with GetDecimalSeparator in version 2.1.0.
+        # Only use it, if using an Excel version older than 2007.
         #
-        # See also: GetVersion
+        # See also: GetVersion GetDecimalSeparator GetThousandsSeparator
 
         variable decimalSeparator
 
         return $decimalSeparator
     }
 
-    proc GetLangNumberFormat { pre post } {
+    proc GetDecimalSeparator { appId } {
+        # Return the decimal separator used by Excel.
+        #
+        # appId - Identifier of the Excel instance.
+        #
+        # See also: GetVersion GetThousandsSeparator
+
+        return [$appId DecimalSeparator]
+    }
+
+    proc GetThousandsSeparator { appId } {
+        # Return the thousands separator used by Excel.
+        #
+        # appId - Identifier of the Excel instance.
+        #
+        # See also: GetVersion GetDecimalSeparator
+
+        return [$appId ThousandsSeparator]
+    }
+
+    proc GetLangNumberFormat { pre post { floatSep "" } } {
+        # Obsolete: Replaced with GetNumberFormat in version 2.1.0
+        #
         # Return an Excel number format string.
         #
         # pre  - Number of digits before the decimal point.
         # post - Number of digits after the decimal point.
+        # floatSep - Specify the floating point separator character.
         #
         # The number of digits is specified as a string containing as
         # many zeros as wanted digits.
+        # If no floating point separator is specified or the empty string, the
+        # floating point separator of Excel is used.
         #
         # Example: [GetLangNumberFormat "0" "0000"] will return the Excel format string to show
         #          floating point values with 4 digits after the decimal point.
         #
         # See also: SetRangeFormat
 
-        set floatSep [Excel GetFloatSeparator]
+        if { $floatSep eq "" } {
+            set floatSep [Excel GetFloatSeparator]
+        }
+        return [format "%s%s%s" $pre $floatSep $post]
+    }
+
+    proc GetNumberFormat { appId pre post { floatSep "" } } {
+        # Return an Excel number format string.
+        #
+        # appId    - Identifier of the Excel instance.
+        # pre      - Number of digits before the decimal point.
+        # post     - Number of digits after the decimal point.
+        # floatSep - Specify the floating point separator character.
+        #
+        # The number of digits is specified as a string containing as
+        # many zeros as wanted digits.
+        # If no floating point separator is specified or the empty string, the
+        # floating point separator of Excel is used.
+        #
+        # Example: [GetNumberFormat "0" "0000"] will return the Excel format string to show
+        #          floating point values with 4 digits after the decimal point.
+        #
+        # See also: SetRangeFormat
+
+        if { $floatSep eq "" } {
+            set floatSep [Excel GetDecimalSeparator $appId]
+        }
         return [format "%s%s%s" $pre $floatSep $post]
     }
 
@@ -893,7 +951,7 @@ namespace eval Excel {
         # fmt     - Format of the cell range.  Possible values: "text", "int", "real".
         # subFmt  - Sub-format of the cell range. Only valid, if fmt is "real". Then it
         #           specifies the number of digits before and after the decimal point.
-        #           Use the GetLangNumberFormat procedure for specifying the sub-format.
+        #           Use the GetNumberFormat procedure for specifying the sub-format.
         #           If subFmt is the empty string 2 digits after the decimal point are used.
         #
         # No return value.
@@ -906,7 +964,8 @@ namespace eval Excel {
             set numberFormat "0"
         } elseif { $fmt eq "real" } {
             if { $subFmt eq "" } {
-                set subFmt [Excel GetLangNumberFormat "0" "00"]
+                set appId [Cawt GetApplicationId $rangeId]
+                set subFmt [Excel GetNumberFormat $appId "0" "00"]
             }
             set numberFormat $subFmt
         } else {
@@ -1032,7 +1091,7 @@ namespace eval Excel {
         # Version number is in a format, so that it can be evaluated as a
         # floating point number.
         #
-        # See also: GetFloatSeparator GetExtString
+        # See also: GetDecimalSeparator GetExtString
 
         array set map {
             "8.0"  "Excel 97"

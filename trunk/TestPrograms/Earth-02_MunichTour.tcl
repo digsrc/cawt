@@ -59,9 +59,9 @@ set dAlt  [expr ($loc(1,alt) - $loc(0,alt)) / $delta]
 set dEle  [expr ($loc(1,ele) - $loc(0,ele)) / $delta]
 set dAzi  [expr ($loc(1,azi) - $loc(0,azi)) / $delta]
 
-set fmt1 [Excel GetLangNumberFormat "0" "0"]
-set fmt2 [Excel GetLangNumberFormat "0" "00"]
-set fmt4 [Excel GetLangNumberFormat "0" "0000"]
+set fmt1 [Excel GetNumberFormat $appId "0" "0"]
+set fmt2 [Excel GetNumberFormat $appId "0" "00"]
+set fmt4 [Excel GetNumberFormat $appId "0" "0000"]
 
 for { set row 2 } { $row <= [expr $numRows +1] } { incr row } {
     Excel SetCellValue $worksheetId $row 1 [expr $ind * $dLat + $loc(0,lat)] "real" $fmt4

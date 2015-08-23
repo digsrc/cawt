@@ -49,7 +49,8 @@ puts [format "%-30s: %s" "Version (from Workbook)"    [Excel GetVersion $workboo
 puts [format "%-30s: %s" "Version (from Worksheet)"   [Excel GetVersion $worksheetId]]
 puts [format "%-30s: %s" "Version (from Cells)"       [Excel GetVersion $cellsId]]
 
-puts [format "%-30s: %s" "Floating point separator" [Excel GetFloatSeparator]]
+puts [format "%-30s: %s" "Floating point separator" [Excel GetDecimalSeparator   $appId]]
+puts [format "%-30s: %s" "Thousands separator"      [Excel GetThousandsSeparator $appId]]
 
 Cawt CheckNumber  1 [Excel ColumnCharToInt A] "ColumnCharToInt A"
 Cawt CheckNumber 13 [Excel ColumnCharToInt M] "ColumnCharToInt M"

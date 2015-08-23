@@ -1,25 +1,16 @@
 # Test CawtExcel procedures related to specifying number formats.
+# If called without options, the system separators are used.
+# If "--English" is specified, a dot is used as floating point separator and a comma as thousands separator.
+# If "--German"  is specified, a comma is used as floating point separator and a dot as thousands separator.
+#
+# Note, that if using one of the 2 options, the standard settings regarding separators are changed globally
+# for the installed Excel application.
 #
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
 source "SetTestPathes.tcl"
 package require cawt
-
-# Open Excel, show the application window and create a workbook.
-set appId [Excel Open true]
-set workbookId [Excel AddWorkbook $appId]
-
-# Delete Excel file from previous test run.
-file mkdir testOut
-set xlsFile [file join [pwd] "testOut" "Excel-24_Format"]
-append xlsFile [Excel GetExtString $appId]
-file delete -force $xlsFile
-
-set worksheetId [Excel GetWorksheetIdByIndex $workbookId 1]
-Excel SetWorksheetName $worksheetId "NumberFormats"
-
-Excel SetHeaderRow $worksheetId [list "Value as text" "Number format" "Display"]
 
 # Insert a numeric value into a worksheet.
 # Column 1 holds the value as a textual representation.
@@ -32,21 +23,55 @@ proc InsertValue { worksheetId row value numberFormat } {
     Excel SetCellValue $worksheetId $row 3 $value "real" $numberFormat
 }
 
-puts "Using system separator   : [$appId UseSystemSeparators]"
-puts "Using decimal separator  : [$appId DecimalSeparator]"
-puts "Using thousands separator: [$appId ThousandsSeparator]"
+set appId [Excel Open true]
+set workbookId [Excel AddWorkbook $appId]
+
+if { [lsearch -nocase $argv "--German"] >= 0 } {
+    $appId UseSystemSeparators false
+    set floatSep     ","
+    set thousandsSep "."
+    $appId DecimalSeparator   $floatSep
+    $appId ThousandsSeparator $thousandsSep
+    set style        "GermanStyle"
+} elseif { [lsearch -nocase $argv "--English"] >= 0 } {
+    $appId UseSystemSeparators false
+    set floatSep     "." 
+    set thousandsSep ","
+    $appId DecimalSeparator   $floatSep
+    $appId ThousandsSeparator $thousandsSep
+    set style        "EnglishStyle"
+} else {
+    set floatSep     [Excel GetDecimalSeparator $appId]
+    set thousandsSep [Excel GetThousandsSeparator $appId]
+    set style        "NativeStyle"
+}
+
+puts "Using system separators  : [$appId UseSystemSeparators]"
+puts "Using decimal   separator: [Excel GetDecimalSeparator $appId]"
+puts "Using thousands separator: [Excel GetThousandsSeparator $appId]"
+
+# Delete Excel file from previous test run.
+file mkdir testOut
+set xlsFile [file join [pwd] "testOut" "Excel-24_Format_$style"]
+append xlsFile [Excel GetExtString $appId]
+file delete -force $xlsFile
+
+set worksheetId [Excel GetWorksheetIdByIndex $workbookId 1]
+Excel SetWorksheetName $worksheetId $style
+
+Excel SetHeaderRow $worksheetId [list "Value as text" "Number format" "Display"]
 
 set row 2
 
-set numberFormat [Excel GetLangNumberFormat "0" "0000"]
-InsertValue $worksheetId $row "1.0"     $numberFormat  ; incr row
-InsertValue $worksheetId $row "0.54321" $numberFormat  ; incr row
-InsertValue $worksheetId $row "12345.5" $numberFormat  ; incr row
+set numberFormat [Excel GetNumberFormat $appId "0" "0000" $floatSep]
+InsertValue $worksheetId $row "0.0"     $numberFormat  ; incr row
+InsertValue $worksheetId $row "0.12345" $numberFormat  ; incr row
+InsertValue $worksheetId $row "12345.6" $numberFormat  ; incr row
 
-set numberFormat [Excel GetLangNumberFormat "0" "0"]
-InsertValue $worksheetId $row "1.0"     $numberFormat  ; incr row
-InsertValue $worksheetId $row "0.54321" $numberFormat  ; incr row
-InsertValue $worksheetId $row "12345.5" $numberFormat  ; incr row
+set numberFormat [Excel GetNumberFormat $appId "0" "0" $floatSep]
+InsertValue $worksheetId $row "0.0"     $numberFormat  ; incr row
+InsertValue $worksheetId $row "0.12345" $numberFormat  ; incr row
+InsertValue $worksheetId $row "12345.6" $numberFormat  ; incr row
 
 Excel SetColumnsWidth $worksheetId 1 3
 

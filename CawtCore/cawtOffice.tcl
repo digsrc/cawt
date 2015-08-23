@@ -10,6 +10,8 @@ namespace eval Cawt {
     namespace export GetApplicationId
     namespace export GetApplicationName
     namespace export GetApplicationVersion
+    namespace export GetDocumentProperties
+    namespace export GetDocumentProperty
     namespace export GetInstallationPath
     namespace export GetStartupPath
     namespace export GetTemplatesPath
@@ -18,6 +20,7 @@ namespace eval Cawt {
     namespace export GetUserPath
     namespace export IsApplicationId
     namespace export RgbToColor
+    namespace export SetDocumentProperty
     namespace export ShowAlerts
 
     proc RgbToColor { r g b } {
@@ -247,6 +250,112 @@ namespace eval Cawt {
             return $val
         } else {
             return "Method not available"
+        }
+    }
+
+    proc GetDocumentProperties { objId { type "" } } {
+        # Get document property names as a list.
+        #
+        # objId - The identifier of an Office object (Workbook, Document, Presentation).
+        # type  - Type of document properties ("Builtin" or "Custom").
+        #         If type is not specified or the empty string, both types
+        #         of document properties are included in the list.
+        #
+        # Return a sorted Tcl list containing the names of all properties
+        # of the specified type.
+        #
+        # See also: GetDocumentProperty SetDocumentProperty
+
+        set propsBuiltin [$objId BuiltinDocumentProperties]
+        set propsCustom  [$objId CustomDocumentProperties]
+
+        set propList [list]
+        if { $type eq "Builtin" || $type eq "" } {
+            $propsBuiltin -iterate prop {
+                lappend propList [$prop Name]
+                Cawt Destroy $prop
+            }
+        }
+        if { $type eq "Custom" || $type eq "" } {
+            $propsCustom -iterate prop {
+                lappend propList [$prop Name]
+                Cawt Destroy $prop
+            }
+        }
+        Cawt Destroy $propsBuiltin
+        Cawt Destroy $propsCustom
+        return [lsort -dictionary $propList]
+    }
+
+    proc _GetPropertyValue { propertyId } {
+        set retVal [catch {$propertyId Value} propVal]
+        if { $retVal == 0 } {
+            return $propVal
+        } else {
+            return "N/A"
+        }
+    }
+
+    proc GetDocumentProperty { objId propertyName } {
+        # Get the value of a document property.
+        #
+        # objId        - The identifier of an Office object (Workbook, Document, Presentation).
+        # propertyName - The name of the property.
+        #
+        # Return the value of specified property.
+        # If the property value is not set or an invalid property name is given,
+        # the string "N/A" is returned.
+        #
+        # See also: GetDocumentProperties SetDocumentProperty
+
+        set properties [Cawt GetDocumentProperties $objId]
+        if { [lsearch $properties $propertyName] >= 0 } {
+            set propsBuiltin [$objId BuiltinDocumentProperties]
+            set retVal [catch {$propsBuiltin -get Item $propertyName} property]
+            Cawt Destroy $propsBuiltin
+            if { $retVal != 0 } {
+                set propsCustom  [$objId CustomDocumentProperties]
+                set retVal [catch {$propsCustom -get Item $propertyName} property]
+                Cawt Destroy $propsCustom
+                if { $retVal != 0 } {
+                    set propertyValue "N/A"
+                } else {
+                    set propertyValue [_GetPropertyValue $property]
+                    Cawt Destroy $property
+                }
+            } else {
+                set propertyValue [_GetPropertyValue $property]
+                Cawt Destroy $property
+            }
+        } else {
+            error "GetDocumentProperty: \"$propertyName\" is not a valid property name."
+        }
+        return $propertyValue
+    }
+
+    proc SetDocumentProperty { objId propertyName propertyValue } {
+        # Set the value of a document property.
+        #
+        # objId         - The identifier of an Office object (Workbook, Document, Presentation).
+        # propertyName  - The name of the property to set.
+        # propertyValue - The value for the property.
+        #
+        # No return value.
+        #
+        # If the property name is a builtin property, it's value is set.
+        # Ptherwise a new custom property is generated and it's value set.
+        #
+        # See also: GetDocumentProperties GetDocumentProperty
+
+        set properties [Cawt GetDocumentProperties $objId "Builtin"]
+        if { [lsearch $properties $propertyName] >= 0 } {
+            set propsBuiltin [$objId BuiltinDocumentProperties]
+            $propsBuiltin -set Item $propertyName $propertyValue
+            Cawt Destroy $propsBuiltin
+        } else {
+            set propsCustom [$objId CustomDocumentProperties]
+            $propsCustom Add $propertyName [Cawt TclBool false] 4 $propertyValue
+            Cawt Destroy $propsCustom
         }
     }
 }

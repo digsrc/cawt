@@ -7,6 +7,9 @@ namespace eval Ppt {
 
     namespace export AddPres
     namespace export AddSlide
+    namespace export AddTextbox
+    namespace export AddTextboxText
+    namespace export SetTextboxFontSize
     namespace export Close
     namespace export CloseAll
     namespace export CopySlide
@@ -751,5 +754,57 @@ namespace eval Ppt {
             }
             error "GetCustomLayoutId: No custom layout with name $indexOrName"
         }
+    }
+
+    proc AddTextbox { slideId left top width height } {
+        # Add a text box into a slide.
+        #
+        # slideId - Identifier of the slide where the text box is inserted.
+        # left    - X position of top-left image position in points.
+        # top     - Y position of top-left image position in points.
+        # width   - Width of image in points.
+        # height  - Height of image in points.
+        #
+        # Return the identifier of the new text box.
+        #
+        # See also: AddTextboxText SetTextboxFontSize
+        #           ::Cawt::InchesToPoints ::Cawt::CentiMetersToPoints
+
+        set msoTextOrientationHorizontal 1
+        set textId [$slideId -with { Shapes } AddTextbox $msoTextOrientationHorizontal \
+                    $left $top $width $height]
+        return $textId
+    }
+
+    proc AddTextboxText { textboxId text { addNewline false } } {
+        # Add a text string to a text box.
+        #
+        # textboxId  - Identifier of the text box where the text is inserted.
+        # text       - The text to be inserted.
+        # addNewline - Add a new line after the text.
+        #
+        # No return value.
+        #
+        # See also: AddTextbox SetTextboxFontSize
+
+        if { $text ne "" } {
+            $textboxId -with { TextFrame TextRange } InsertAfter $text
+        }
+        if { $addNewline } {
+            $textboxId -with { TextFrame TextRange } InsertAfter "\r\n"
+        }
+    }
+
+    proc SetTextboxFontSize { textboxId fontSize } {
+        # Set the font size of the text in a text box.
+        #
+        # textboxId - Identifier of the text box where the text is inserted.
+        # fontSize  - Font size in points.
+        #
+        # No return value.
+        #
+        # See also: AddTextbox AddTextboxText
+
+        $textboxId -with { TextFrame TextRange Font } Size [expr int($fontSize)]
     }
 }

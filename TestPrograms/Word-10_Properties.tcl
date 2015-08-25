@@ -6,7 +6,7 @@
 source "SetTestPathes.tcl"
 package require cawt
 
-# Open Excel, show the application window and create a workbook.
+# Open Word, show the application window and create a workbook.
 set appId [Word OpenNew true]
 set docId [Word AddDocument $appId]
 

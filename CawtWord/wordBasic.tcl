@@ -110,18 +110,13 @@ namespace eval Word {
         #
         # The string is trimmed from the left and right side.
         # Trimmed characters are whitespaces.
-        # Additionally all control characters matched by Tcl's regsub
-        # character class [:cntrl:] are removed.
+        # Additionally the following control characters are converted:
+        # 0xD to \n, 0x7 to space.
         #
         # Return the trimmed string.
 
-        set str [string trim $str]
-        # Tcl 8.6.0 does not remove the following characters in the regsub command.
-        # So we remove them by trimming.
-        set str [string trim $str [format "%c" 0x7]]
-        set str [string trim $str [format "%c" 0xD]]
-        regsub -all -- {[[:cntrl:]]} $str "" str
-        return $str
+        set str [string map [list [format %c 0xD] \n  [format %c 0x7] " "] $str]
+        return [string trim $str]
     }
 
     proc _IsDocument { objId } {

@@ -12,7 +12,7 @@
 source "SetTestPathes.tcl"
 package require cawt
 
-# Insert a numeric value into a worksheet.
+# Insert and read back a numeric value into a worksheet.
 # Column 1 holds the value as a textual representation.
 # Column 2 shows the number format specified.
 # Column 3 is how Excel displays the value with the given number format.
@@ -21,6 +21,10 @@ proc InsertValue { worksheetId row value numberFormat } {
     Excel SetCellValue $worksheetId $row 1 $value
     Excel SetCellValue $worksheetId $row 2 $numberFormat
     Excel SetCellValue $worksheetId $row 3 $value "real" $numberFormat
+
+    Cawt CheckString $value        [Excel GetCellValue $worksheetId $row 1]        "Value as text"
+    Cawt CheckString $numberFormat [Excel GetCellValue $worksheetId $row 2]        "Number format"
+    Cawt CheckNumber $value        [Excel GetCellValue $worksheetId $row 3 "real"] "Display"
 }
 
 set appId [Excel Open true]

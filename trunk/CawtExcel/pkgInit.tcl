@@ -1,8 +1,8 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-proc __CawtExcelSourcePkgs { dir } {
-    package provide cawtexcel 2.0.0
+proc _InitCawtExcel { dir version } {
+    package provide cawtexcel $version
 
     source [file join $dir excelConst.tcl]
     source [file join $dir excelBasic.tcl]
@@ -16,8 +16,4 @@ proc __CawtExcelSourcePkgs { dir } {
     source [file join $dir excelHtml.tcl]
     source [file join $dir excelChart.tcl]
     source [file join $dir excelCsv.tcl]
-    rename ::__CawtExcelSourcePkgs {}
 }
-
-# All modules are exported as package cawtexcel
-package ifneeded cawtexcel 2.0.0 "[list __CawtExcelSourcePkgs $dir]"

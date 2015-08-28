@@ -6,14 +6,30 @@ if {[lsearch -exact $::auto_path $dir] == -1} {
     lappend ::auto_path $dir
 }
 
-proc __cawtSourcePkgs { dir } {
-    set subPkgs [list cawtcore cawtexcel cawtword cawtppt cawtoutlook cawtocr cawtexplorer \
-                      cawtearth cawtmatlab]
-    foreach pkg $subPkgs {
-        set retVal [catch {package require $pkg} ::__cawtPkgInfo($pkg,version)]
-        set ::__cawtPkgInfo($pkg,avail) [expr !$retVal]
+proc _SetupCawtPkgs { dir version subDirs } {
+    foreach subDir $subDirs {
+        set pkg [string tolower $subDir]
+        set subDirPath [file join $dir $subDir]
+        set initFile [file join $subDirPath "pkgInit.tcl"]
+        if { [file readable $initFile] } {
+            source $initFile
+            package ifneeded $pkg $version [list _Init$subDir $subDirPath $version]
+        }
     }
-    package provide cawt 2.0.0
 }
 
-package ifneeded cawt 2.0.0 "[list __cawtSourcePkgs $dir]"
+proc _LoadCawtPkgs { dir version subDirs } {
+    foreach subDir $subDirs {
+        set pkg [string tolower $subDir]
+        set retVal [catch { package require $pkg } ::__cawtPkgInfo($pkg,version)]
+        set ::__cawtPkgInfo($pkg,avail) [expr !$retVal]
+    }
+    package provide cawt $version
+}
+
+set _CawtSubDirs [list CawtCore CawtExcel CawtWord CawtPpt CawtOutlook \
+                       CawtOcr CawtExplorer CawtEarth CawtMatlab]
+
+_SetupCawtPkgs $dir 2.1.0 $_CawtSubDirs
+
+package ifneeded cawt 2.1.0 [list _LoadCawtPkgs $dir 2.1.0 $_CawtSubDirs]

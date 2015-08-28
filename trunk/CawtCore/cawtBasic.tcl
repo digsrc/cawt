@@ -106,7 +106,9 @@ namespace eval Cawt {
         #
         # pkgName - The name of the sub-package
         #
-        # The version is returned as a string.
+        # The version of the sub-package is returned as a string.
+        # If the package is not available (HavePkg == false), an
+        # empty string is returned.
         #
         # See also: HavePkg
 

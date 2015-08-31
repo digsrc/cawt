@@ -30,12 +30,14 @@ if { $argc > 1 } {
         set outPlatform $outOption
     }
 }
-set tclkit "tclkit-sh-$inPlatform-86.exe"
+set tclkit     "tclkit-$inPlatform-tcl.exe"
+set runtimeTcl "tclkit-$inPlatform-sh.exe"
 
 set auto_path [linsert $auto_path 0 $cawtDir [file join $cawtDir "Externals"]]
 
 set retVal [catch {package require cawt} cawtVersion]
 
+set starpackName     "Cawt-$cawtVersion-$outPlatform"
 set starkitName      "CawtKit-$cawtVersion-$outPlatform"
 set starkitVfs       [format "%s.vfs" $starkitName]
 set starkitVfsDir    [file join $starkitDir $starkitVfs]
@@ -43,20 +45,25 @@ set starkitVfsLibDir [file join $starkitVfsDir "lib"]
 
 file delete -force $starkitName.bat
 file delete -force $starkitVfsDir
+file delete -force $runtimeTcl
 
 if { $option eq "distclean" } {
     file delete -force $starkitName.kit
+    file delete -force $starpackName.exe
 }
 
 if { $optClean } {
     puts "Cleaned $starkitVfsDir"
     if { $option eq "distclean" } {
         puts "Cleaned $starkitName.kit"
+        puts "Cleaned $starpackName.exe"
     }
     exit 0
 }
 
-puts "Generating StarKit $starkitName ..."
+file copy $tclkit $runtimeTcl
+
+puts "Generating StarKit $starkitName.kit ..."
 
 file mkdir $starkitVfsDir
 file mkdir $starkitVfsLibDir
@@ -79,9 +86,26 @@ puts "    Copying external package $ImgPkg ..."
 file copy [file join $cawtDir "Externals" $ImgPkg] [file join $starkitVfsLibDir "Img"]
 
 cd $starkitDir
-file copy main.tcl $starkitVfsDir
+file copy mainStarkit.tcl [file join $starkitVfsDir "main.tcl"]
 
-puts "Wrapping with $tclkit"
+puts "    Wrapping with $tclkit ..."
 exec $tclkit sdx.kit wrap $starkitName.kit
+
+puts "Generating Starpack $starkitName.exe"
+file delete -force $starpackName.exe
+file delete -force [file join $starkitVfsDir "main.tcl"]
+
+set batchDir "${outPlatform}Batch"
+puts "    Copying Tk package $batchDir ..."
+foreach dir [glob $batchDir/*] {
+    puts "        Copying $dir ... "
+    file copy $dir [file join $starkitVfsLibDir]
+}
+
+file copy mainStarpack.tcl [file join $starkitVfsDir "main.tcl"]
+
+puts "    Using runtime $runtimeTcl"
+exec $tclkit sdx.kit wrap $starkitName.exe -runtime $runtimeTcl
+file rename $starkitName.exe $starpackName.exe
 
 puts "Done"

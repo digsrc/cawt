@@ -108,4 +108,5 @@ puts "    Using runtime $runtimeTcl"
 exec $tclkit sdx.kit wrap $starkitName.exe -runtime $runtimeTcl
 file rename $starkitName.exe $starpackName.exe
 
+file delete -force $runtimeTcl
 puts "Done"

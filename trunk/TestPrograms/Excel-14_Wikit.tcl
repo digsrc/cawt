@@ -3,7 +3,9 @@
 # Copyright: 2007-2015 Paul Obermeier (obermeier@poSoft.de)
 # Distributed under BSD license.
 
-source "SetTestPathes.tcl"
+if { [file exists "SetTestPathes.tcl"] } {
+    source "SetTestPathes.tcl"
+}
 package require cawt
 
 set outPath [file join [pwd] "testOut"]

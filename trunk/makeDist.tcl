@@ -52,8 +52,11 @@ file delete -force "testOut"
 cd $starkitDir
 foreach winPlatform { "win32" "win64" } {
     set starkitName "CawtKit-$cawtVersion-$winPlatform.kit"
-    puts "Copying starkit $starkitName to directory $distDir"
+    puts "Copying Starkit $starkitName to directory $distDir"
     file copy -force $starkitName $distDir
+    set starpackName "Cawt-$cawtVersion-$winPlatform.exe"
+    puts "Copying Starpack $starpackName to directory $distDir"
+    file copy -force $starpackName $distDir
 }
 
 puts "Generating user distribution in directory $distUserDir"
@@ -103,8 +106,10 @@ file delete -force ".svn"
 file delete -force "ToDo.txt"
 cd "Starkit"
 foreach winPlatform { "win32" "win64" } {
-    set starkitName "CawtKit-$cawtVersion-$winPlatform.kit"
+    set starkitName  "CawtKit-$cawtVersion-$winPlatform.kit"
+    set starpackName "Cawt-$cawtVersion-$winPlatform.exe"
     file delete -force $starkitName
+    file delete -force $starpackName
     file delete -force "CawtKit-$cawtVersion-$winPlatform.bat"
     file delete -force "CawtKit-$cawtVersion-$winPlatform.vfs"
 }

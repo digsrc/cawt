@@ -17,9 +17,12 @@ namespace eval Ppt {
     namespace export ExportSlide
     namespace export ExportSlides
     namespace export GetActivePres
+    namespace export GetComments
+    namespace export GetCommentKeyValue
     namespace export GetCustomLayoutId
     namespace export GetCustomLayoutName
     namespace export GetExtString
+    namespace export GetNumComments
     namespace export GetNumCustomLayouts
     namespace export GetNumSlideShows
     namespace export GetNumSlides
@@ -448,6 +451,30 @@ namespace eval Ppt {
         return $toSlideId
     }
 
+    proc GetCommentKeyValue { slideId key } {
+        # Return the value of a key stored in a comment.
+        #
+        # slideId - Identifier of the slide.
+        # key     - Key to search for.
+        #
+        # All comments of the specified slide are search for strings of the form "Key: Value".
+        # If the key is found in the comments, the corresponding value is returned.
+        # Otherwise an empty string is returned.
+        #
+        # See also: GetNumComments GetComments ExportSlides
+
+        set value ""
+        if { [Ppt GetNumComments $slideId] > 0 } {
+            foreach comment [Ppt GetComments $slideId] {
+                if { [string match "$key:*" $comment] } {
+                    set value [string trim [lindex [split $comment ":"] 1]]
+                    break
+                }
+            }
+        }
+        return $value
+    }
+
     proc ExportSlide { slideId outputFile { imgType "GIF" } { width -1 } { height -1 } } {
         # Export a slide as an image.
         #
@@ -482,7 +509,7 @@ namespace eval Ppt {
         #
         # presId        - Identifier of the presentation.
         # outputDir     - Name of the output folder (as absolute path).
-        # outputFileFmt - Name of the output file names (C printf style with one "%d" for the slide index).
+        # outputFileFmt - Name of the output file names.
         # startIndex    - Start index for slide export.
         # endIndex      - End index for slide export.
         # imgType       - Name of the image format filter. This is the name as stored in
@@ -491,6 +518,13 @@ namespace eval Ppt {
         # height        - Height of the generated images in pixels.
         #
         # If the output directory does not exist, it is created.
+        #
+        # The output file name must contain either a "%s" or a "%d" format.
+        # In the first case, it is assumed that each slide has a comment of the form
+        # "Export: Name", where "Name" is substituted for the "%s" format option.
+        # If the output file name contains a "%d" format option, the slide number
+        # is substituted instead.
+        #
         # If width and height are not specified or less than zero, the default sizes
         # of PowerPoint are used.
         #
@@ -516,7 +550,14 @@ namespace eval Ppt {
 
         for { set i $startIndex } { $i <= $endIndex } { incr i } {
             set slideId [Ppt GetSlideId $presId $i]
-            set outputFile [format [file join $outputDir $outputFileFmt] $i]
+            set outputFile [file join $outputDir $outputFileFmt]
+
+            if { [string match "*\%s*" $outputFile] } {
+                set exportFileName [Ppt GetCommentKeyValue $slideId "Export"]
+                set outputFile [format $outputFile $exportFileName]
+            } else {
+                set outputFile [format $outputFile $i]
+            }
             Ppt ExportSlide $slideId $outputFile $imgType $width $height
             Cawt Destroy $slideId
         }
@@ -806,5 +847,34 @@ namespace eval Ppt {
         # See also: AddTextbox AddTextboxText
 
         $textboxId -with { TextFrame TextRange Font } Size [expr int($fontSize)]
+    }
+
+    proc GetNumComments { slideId } {
+        # Return the number of comments of a slide.
+        #
+        # slideId - Identifier of the slide.
+        #
+        # See also: GetComments GetCommentKeyValue
+
+        return [$slideId -with { Comments } Count]
+    }
+
+    proc GetComments { slideId } {
+        # Get the comment texts of a slide as a Tcl list.
+        #
+        # slideId - Identifier of the slide.
+        # 
+        # See also: GetNumComments GetCommentKeyValue
+
+        set numComments [Ppt GetNumComments $slideId]
+        set commentList [list]
+        set commentsId [$slideId Comments]
+        for { set commentInd 1 } { $commentInd <= $numComments } { incr commentInd } {
+            set commentId [$commentsId Item $commentInd]
+            lappend commentList [$commentId Text]
+            Cawt Destroy $commentId
+        }
+        Cawt Destroy $commentsId
+        return $commentList
     }
 }

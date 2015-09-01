@@ -31,7 +31,7 @@ namespace eval Ppt {
         #
         # pptFile       - Name of the PowerPoint file (as absolute path).
         # outputDir     - Name of the output folder (as absolute path).
-        # outputFileFmt - Name of the output file names (printf style with 1 "%d" for the slide index).
+        # outputFileFmt - Name of the output file names.
         # startIndex    - Start index for slide export.
         # endIndex      - End index for slide export.
         # imgType       - Name of the image format filter. This is the name as stored in
@@ -46,6 +46,12 @@ namespace eval Ppt {
         #
         # If the output directory does not exist, it is created.
         # Caution: All existing files in the output directory are deleted before exporting.
+        #
+        # The output file name must contain either a "%s" or a "%d" format.
+        # In the first case, it is assumed that each slide has a comment of the form
+        # "Export: Name", where "Name" is substituted for the "%s" format option.
+        # If the output file name contains a "%d" format option, the slide number
+        # is substituted instead. 
         #
         # If width and height are not specified or less than zero, the default sizes
         # of PowerPoint are used.

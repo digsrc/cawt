@@ -24,14 +24,29 @@ extend the CAWT package.
 Release history:
 ================
 
-2.0.1   2015-XX-XX
+2.1.0   2015-09-01
+    Updated Twapi to version 4.2.a1, because of new Twapi functionality "tclcast bstr"
+    and bug fix to retrieve document properties.
+    Added support to generate a CAWT starpack.
     CawtExcel:
         Take hidden flag of both Excel and tablelist columns into account in
         procedures TablelistToWorksheet and WorksheetToTablelist.
+        Fixed SetCellValue and SetRangeFormat using new TclString procedure.
+    CawtPpt:
+        Extended functionality of ExportPptFile and ExportSlides to take into
+        account slide comments regarding export file names.
+    New procedures in CawtCore:
+        TclString.
     New procedures in CawtExcel:
-        DeleteColumn, DeleteRow, HideColumn, GetHiddenColumns.
+        DeleteColumn, DeleteRow, HideColumn, GetHiddenColumns,
+        GetDecimalSeparator (replacing GetFloatSeparator), GetThousandsSeparator,
+        GetNumberFormat (replacing GetLangNumberFormat).
+    New procedures in CawtPpt:
+        AddTextbox, AddTextboxText, SetTextboxFontSize,
+        GetNumComments, GetComments, GetCommentKeyValue.
     New procedures in CawtWord:
-        AddContentControl, SetContentControlDropdown, SetContentControlText.
+        AddContentControl, SetContentControlDropdown, SetContentControlText,
+        GetDocumentProperties, GetDocumentProperty, SetDocumentProperty.
 
 2.0.0   2015-03-31
     Ensembled all CAWT namespaces.

@@ -35,7 +35,7 @@ proc RunTest { testFile } {
     global opts
 
     puts "Running test $testFile ..."
-    set catchVal [catch {exec -ignorestderr $::tclsh $testFile auto 2>@1 } retVal optionsDict]
+    set catchVal [catch {exec -ignorestderr $::tclExe $testFile auto 2>@1 } retVal optionsDict]
     if { $catchVal || [string match "*Error:*" $retVal] } {
         if { $catchVal } {
             set fullErrorInfo [dict get $optionsDict -errorinfo]
@@ -102,11 +102,7 @@ foreach nsName $nsUseList {
     }
 }
 
-if { $::tcl_platform(platform) eq "windows" } {
-    set tclsh "tclsh"
-} else {
-    set tclsh "tclsh"
-}
+set tclExe [info nameofexecutable]
 
 if { $opts(RunTests) } {
     catch { file mkdir testOut }

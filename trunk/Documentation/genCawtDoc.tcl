@@ -72,7 +72,7 @@ if { $option eq "user" || $option eq "all" } {
     # Generate the figures for the user manual from the PowerPoint file.
     if { $optExportPpt } {
         puts "    Exporting figures from PowerPoint template ..."
-        Ppt ExportPptFile $pptInFile $outFigureDir "Figure-%02d.png" 1 end "PNG" -1 -1 false false
+        Ppt ExportPptFile $pptInFile $outFigureDir "Figure-%s.png" 1 end "PNG" -1 -1 false false
     }
     Cawt CheckComObjects 1 "ComObjs after ExportPptFile" $printChecks
 
@@ -189,17 +189,19 @@ if { $option eq "user" || $option eq "all" } {
     }
 
     if { $optReplaceFigures } {
-        set cropValues(Figure-01)  1.5    ; # Overview CAWT
-        set cropValues(Figure-02)  9.0    ; # Module excelCsv
-        set cropValues(Figure-03) 11.0    ; # Module excelTablelist
-        set cropValues(Figure-04)  9.0    ; # Module excelMatlabFile
-        set cropValues(Figure-05) 11.0    ; # Module excelWord
-        set cropValues(Figure-06)  9.0    ; # Module excelImgRaw
-        set cropValues(Figure-07)  9.0    ; # Module excelMediaWiki
-        set cropValues(Figure-08)  9.0    ; # Module excelWikit
-        set cropValues(Figure-09)  9.0    ; # Module excelHtml
-        set cropValues(Figure-10)  9.2    ; # Application EnumExplorer
-        set cropValues(Figure-11)  7.2    ; # Documentation generation workflow
+        # Extract the crop values form the comments of the slides.
+        set pptId [Ppt Open]
+        set presId [Ppt OpenPres $pptId $pptInFile]
+        set numSlides [Ppt GetNumSlides $presId]
+        for { set slideNum 1 } { $slideNum <= $numSlides } { incr slideNum } {
+            set slideId [Ppt GetSlideId $presId $slideNum]
+            set slideName [Ppt GetCommentKeyValue $slideId "Export"]
+            set cropValues(Figure-$slideName) [Ppt GetCommentKeyValue $slideId "Crop"]
+            Cawt Destroy $slideId
+        }
+        Ppt Quit $pptId
+        Cawt Destroy $presId
+        Cawt Destroy $pptId
 
         foreach fig [glob -directory $outFigureDir *] {
             set figImg  [file tail $fig]

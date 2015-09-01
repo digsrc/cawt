@@ -18,6 +18,6 @@ if { $argc == 0 } {
     set tclScript [file normalize [lindex $argv $i]]
     incr argc -1
     set argv [lrange $argv [expr $i+1] end]
-    set argv0 [vfs::filesystem fullynormalize $tclScript]
+    set argv0 [file dirname [vfs::filesystem fullynormalize $argv0]]
     source $tclScript
 }

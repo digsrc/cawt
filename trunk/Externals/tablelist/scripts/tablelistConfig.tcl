@@ -23,6 +23,7 @@ proc tablelist::extendConfigSpecs {} {
     lappend configSpecs(-activestyle)		frame
     lappend configSpecs(-autoscan)		1
     lappend configSpecs(-collapsecommand)	{}
+    lappend configSpecs(-colorizecommand)	{}
     lappend configSpecs(-columns)		{}
     lappend configSpecs(-columntitles)		{}
     lappend configSpecs(-customdragsource)	0
@@ -227,9 +228,9 @@ proc tablelist::extendConfigSpecs {} {
 	#
 	switch $winSys {
 	    x11 {
-		set arrowColor		{}
-		set arrowDisabledColor	{}
-		set arrowStyle		sunken10x9
+		set arrowColor		black
+		set arrowDisabledColor	#a3a3a3
+		set arrowStyle		flat7x5
 		set treeStyle		gtk
 	    }
 
@@ -266,30 +267,42 @@ proc tablelist::extendConfigSpecs {} {
 		    set arrowDisabledColor	SystemDisabledText
 
 		} elseif {$::tcl_platform(osVersion) == 6.0} {	;# Win Vista
+		    variable scaling
+		    switch $scaling {
+			100 { set arrowStyle	flat7x4 }
+			125 { set arrowStyle	flat9x5 }
+			150 { set arrowStyle	flat11x6 }
+			200 { set arrowStyle	flat15x8 }
+		    }
+
 		    switch [winfo rgb . SystemHighlight] {
 			"13107 39321 65535" {			;# Vista Aero
 			    set arrowColor	#569bc0
-			    set arrowStyle	flat7x4
 			    set treeStyle	vistaAero
 			}
 			default {				;# Win Classic
 			    set arrowColor	SystemButtonShadow
-			    set arrowStyle	flat7x4
 			    set treeStyle	vistaClassic
 			}
 		    }
 		    set arrowDisabledColor	SystemDisabledText
 
 		} else {					;# Win 7
+		    variable scaling
+		    switch $scaling {
+			100 { set arrowStyle	flat7x4 }
+			125 { set arrowStyle	flat9x5 }
+			150 { set arrowStyle	flat11x6 }
+			200 { set arrowStyle	flat15x8 }
+		    }
+
 		    switch [winfo rgb . SystemHighlight] {
 			"13107 39321 65535" {			;# Win 7 Aero
 			    set arrowColor	#569bc0
-			    set arrowStyle	flat7x4
 			    set treeStyle	win7Aero
 			}
 			default {				;# Win Classic
 			    set arrowColor	SystemButtonShadow
-			    set arrowStyle	flat7x4
 			    set treeStyle	win7Classic
 			}
 		    }
@@ -559,6 +572,7 @@ proc tablelist::doConfig {win opt val} {
 		-acceptchildcommand -
 		-acceptdropcommand -
 		-collapsecommand -
+		-colorizecommand -
 		-editendcommand -
 		-editstartcommand -
 		-expandcommand -
@@ -995,11 +1009,13 @@ proc tablelist::doConfig {win opt val} {
 			disabled {
 			    $w tag add disabled 1.0 end
 			    $w tag configure select -relief flat
+			    $w tag configure curRow -relief flat
 			    set data(isDisabled) 1
 			}
 			normal {
 			    $w tag remove disabled 1.0 end
 			    $w tag configure select -relief raised
+			    $w tag configure curRow -relief raised
 			    set data(isDisabled) 0
 			}
 		    }

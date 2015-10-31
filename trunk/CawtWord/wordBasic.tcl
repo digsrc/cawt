@@ -820,6 +820,7 @@ namespace eval Word {
             "12.0" "Word 2007"
             "14.0" "Word 2010"
             "15.0" "Word 2013"
+            "16.0" "Word 2016"
         }
         set version [Cawt GetApplicationVersion $objId]
         if { $useString } {

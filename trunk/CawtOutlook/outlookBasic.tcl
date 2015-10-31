@@ -42,6 +42,7 @@ namespace eval Outlook {
             "12.0" "Outlook 2007"
             "14.0" "Outlook 2010"
             "15.0" "Outlook 2013"
+            "16.0" "Outlook 2016"
         }
         set versionString [Cawt GetApplicationVersion $objId]
 

@@ -1101,6 +1101,7 @@ namespace eval Excel {
             "12.0" "Excel 2007"
             "14.0" "Excel 2010"
             "15.0" "Excel 2013"
+            "16.0" "Excel 2016"
         }
         set version [Cawt GetApplicationVersion $objId]
 

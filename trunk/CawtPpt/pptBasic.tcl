@@ -76,6 +76,7 @@ namespace eval Ppt {
             "12.0" "PowerPoint 2007"
             "14.0" "PowerPoint 2010"
             "15.0" "PowerPoint 2013"
+            "16.0" "PowerPoint 2016"
         }
         set version [Cawt GetApplicationVersion $objId]
         if { $useString } {

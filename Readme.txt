@@ -24,6 +24,12 @@ extend the CAWT package.
 Release history:
 ================
 
+2.1.1   2015-10-31
+    Support for Office 2016.
+
+    External packages:
+        Updated Tablelist to version 5.14.
+
 2.1.0   2015-09-01
     Updated Twapi to version 4.2.a1, because of new Twapi functionality "tclcast bstr"
     and bug fix to retrieve document properties.

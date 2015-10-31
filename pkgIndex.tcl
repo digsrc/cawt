@@ -30,6 +30,6 @@ proc _LoadCawtPkgs { dir version subDirs } {
 set _CawtSubDirs [list CawtCore CawtExcel CawtWord CawtPpt CawtOutlook \
                        CawtOcr CawtExplorer CawtEarth CawtMatlab]
 
-_SetupCawtPkgs $dir 2.1.0 $_CawtSubDirs
+_SetupCawtPkgs $dir 2.1.1 $_CawtSubDirs
 
-package ifneeded cawt 2.1.0 [list _LoadCawtPkgs $dir 2.1.0 $_CawtSubDirs]
+package ifneeded cawt 2.1.1 [list _LoadCawtPkgs $dir 2.1.1 $_CawtSubDirs]

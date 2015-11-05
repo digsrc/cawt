@@ -1791,7 +1791,7 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: AddWorksheet
+        # See also: AddWorksheet SetWorksheetFitToPages
 
         $worksheetId -with { PageSetup } Orientation [Excel GetEnum $orientation]
     }
@@ -1803,20 +1803,32 @@ namespace eval Excel {
         # wide        - The number of pages in horizontal direction.
         # tall        - The number of pages in vertical direction.
         #
+        # Use zero for parameters wide or tall to automatically determine the
+        # number of pages.
         # When using the default values for wide and tall, the worksheet is adjusted
         # to fit onto exactly one piece of paper.
         #
         # No return value.
         #
-        # See also: AddWorksheet
+        # See also: AddWorksheet SetWorksheetOrientation
 
-        if { $wide < 1 || $tall < 1 } {
-            error "SetWorksheetFitToPages: Number of pages must be greater than 1."
+        if { $wide < 0 || $tall < 0 } {
+            error "SetWorksheetFitToPages: Number of pages must be greater or equal to 0."
+        }
+        if { $wide == 0 } {
+            set wideVar [Cawt TclBool false]
+        } else {
+            set wideVar [expr int($wide)]
+        }
+        if { $tall == 0 } {
+            set tallVar [Cawt TclBool false]
+        } else {
+            set tallVar [expr int($tall)]
         }
         set pageSetup [$worksheetId PageSetup]
         $pageSetup Zoom [Cawt TclBool false]
-        $pageSetup FitToPagesWide $wide
-        $pageSetup FitToPagesTall $tall
+        $pageSetup FitToPagesWide $wideVar
+        $pageSetup FitToPagesTall $tallVar
         Cawt Destroy $pageSetup
     }
 

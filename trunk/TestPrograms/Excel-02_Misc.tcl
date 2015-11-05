@@ -133,10 +133,10 @@ Excel CopyWorksheet $worksheetId $copyWorksheetId
 Excel CopyWorksheetBefore $worksheetId $copyWorksheetId "CopyBefore"
 Excel CopyWorksheetAfter  $worksheetId $copyWorksheetId "CopyAfter"
 
-
 # Adjust the page setup of the worksheets.
 Excel SetWorksheetOrientation $worksheetId xlLandscape
 Excel SetWorksheetZoom $worksheetId 50
+Excel SetWorksheetFitToPages $worksheetId 1 0
 
 Excel SetWorksheetOrientation $copyWorksheetId xlPortrait
 Excel SetWorksheetFitToPages $copyWorksheetId

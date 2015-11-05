@@ -1810,6 +1810,9 @@ namespace eval Excel {
         #
         # See also: AddWorksheet
 
+        if { $wide < 1 || $tall < 1 } {
+            error "SetWorksheetFitToPages: Number of pages must be greater than 1."
+        }
         set pageSetup [$worksheetId PageSetup]
         $pageSetup Zoom [Cawt TclBool false]
         $pageSetup FitToPagesWide $wide

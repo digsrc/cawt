@@ -161,16 +161,18 @@ namespace eval Cawt {
         # Enable the printer communication after setting properties to commit
         # all cached PageSetup commands.
         #
+        # Note: This method is only available in Office 2010 or newer.
+        #
         # No return value.
         #
         # See also: GetActivePrinter
 
         if { ! [Cawt IsApplicationId $objId] } {
             set appId [Cawt GetApplicationId $objId]
-            $appId PrintCommunication [Cawt TclBool $onOff]
+            catch {$appId PrintCommunication [Cawt TclBool $onOff]}
             Cawt Destroy $appId
         } else {
-            $objId PrintCommunication [Cawt TclBool $onOff]
+            catch {$objId PrintCommunication [Cawt TclBool $onOff]}
         }
     }
 

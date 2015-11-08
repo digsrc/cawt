@@ -21,6 +21,7 @@ namespace eval Cawt {
     namespace export IsApplicationId
     namespace export RgbToColor
     namespace export SetDocumentProperty
+    namespace export SetPrinterCommunication
     namespace export ShowAlerts
 
     proc RgbToColor { r g b } {
@@ -148,12 +149,39 @@ namespace eval Cawt {
         return $version
     }
 
+    proc SetPrinterCommunication { objId onOff } {
+        # Enable or disable printer communication.
+        #
+        # objId - The identifier of an Office object.
+        # onOff - true : Printer communication is enabled.
+        #         false: Printer communication is disabled.
+        #
+        # Disable the printer communication to speed up the execution of code
+        # that sets PageSetup properties, ex. SetWorksheetPrintOptions.
+        # Enable the printer communication after setting properties to commit
+        # all cached PageSetup commands.
+        #
+        # No return value.
+        #
+        # See also: GetActivePrinter
+
+        if { ! [Cawt IsApplicationId $objId] } {
+            set appId [Cawt GetApplicationId $objId]
+            $appId PrintCommunication [Cawt TclBool $onOff]
+            Cawt Destroy $appId
+        } else {
+            $objId PrintCommunication [Cawt TclBool $onOff]
+        }
+    }
+
     proc GetActivePrinter { appId } {
         # Get the name of the active printer.
         #
         # appId - The application identifier.
         #
         # Return the name of the active printer as a string.
+        #
+        # See also: SetPrinterCommunication
 
         set retVal [catch {$appId ActivePrinter} val]
         if { $retVal == 0 } {

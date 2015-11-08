@@ -116,10 +116,12 @@ namespace eval Excel {
     namespace export SetRowValues
     namespace export SetRowsHeight
     namespace export SetWindowState
+    namespace export SetWorksheetFooter
+    namespace export SetWorksheetHeader
     namespace export SetWorksheetFitToPages
     namespace export SetWorksheetName
     namespace export SetWorksheetOrientation
-    namespace export SetWorksheetPrintGridLines
+    namespace export SetWorksheetPrintOptions
     namespace export SetWorksheetPaperSize
     namespace export SetWorksheetTabColor
     namespace export SetWorksheetMargins
@@ -1787,7 +1789,6 @@ namespace eval Excel {
 
         return [$workbookId -with { Worksheets } Count]
     }
-
     
     proc SetWorksheetOrientation { worksheetId orientation } {
         # Set the orientation of a worksheet.
@@ -1798,8 +1799,9 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: SetWorksheetFitToPages SetWorksheetZoom SetWorksheetPrintGridLines
+        # See also: SetWorksheetFitToPages SetWorksheetZoom SetWorksheetPrintOptions
         #           SetWorksheetPaperSize SetWorksheetMargins
+        #           SetWorksheetHeader SetWorksheetFooter
 
         $worksheetId -with { PageSetup } Orientation [Excel GetEnum $orientation]
     }
@@ -1818,8 +1820,9 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: SetWorksheetOrientation SetWorksheetZoom SetWorksheetPrintGridLines
+        # See also: SetWorksheetOrientation SetWorksheetZoom SetWorksheetPrintOptions
         #           SetWorksheetPaperSize SetWorksheetMargins
+        #           SetWorksheetHeader SetWorksheetFooter
 
         if { $wide < 0 || $tall < 0 } {
             error "SetWorksheetFitToPages: Number of pages must be greater or equal to 0."
@@ -1851,25 +1854,44 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetPrintGridLines
+        # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetPrintOptions
         #           SetWorksheetPaperSize SetWorksheetMargins
+        #           SetWorksheetHeader SetWorksheetFooter
 
         $worksheetId -with { PageSetup } Zoom [expr int($zoom)]
     }
 
-    proc SetWorksheetPrintGridLines { worksheetId onOff } {
-        # Set print mode of worksheet grid lines.
+    proc SetWorksheetPrintOptions { worksheetId args } {
+        # Set printing options of a worksheet.
         #
         # worksheetId - Identifier of the worksheet.
-        # onOff       - true:  Enable printing of grid lines.
-        #               false: Disable printing of grid lines.
+        # args        - List of key value pairs specifying the different options 
+        #               and its values.
+        #
+        # Option keys are: gridlines, bw, draft, headings, comments, errors.
+        #                  Values of key comments are of enumeration type XlPrintLocation (see excelConst.tcl).
+        #                  Values of key errors are of enumeration type XlPrintErrors (see excelConst.tcl)
+        #                  All other keys are of type bool.
         #
         # No return value.
         #
         # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetZoom
         #           SetWorksheetPaperSize SetWorksheetMargins
+        #           SetWorksheetHeader SetWorksheetFooter
 
-        $worksheetId -with { PageSetup } PrintGridlines [Cawt TclBool $onOff]
+        set pageSetup [$worksheetId PageSetup]
+        foreach { key value } $args {
+            switch -exact $key {
+                "gridlines" { $pageSetup PrintGridlines [Cawt TclBool $value] }
+                "bw"        { $pageSetup BlackAndWhite  [Cawt TclBool $value] }
+                "draft"     { $pageSetup Draft          [Cawt TclBool $value] }
+                "headings"  { $pageSetup PrintHeadings  [Cawt TclBool $value] }
+                "comments"  { $pageSetup PrintComments  [Excel GetEnum $value] }
+                "errors"    { $pageSetup PrintErrors    [Excel GetEnum $value] }
+                default     { error "SetWorksheetPrintOptions: Unknown key \"$key\" specified" }
+            }
+        }
+        Cawt Destroy $pageSetup
     }
 
     proc SetWorksheetPaperSize { worksheetId paperSize } {
@@ -1881,7 +1903,8 @@ namespace eval Excel {
         # No return value.
         #
         # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetZoom
-        #           SetWorksheetPrintGridLines SetWorksheetMargins
+        #           SetWorksheetPrintOptions SetWorksheetMargins
+        #           SetWorksheetHeader SetWorksheetFooter
 
         $worksheetId -with { PageSetup } PaperSize [Excel GetEnum $paperSize]
     }
@@ -1903,18 +1926,75 @@ namespace eval Excel {
         # No return value.
         #
         # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetZoom
-        #           SetWorksheetPrintGridLines SetWorksheetPaperSize ::Cawt::ValueToPoints
+        #           SetWorksheetPrintOptions SetWorksheetPaperSize
+        #           SetWorksheetHeader SetWorksheetFooter
+        #           ::Cawt::ValueToPoints
 
         set pageSetup [$worksheetId PageSetup]
-        foreach { marginType marginValue } $args {
-            set value [Cawt ValueToPoints $marginValue]
-            switch -exact $marginType {
-                "top"    { $pageSetup TopMargin    $value }
-                "bottom" { $pageSetup BottomMargin $value }
-                "left"   { $pageSetup LeftMargin   $value }
-                "right"  { $pageSetup RightMargin  $value }
-                "header" { $pageSetup HeaderMargin $value }
-                "footer" { $pageSetup FooterMargin $value }
+        foreach { key value } $args {
+            set pointValue [Cawt ValueToPoints $value]
+            switch -exact $key {
+                "top"    { $pageSetup TopMargin    $pointValue }
+                "bottom" { $pageSetup BottomMargin $pointValue }
+                "left"   { $pageSetup LeftMargin   $pointValue }
+                "right"  { $pageSetup RightMargin  $pointValue }
+                "header" { $pageSetup HeaderMargin $pointValue }
+                "footer" { $pageSetup FooterMargin $pointValue }
+                default  { error "SetWorksheetMargins: Unknown key \"$key\" specified" }
+            }
+        }
+        Cawt Destroy $pageSetup
+    }
+
+    proc SetWorksheetHeader { worksheetId args } {
+        # Set the texts of the header of a worksheet.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # args        - List of key value pairs specifying the 3 different text 
+        #               locations and its values.
+        #
+        # Location keys are: left, center, right.
+        #
+        # No return value.
+        #
+        # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetZoom
+        #           SetWorksheetPrintOptions SetWorksheetPaperSize
+        #           SetWorksheetHeader SetWorksheetFooter
+
+        set pageSetup [$worksheetId PageSetup]
+        foreach { key value } $args {
+            switch -exact $key {
+                "left"   { $pageSetup LeftHeader   $value }
+                "center" { $pageSetup CenterHeader $value }
+                "right"  { $pageSetup RightHeader  $value }
+                default  { error "SetWorksheetHeader: Unknown key \"$key\" specified" }
+            }
+        }
+        Cawt Destroy $pageSetup
+    }
+
+    proc SetWorksheetFooter { worksheetId args } {
+        # Set the texts of the footer of a worksheet.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # args        - List of key value pairs specifying the 3 different text 
+        #               locations and its values.
+        #
+        # Location keys are: left, center, right.
+        #
+        # No return value.
+        #
+        # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetZoom
+        #           SetWorksheetPrintOptions SetWorksheetPaperSize
+        #           SetWorksheetHeader SetWorksheetFooter
+
+        set pageSetup [$worksheetId PageSetup]
+        foreach { key value } $args {
+            switch -exact $key {
+                "left"   { $pageSetup LeftFooter   $value }
+                "center" { $pageSetup CenterFooter $value }
+                "right"  { $pageSetup RightFooter  $value }
+                default  { error "SetWorksheetFooter: Unknown key \"$key\" specified" }
             }
         }
         Cawt Destroy $pageSetup

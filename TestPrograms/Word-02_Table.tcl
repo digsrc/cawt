@@ -67,8 +67,8 @@ Word SetRangeBackgroundColor $rowRange 200 100 50
 set colRange [Word GetColumnRange $table(2,Id) 2]
 Word SetRangeFontItalic $colRange true
 
-Word SetColumnWidth $table(2,Id) 1 [Cawt InchesToPoints 1]
-Word SetColumnWidth $table(2,Id) 2 [Cawt CentiMetersToPoints 2.54]
+Word SetColumnWidth $table(2,Id) 1 1i
+Word SetColumnWidth $table(2,Id) 2 2.54c
 
 # Read the number of rows and columns and check them.
 set numRowsRead [Word GetNumRows $table(2,Id)]
@@ -88,7 +88,7 @@ set table(3,Rows) [expr $numRows+2]
 set matrixList [Word GetMatrixValues $table(2,Id) 1 1 $numRows $numCols]
 Word SetMatrixValues $table(3,Id) $matrixList 3 2
 
-Word SetColumnsWidth $table(3,Id) 1 [expr $numCols+1] [Cawt InchesToPoints 1.9]
+Word SetColumnsWidth $table(3,Id) 1 [expr $numCols+1] 1.9i
 Word SetTableBorderLineStyle $table(3,Id) \
         wdLineStyleEmboss3D wdLineStyleDashDot
 

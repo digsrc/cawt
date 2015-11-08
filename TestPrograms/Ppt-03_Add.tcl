@@ -31,11 +31,8 @@ set imgName [file join [pwd] "testIn" "wish.gif"]
 set slideId1 [Ppt AddSlide $presId1]
 set slideId2 [Ppt AddSlide $presId2]
 
-set imgId1 [Ppt InsertImage $slideId1 $imgName \
-           [Cawt CentiMetersToPoints 1] [Cawt CentiMetersToPoints 2] \
-           [Cawt CentiMetersToPoints 6] [Cawt CentiMetersToPoints 6]]
-set imgId2 [Ppt InsertImage $slideId2 $imgName \
-           [Cawt CentiMetersToPoints 1] [Cawt CentiMetersToPoints 2]]
+set imgId1 [Ppt InsertImage $slideId1 $imgName 1c 2c 6c 6c]
+set imgId2 [Ppt InsertImage $slideId2 $imgName 1c 2c]
 
 # Copy slide 1 of presId1 to the end of the presentation.
 set copiedSlide1 [Ppt CopySlide $presId1 1]

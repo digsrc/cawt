@@ -82,22 +82,22 @@ Word AppendText $docId "Images with different croppings\n"
 
 Word AppendText $docId "Square cropped at the bottom side:\n"
 set cropId1 [Word InsertImage [Word GetEndRange $docId] $squareImg]
-Word CropImage $cropId1 [Cawt CentiMetersToPoints 5] 0  0 0
+Word CropImage $cropId1 5c 0  0 0
 Word AppendParagraph $docId
 
 Word AppendText $docId "Square cropped at the top side:\n"
 set cropId2 [Word InsertImage [Word GetEndRange $docId] $squareImg]
-Word CropImage $cropId2 0 [Cawt CentiMetersToPoints 0.5]  0 0
+Word CropImage $cropId2 0 0.5c  0 0
 Word AppendParagraph $docId
 
 Word AppendText $docId "Square cropped at the left side:\n"
 set cropId3 [Word InsertImage [Word GetEndRange $docId] $squareImg]
-Word CropImage $cropId3 0 0  [Cawt CentiMetersToPoints 2] 0
+Word CropImage $cropId3 0 0  2c 0
 Word AppendParagraph $docId
 
 Word AppendText $docId "Square cropped at the right side:\n"
 set cropId4 [Word InsertImage [Word GetEndRange $docId] $squareImg]
-Word CropImage $cropId4 0 0  0 [Cawt CentiMetersToPoints 2]
+Word CropImage $cropId4 0 0  0 2c
 Word AppendParagraph $docId
 
 # Save document as Word file.

@@ -319,14 +319,17 @@ namespace eval Excel {
         # worksheetId - Identifier of the worksheet.
         # row         - Row number of the top-left corner of the image. Row numbering starts with 1.
         # col         - Column number of the top-left corner of the image. Column numbering starts with 1.
-        # rowHeight   - Row height in points.
+        # rowHeight   - Row height.
         # colWidth    - Column width in average-size characters of the widget's font.
+        #
+        # The height value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # Note: Use only with small images.
         #
         # No return value.
         #
-        # See also: WorksheetToImg UseImgTransparency
+        # See also: WorksheetToImg UseImgTransparency ::Cawt::ValueToPoints
         #           ImgToClipboard RawImageFileToWorksheet SetRowHeight SetColumnWidth
 
         variable sUseTransparency

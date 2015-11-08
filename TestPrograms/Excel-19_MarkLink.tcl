@@ -62,7 +62,7 @@ Excel SetRangeComment $rangeId "Overwritten comment text."
 Excel SetCellValue $worksheetId 5 3 "Cell with comment image"
 set rangeId [Excel SelectCellByIndex $worksheetId 5 3 true]
 set commentId [Excel SetRangeComment $rangeId "Comment text." [file join [pwd] "testIn/wish.gif"]]
-Excel SetCommentSize $commentId [Cawt CentiMetersToPoints 3] [Cawt CentiMetersToPoints 5]
+Excel SetCommentSize $commentId 3c 5c
 
 Excel SetCommentDisplayMode $appId true true
 

@@ -55,6 +55,12 @@ if { [lindex $argv 0] eq "full" } {
     puts "Conversion test finished."
 }
 
+Cawt CheckNumber 72.0 [Cawt InchesToPoints 1]  "InchesToPoints"
+Cawt CheckNumber  1.0 [Cawt PointsToInches 72] "PointsToInches"
+
+Cawt CheckNumber 1.0 [Cawt PointsToInches      [Cawt InchesToPoints      1]] "InchesToPoints"
+Cawt CheckNumber 1.0 [Cawt PointsToCentiMeters [Cawt CentiMetersToPoints 1]] "CentiMetersToPoints"
+
 if { [lindex $argv 0] eq "auto" } {
     Cawt Destroy
     exit 0

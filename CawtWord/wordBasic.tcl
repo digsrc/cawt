@@ -572,13 +572,17 @@ namespace eval Word {
         # Set the font size of a text range.
         #
         # rangeId  - Identifier of the text range.
-        # fontSize - Font size in points.
+        # fontSize - Font size.
+        #
+        # The size value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # No return value.
         #
         # See also: SetRangeFontName SetRangeFontBold SetRangeFontItalic SetRangeFontUnderline
+        #           ::Cawt::ValueToPoints
 
-        $rangeId -with { Font } Size [expr int($fontSize)]
+        $rangeId -with { Font } Size [Cawt ValueToPoints $fontSize]
     }
 
     proc SetRangeFontBold { rangeId { onOff true } } {
@@ -1247,16 +1251,18 @@ namespace eval Word {
         # Append a paragraph at the end of the document.
         #
         # docId      - Identifier of the document.
-        # spaceAfter - Spacing in points after the range.
+        # spaceAfter - Spacing after the range.
         #
-        # Append a new paragraph to the end of the document.
+        # The spacing value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # No return value.
         #
-        # See also: GetEndRange AddParagraph
+        # See also: GetEndRange AddParagraph ::Cawt::ValueToPoints
 
         set endRange [Word GetEndRange $docId]
         $endRange InsertParagraphAfter
+        set spaceAfter [Cawt ValueToPoints $spaceAfter]
         if { $spaceAfter >= 0 } {
             $endRange -with { ParagraphFormat } SpaceAfter $spaceAfter
         }
@@ -1267,13 +1273,17 @@ namespace eval Word {
         # Add a new paragraph to a document.
         #
         # rangeId    - Identifier of the text range.
-        # spaceAfter - Spacing in points after the range.
+        # spaceAfter - Spacing after the range.
+        #
+        # The spacing value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # Return the new extended range.
         #
-        # See also: AppendParagraph
+        # See also: AppendParagraph ::Cawt::ValueToPoints
 
         $rangeId InsertParagraphAfter
+        set spaceAfter [Cawt ValueToPoints $spaceAfter]
         if { $spaceAfter >= 0 } {
             $rangeId -with { ParagraphFormat } SpaceAfter $spaceAfter
         }
@@ -1541,18 +1551,17 @@ namespace eval Word {
         # cropLeft   - Crop amount at the left border.
         # cropRight  - Crop amount at the right border.
         #
-        # The crop values must be specified in points.
-        # Use ::Cawt::CentiMetersToPoints or ::Cawt::InchesToPoints
-        # for conversion.
+        # The crop values may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # No return value.
         #
-        # See also: InsertImage ScaleImage ::Cawt::CentiMetersToPoints ::Cawt::InchesToPoints
+        # See also: InsertImage ScaleImage ::Cawt::ValueToPoints
 
-        $shapeId -with { PictureFormat } CropBottom $cropBottom
-        $shapeId -with { PictureFormat } CropTop    $cropTop
-        $shapeId -with { PictureFormat } CropLeft   $cropLeft
-        $shapeId -with { PictureFormat } CropRight  $cropRight
+        $shapeId -with { PictureFormat } CropBottom [Cawt ValueToPoints $cropBottom]
+        $shapeId -with { PictureFormat } CropTop    [Cawt ValueToPoints $cropTop]
+        $shapeId -with { PictureFormat } CropLeft   [Cawt ValueToPoints $cropLeft]
+        $shapeId -with { PictureFormat } CropRight  [Cawt ValueToPoints $cropRight]
     }
 
     proc InsertCaption { rangeId labelId text { pos wdCaptionPositionBelow } } {
@@ -1604,12 +1613,16 @@ namespace eval Word {
         # numCols    - Number of columns of the new table.
         # spaceAfter - Spacing in points after the table.
         #
+        # The spacing value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
+        #
         # Return the identifier of the new table.
         #
-        # See also: GetNumRows GetNumColumns
+        # See also: GetNumRows GetNumColumns ::Cawt::ValueToPoints
 
         set docId [Word GetDocumentId $rangeId]
         set tableId [$docId -with { Tables } Add $rangeId $numRows $numCols]
+        set spaceAfter [Cawt ValueToPoints $spaceAfter]
         if { $spaceAfter >= 0 } {
             $tableId -with { Range ParagraphFormat } SpaceAfter $spaceAfter
         }
@@ -1890,14 +1903,17 @@ namespace eval Word {
         #
         # tableId - Identifier of the Word table.
         # col     - Column number. Column numbering starts with 1.
-        # width   - Column width of table column in points.
+        # width   - Column width.
+        #
+        # The size value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # No return value.
         #
-        # See also: SetColumnsWidth InchesToPoints
+        # See also: SetColumnsWidth ::Cawt::ValueToPoints 
 
         set colId [$tableId -with { Columns } Item $col]
-        $colId Width $width
+        $colId Width [Cawt ValueToPoints $width]
         Cawt Destroy $colId
     }
 
@@ -1907,11 +1923,14 @@ namespace eval Word {
         # tableId  - Identifier of the Word table.
         # startCol - Range start column number. Column numbering starts with 1.
         # endCol   - Range end column number. Column numbering starts with 1.
-        # width    - Column width of table column in points.
+        # width    - Column width.
+        #
+        # The size value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # No return value.
         #
-        # See also: SetColumnWidth InchesToPoints
+        # See also: SetColumnWidth ::Cawt::ValueToPoints
 
         for { set c $startCol } { $c <= $endCol } { incr c } {
             SetColumnWidth $tableId $c $width

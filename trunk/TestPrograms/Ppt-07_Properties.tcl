@@ -33,9 +33,7 @@ Cawt PrintNumComObjects
 
 # Get all builtin and custom properties and insert them into the presentation.
 set builtinSlide [Ppt AddSlide $presId]
-set textboxId [Ppt AddTextbox $builtinSlide \
-              [Cawt CentiMetersToPoints 1] [Cawt CentiMetersToPoints 2] \
-              [Cawt CentiMetersToPoints 20] [Cawt CentiMetersToPoints 20]]
+set textboxId [Ppt AddTextbox $builtinSlide 1c 2c 20c 20c]
 set builtinProps [Cawt GetDocumentProperties $presId "Builtin"]
 
 Cawt PrintNumComObjects
@@ -50,9 +48,7 @@ Ppt SetTextboxFontSize $textboxId 10
 Cawt PrintNumComObjects
 
 set customSlide [Ppt AddSlide $presId]
-set textboxId [Ppt AddTextbox $customSlide \
-              [Cawt CentiMetersToPoints 1] [Cawt CentiMetersToPoints 2] \
-              [Cawt CentiMetersToPoints 20] [Cawt CentiMetersToPoints 10]]
+set textboxId [Ppt AddTextbox $customSlide 1c 2c 20c 10c]
 set customProps [Cawt GetDocumentProperties $presId "Custom"]
 
 foreach propertyName [Cawt GetDocumentProperties $presId "Custom"] {

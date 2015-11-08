@@ -17,6 +17,8 @@ namespace eval Cawt {
     namespace export IsComObject
     namespace export IsValidId
     namespace export KillApp
+    namespace export PointsToCentiMeters
+    namespace export PointsToInches
     namespace export PopComObjects
     namespace export PrintNumComObjects
     namespace export PushComObjects
@@ -24,6 +26,7 @@ namespace eval Cawt {
     namespace export TclBool
     namespace export TclInt
     namespace export TclString
+    namespace export ValueToPoints
 
     variable pkgInfo
     variable dotsPerInch
@@ -162,6 +165,20 @@ namespace eval Cawt {
         return [expr {$inches * double($dotsPerInch)}]
     }
 
+    proc PointsToInches { points } {
+        # Convert value in points into inches.
+        #
+        # points - Floating point value to be converted to inches.
+        #
+        # Return the corresponding value in inches.
+        #
+        # See also: SetDotsPerInch CentiMetersToPoints InchesToPoint
+
+        variable dotsPerInch
+
+        return [expr {$points / double($dotsPerInch)}]
+    }
+
     proc CentiMetersToPoints { cm } {
         # Convert centimeter value into points.
         #
@@ -174,6 +191,48 @@ namespace eval Cawt {
         variable dotsPerInch
 
         return [expr {$cm / 2.54 * double($dotsPerInch)}]
+    }
+
+    proc PointsToCentiMeters { points } {
+        # Convert value in points into centimeters.
+        #
+        # points - Floating point value to be converted to centimeters.
+        #
+        # Return the corresponding value in centimeters.
+        #
+        # See also: SetDotsPerInch InchesToPoints CentiMetersToPoints
+
+        variable dotsPerInch
+
+        return [expr {$points * 2.54 / double($dotsPerInch)}]
+    }
+
+    proc ValueToPoints { value } {
+        # Convert a value into points.
+        #
+        # value - Floating point value to be converted to points.
+        #         If the value is followed by "i", it is interpreted as inches.
+        #         If the value is followed by "c", it is interpreted as centimeters.
+        #         If the value is a simple floating point number or followed by "p",
+        #         it is interpreted as points, i.e. the pure value is returned.
+        #
+        # Examples: "ValueToPoints 2c", "ValueToPoints 1.5i"
+        #
+        # Return the corresponding value in points.
+        #
+        # See also: CentiMetersPerInch InchesToPoints
+
+        if { [string index $value end] eq "c" } {
+            return [Cawt::CentiMetersToPoints [string range $value 0 end-1]]
+        } elseif { [string index $value end] eq "i" } {
+            return [Cawt::InchesToPoints [string range $value 0 end-1]]
+        } elseif { [string index $value end] eq "p" } {
+            return [string range $value 0 end-1]
+        } elseif { [string is double $value] } {
+            return $value
+        } else {
+            error "Invalid value \"$value\" specified."
+        }
     }
 
     proc TclInt { val } {

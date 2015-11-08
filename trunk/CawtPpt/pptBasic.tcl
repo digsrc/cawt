@@ -719,23 +719,27 @@ namespace eval Ppt {
         #
         # slideId     - Identifier of the slide where the image is inserted.
         # imgFileName - File name of the image (as absolute path).
-        # left        - X position of top-left image position in points.
-        # top         - Y position of top-left image position in points.
-        # width       - Width of image in points.
-        # height      - Height of image in points.
+        # left        - X position of top-left image position.
+        # top         - Y position of top-left image position.
+        # width       - Width of image.
+        # height      - Height of image.
         #
         # The file name of the image must be an absolute pathname. Use a
         # construct like [file join [pwd] "myImage.gif"] to insert
         # images from the current directory.
         #
+        # The position and size values may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
+        #
         # Return the identifier of the inserted image.
         #
-        # See also: ::Cawt::InchesToPoints ::Cawt::CentiMetersToPoints
+        # See also: ::Cawt::ValueToPoints
 
 	set fileName [file nativename $imgFileName]
         set imgId [$slideId -with { Shapes } AddPicture $fileName \
                    [Cawt TclInt 0] [Cawt TclInt 1] \
-                   $left $top $width $height]
+                   [Cawt ValueToPoints $left]  [Cawt ValueToPoints $top] \
+                   [Cawt ValueToPoints $width] [Cawt ValueToPoints $height]]
         return $imgId
     }
 
@@ -802,19 +806,22 @@ namespace eval Ppt {
         # Add a text box into a slide.
         #
         # slideId - Identifier of the slide where the text box is inserted.
-        # left    - X position of top-left image position in points.
-        # top     - Y position of top-left image position in points.
-        # width   - Width of image in points.
-        # height  - Height of image in points.
+        # left    - X position of top-left text box position.
+        # top     - Y position of top-left text box position.
+        # width   - Width of text box.
+        # height  - Height of text box.
+        #
+        # The position and size values may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # Return the identifier of the new text box.
         #
-        # See also: AddTextboxText SetTextboxFontSize
-        #           ::Cawt::InchesToPoints ::Cawt::CentiMetersToPoints
+        # See also: AddTextboxText SetTextboxFontSize ::Cawt::ValueToPoints
 
         set msoTextOrientationHorizontal 1
         set textId [$slideId -with { Shapes } AddTextbox $msoTextOrientationHorizontal \
-                    $left $top $width $height]
+                    [Cawt ValueToPoints $left]  [Cawt ValueToPoints $top] \
+                    [Cawt ValueToPoints $width] [Cawt ValueToPoints $height]]
         return $textId
     }
 
@@ -841,13 +848,16 @@ namespace eval Ppt {
         # Set the font size of the text in a text box.
         #
         # textboxId - Identifier of the text box where the text is inserted.
-        # fontSize  - Font size in points.
+        # fontSize  - Font size.
+        #
+        # The size value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # No return value.
         #
         # See also: AddTextbox AddTextboxText
 
-        $textboxId -with { TextFrame TextRange Font } Size [expr int($fontSize)]
+        $textboxId -with { TextFrame TextRange Font } Size [Cawt ValueToPoints $fontSize]
     }
 
     proc GetNumComments { slideId } {

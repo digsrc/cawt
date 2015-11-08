@@ -26,14 +26,9 @@ set slideId1 [Ppt AddSlide $presId]
 set slideId2 [Ppt AddSlide $presId]
 set slideId3 [Ppt AddSlide $presId]
 
-set img1Id [Ppt InsertImage $slideId1 $imgName \
-           [Cawt CentiMetersToPoints 1] [Cawt CentiMetersToPoints 2]]
-set img2Id [Ppt InsertImage $slideId2 $imgName \
-           [Cawt CentiMetersToPoints 1] [Cawt CentiMetersToPoints 2] \
-           [Cawt CentiMetersToPoints 3] [Cawt CentiMetersToPoints 3]]
-set img3Id [Ppt InsertImage $slideId3 $imgName \
-           [Cawt CentiMetersToPoints 1] [Cawt CentiMetersToPoints 2] \
-           [Cawt CentiMetersToPoints 6] [Cawt CentiMetersToPoints 6]]
+set img1Id [Ppt InsertImage $slideId1 $imgName 1c 2c]
+set img2Id [Ppt InsertImage $slideId2 $imgName 1c 2c 3c 3c]
+set img3Id [Ppt InsertImage $slideId3 $imgName 1c 2c 6c 6c]
 
 # Test switching the ViewType.
 Ppt SetViewType $presId ppViewSlide

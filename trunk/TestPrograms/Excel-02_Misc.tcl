@@ -140,6 +140,9 @@ Excel SetWorksheetFitToPages $worksheetId 1 0
 
 Excel SetWorksheetOrientation $copyWorksheetId xlPortrait
 Excel SetWorksheetFitToPages $copyWorksheetId
+Excel SetWorksheetPrintGridLines $copyWorksheetId true
+Excel SetWorksheetPaperSize $copyWorksheetId xlPaperA3
+Excel SetWorksheetMargins $copyWorksheetId top 3c bottom 2.5c left 1i right 2.1i footer 35 header 45p
 
 puts "Saving as Excel file: $xlsFile"
 Excel SaveAs $workbookId $xlsFile "" false

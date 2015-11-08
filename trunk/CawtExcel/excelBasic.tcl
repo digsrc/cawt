@@ -119,7 +119,10 @@ namespace eval Excel {
     namespace export SetWorksheetFitToPages
     namespace export SetWorksheetName
     namespace export SetWorksheetOrientation
+    namespace export SetWorksheetPrintGridLines
+    namespace export SetWorksheetPaperSize
     namespace export SetWorksheetTabColor
+    namespace export SetWorksheetMargins
     namespace export SetWorksheetZoom
     namespace export ShowCellByIndex
     namespace export ToggleAutoFilter
@@ -636,17 +639,21 @@ namespace eval Excel {
         return [$rangeId -with { Font } Size]
     }
 
-    proc SetRangeFontSize { rangeId sizeInPoints } {
+    proc SetRangeFontSize { rangeId size } {
         # Set the font size of a cell range.
         #
-        # rangeId      - Identifier of the cell range.
-        # sizeInPoints - Font size in points.
+        # rangeId - Identifier of the cell range.
+        # size    - Font size.
+        #
+        # The size value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # No return value.
         #
-        # See also: SetRangeFontName SetRangeFontBold SetRangeFontItalic SetRangeFontUnderline SelectRangeByIndex
+        # See also: SetRangeFontName SetRangeFontBold SetRangeFontItalic SetRangeFontUnderline
+        #           SelectRangeByIndex ::Cawt::ValueToPoints
 
-        $rangeId -with { Font } Size $sizeInPoints
+        $rangeId -with { Font } Size [Cawt ValueToPoints $size]
     }
 
     proc GetRangeFontBold { rangeId } {
@@ -1042,17 +1049,16 @@ namespace eval Excel {
         # width     - Width of the comment.
         # height    - Height of the comment.
         #
-        # The size values must be specified in points.
-        # Use ::Cawt::CentiMetersToPoints or ::Cawt::InchesToPoints
-        # for conversion.
+        # The size values may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # No return value.
         #
-        # See also: SetRangeComment ::Cawt::CentiMetersToPoints ::Cawt::InchesToPoints
+        # See also: SetRangeComment ::Cawt::ValueToPoints
 
         $commentId -with { Shape } LockAspectRatio [Cawt TclInt 0]
-        $commentId -with { Shape } Height [expr double ($width)]
-        $commentId -with { Shape } Width  [expr double ($height)]
+        $commentId -with { Shape } Height [Cawt ValueToPoints $width]
+        $commentId -with { Shape } Width  [Cawt ValueToPoints $height]
     }
 
     proc SetRangeTooltip { rangeId tooltipMessage { tooltipTitle "" } } {
@@ -1782,6 +1788,7 @@ namespace eval Excel {
         return [$workbookId -with { Worksheets } Count]
     }
 
+    
     proc SetWorksheetOrientation { worksheetId orientation } {
         # Set the orientation of a worksheet.
         #
@@ -1791,7 +1798,8 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: AddWorksheet SetWorksheetFitToPages
+        # See also: SetWorksheetFitToPages SetWorksheetZoom SetWorksheetPrintGridLines
+        #           SetWorksheetPaperSize SetWorksheetMargins
 
         $worksheetId -with { PageSetup } Orientation [Excel GetEnum $orientation]
     }
@@ -1810,7 +1818,8 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: AddWorksheet SetWorksheetOrientation
+        # See also: SetWorksheetOrientation SetWorksheetZoom SetWorksheetPrintGridLines
+        #           SetWorksheetPaperSize SetWorksheetMargins
 
         if { $wide < 0 || $tall < 0 } {
             error "SetWorksheetFitToPages: Number of pages must be greater or equal to 0."
@@ -1842,9 +1851,73 @@ namespace eval Excel {
         #
         # No return value.
         #
-        # See also: AddWorksheet
+        # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetPrintGridLines
+        #           SetWorksheetPaperSize SetWorksheetMargins
 
         $worksheetId -with { PageSetup } Zoom [expr int($zoom)]
+    }
+
+    proc SetWorksheetPrintGridLines { worksheetId onOff } {
+        # Set print mode of worksheet grid lines.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # onOff       - true:  Enable printing of grid lines.
+        #               false: Disable printing of grid lines.
+        #
+        # No return value.
+        #
+        # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetZoom
+        #           SetWorksheetPaperSize SetWorksheetMargins
+
+        $worksheetId -with { PageSetup } PrintGridlines [Cawt TclBool $onOff]
+    }
+
+    proc SetWorksheetPaperSize { worksheetId paperSize } {
+        # Set the paper size of a worksheet.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # paperSize   - Value of enumeration type XlPaperSize (see excelConst.tcl).
+        #
+        # No return value.
+        #
+        # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetZoom
+        #           SetWorksheetPrintGridLines SetWorksheetMargins
+
+        $worksheetId -with { PageSetup } PaperSize [Excel GetEnum $paperSize]
+    }
+
+    proc SetWorksheetMargins { worksheetId args } {
+        # Set the margins of a worksheet.
+        #
+        # worksheetId - Identifier of the worksheet.
+        # args        - List of key value pairs specifying the 6 different margins 
+        #               and its values.
+        #
+        # Margins keys are: top, bottom, left, right, footer, header.
+        # The margin values may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
+        #
+        # Example: SetWorksheetMargins $worksheetId top 1.5c left 2i
+        #          sets the top margin to 1.5 centimeters and the left margin to 2 inches.
+        #
+        # No return value.
+        #
+        # See also: SetWorksheetOrientation SetWorksheetFitToPages SetWorksheetZoom
+        #           SetWorksheetPrintGridLines SetWorksheetPaperSize ::Cawt::ValueToPoints
+
+        set pageSetup [$worksheetId PageSetup]
+        foreach { marginType marginValue } $args {
+            set value [Cawt ValueToPoints $marginValue]
+            switch -exact $marginType {
+                "top"    { $pageSetup TopMargin    $value }
+                "bottom" { $pageSetup BottomMargin $value }
+                "left"   { $pageSetup LeftMargin   $value }
+                "right"  { $pageSetup RightMargin  $value }
+                "header" { $pageSetup HeaderMargin $value }
+                "footer" { $pageSetup FooterMargin $value }
+            }
+        }
+        Cawt Destroy $pageSetup
     }
 
     proc SetWorksheetTabColor { worksheetId r g b } {
@@ -2324,16 +2397,20 @@ namespace eval Excel {
         #
         # worksheetId - Identifier of the worksheet.
         # row         - Row number. Row numbering starts with 1.
-        # height      - A positive value specifies the row's height in points.
+        # height      - A positive value specifies the row's height.
         #               A value of zero specifies that the rows's height
         #               fits automatically the height of all elements in the row.
         #
+        # The height value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
+        #
         # No return value.
         #
-        # See also: SetRowsHeight SetColumnWidth ColumnCharToInt
+        # See also: SetRowsHeight SetColumnWidth ColumnCharToInt ::Cawt::ValueToPoints
 
         set cell [SelectCellByIndex $worksheetId $row 1]
         set curRow [$cell EntireRow]
+        set height [Cawt ValueToPoints $height]
         if { $height == 0 } {
             $curRow -with { Rows } AutoFit
         } else {
@@ -2349,9 +2426,12 @@ namespace eval Excel {
         # worksheetId - Identifier of the worksheet.
         # startRow    - Range start row number. Row numbering starts with 1.
         # endRow      - Range end row number. Row numbering starts with 1.
-        # height      - A positive value specifies the row's height in points.
+        # height      - A positive value specifies the row's height.
         #               A value of zero specifies that the rows's height
         #               fits automatically the height of all elements in the row.
+        #
+        # The height value may be specified in a format acceptable by
+        # procedure Cawt::ValueToPoints, i.e. centimeters, inches or points.
         #
         # No return value.
         #
